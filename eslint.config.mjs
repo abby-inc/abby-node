@@ -5,7 +5,7 @@ import tsParser from '@typescript-eslint/parser';
 export default [
   js.configs.recommended,
   {
-    files: ['src/**/*.ts'],
+    files: ['src/**/*.ts', 'test/**/*.ts'],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
@@ -13,8 +13,20 @@ export default [
         sourceType: 'module',
       },
       globals: {
+        // Node.js globals
         console: 'readonly',
         process: 'readonly',
+        global: 'readonly',
+        setTimeout: 'readonly',
+        Response: 'readonly',
+        crypto: 'readonly',
+        // Vitest globals
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        vi: 'readonly',
       },
     },
     plugins: {

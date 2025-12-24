@@ -130,8 +130,16 @@ jobs:
       - name: Build
         run: pnpm run build:only
 
-      - name: Check package
-        run: pnpm pack --dry-run
+      - name: Verify package contents
+        run: |
+          # Check that dist folders exist
+          test -d dist/esm && echo "✓ ESM build exists"
+          test -d dist/cjs && echo "✓ CJS build exists"
+          test -d dist/types && echo "✓ Type definitions exist"
+          # Verify main entry points
+          test -f dist/esm/index.js && echo "✓ ESM entry point exists"
+          test -f dist/cjs/index.js && echo "✓ CJS entry point exists"
+          test -f dist/types/index.d.ts && echo "✓ Type entry point exists"
 
   # Summary job that other jobs can depend on
   ci-success:
