@@ -34,11 +34,7 @@ const outputOptions = {
   sourcemap: isDev,
 };
 
-const basePlugins = [
-  commonjs(),
-  resolve({ preferBuiltins: true }),
-  json(),
-];
+const basePlugins = [commonjs(), resolve({ preferBuiltins: true }), json()];
 
 const baseTypeScriptOptions = {
   target: 'ES2022',
@@ -123,4 +119,3 @@ export default [
     ],
   },
 ];
-
