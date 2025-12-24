@@ -7,8 +7,8 @@ package-lock.json
 # Build output
 dist/
 
-# Generated client (regenerated on build)
-src/client/
+# Generated client is committed to repo for Node 18 compatibility
+# Regenerate with: pnpm run generate
 
 # Environment files
 .env

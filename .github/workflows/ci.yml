@@ -55,10 +55,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Generate SDK (for type checking)
-        run: pnpm run generate
-        continue-on-error: true
-
       - name: Run type check
         run: pnpm run typecheck
 
@@ -84,10 +80,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-
-      - name: Generate SDK (for tests)
-        run: pnpm run generate
-        continue-on-error: true
 
       - name: Run tests
         run: pnpm run test
@@ -122,10 +114,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-
-      - name: Generate SDK
-        run: pnpm run generate
-        continue-on-error: true
 
       - name: Build
         run: pnpm run build:only
