@@ -1,0 +1,137 @@
+# This workflow is triggered by the monorepo when a new API version is released.
+# It receives the public OpenAPI spec, generates the SDK, and publishes to npm.
+
+name: Generate SDK and Publish
+
+on:
+  # Triggered by repository_dispatch from the monorepo
+  repository_dispatch:
+    types: [update-sdk]
+
+  # Allow manual triggering for testing
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (e.g., 1.32.0)'
+        required: true
+        type: string
+      dry_run:
+        description: 'Dry run (do not publish to npm)'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  generate-and-publish:
+    name: Generate SDK and Publish to npm
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'pnpm'
+
+      - name: Get version from event
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            echo "version=${{ github.event.client_payload.version }}" >> $GITHUB_OUTPUT
+            echo "dry_run=false" >> $GITHUB_OUTPUT
+          else
+            echo "version=${{ inputs.version }}" >> $GITHUB_OUTPUT
+            echo "dry_run=${{ inputs.dry_run }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Download public OpenAPI spec
+        if: github.event_name == 'repository_dispatch'
+        run: |
+          echo '${{ github.event.client_payload.openapi_spec }}' > public-openapi.json
+
+      - name: Validate OpenAPI spec exists
+        run: |
+          if [ ! -f "public-openapi.json" ]; then
+            echo "Error: public-openapi.json not found"
+            echo "For manual runs, you need to provide the spec file"
+            exit 1
+          fi
+          echo "OpenAPI spec found:"
+          head -20 public-openapi.json
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Generate SDK from OpenAPI spec
+        run: pnpm run generate
+
+      - name: Build SDK
+        run: pnpm run build:only
+
+      - name: Update package version
+        run: |
+          pnpm version ${{ steps.version.outputs.version }} --no-git-tag-version --allow-same-version
+
+      - name: Commit generated files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --staged --quiet || git commit -m "chore: generate SDK v${{ steps.version.outputs.version }}"
+
+      - name: Create git tag
+        run: |
+          git tag -a "v${{ steps.version.outputs.version }}" -m "Release v${{ steps.version.outputs.version }}"
+
+      - name: Push changes and tags
+        run: |
+          git push origin master --follow-tags
+
+      - name: Publish to npm (dry run)
+        if: steps.version.outputs.dry_run == 'true'
+        run: pnpm publish --dry-run --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish to npm
+        if: steps.version.outputs.dry_run != 'true'
+        run: pnpm publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub Release
+        if: steps.version.outputs.dry_run != 'true'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: v${{ steps.version.outputs.version }}
+          body: |
+            ## Abby Node.js SDK v${{ steps.version.outputs.version }}
+
+            This release is automatically generated from the Abby API.
+
+            ### Installation
+            ```bash
+            npm install @abby-inc/abby-node@${{ steps.version.outputs.version }}
+            ```
+
+            ### Changelog
+            See the [API changelog](https://github.com/abby-inc/abby/releases) for details.
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

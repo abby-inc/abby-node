@@ -1,0 +1,9 @@
+# Default owners for everything in the repo
+* @abby-inc/sdk-team
+
+# GitHub configuration
+.github/ @abby-inc/devops
+
+# Documentation
+*.md @abby-inc/sdk-team
+
