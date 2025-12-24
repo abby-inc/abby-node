@@ -1,8 +1,10 @@
 # Abby Node.js SDK
 
 [![npm version](https://img.shields.io/npm/v/@abby-inc/abby-node.svg)](https://www.npmjs.com/package/@abby-inc/abby-node)
+[![npm downloads](https://img.shields.io/npm/dm/@abby-inc/abby-node.svg)](https://www.npmjs.com/package/@abby-inc/abby-node)
+[![CI](https://github.com/abby-inc/abby-node/actions/workflows/ci.yml/badge.svg)](https://github.com/abby-inc/abby-node/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/abby-inc/abby-node/graph/badge.svg)](https://codecov.io/gh/abby-inc/abby-node)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Build Status](https://github.com/abby-inc/abby-node/actions/workflows/ci.yml/badge.svg)](https://github.com/abby-inc/abby-node/actions/workflows/ci.yml)
 
 The official Node.js library for the [Abby API](https://abby.fr). Abby is an all-in-one business management platform for freelancers and micro-enterprises.
 
