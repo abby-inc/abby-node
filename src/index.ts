@@ -19,6 +19,12 @@
 
 import { createClient, createConfig } from './client/client';
 import type { Client } from './client/client/types.gen';
+
+/**
+ * SDK version injected at build time by rollup.
+ * @internal
+ */
+declare const __SDK_VERSION__: string;
 import {
   Estimate,
   Invoice,
@@ -212,15 +218,11 @@ export class Abby {
   }
 
   /**
-   * Get the SDK version from package.json.
-   * Falls back to 'unknown' if version cannot be determined.
+   * Get the SDK version.
+   * This value is injected at build time by rollup.
    */
   private getVersion(): string {
-    try {
-      return process.env.npm_package_version || 'unknown';
-    } catch {
-      return 'unknown';
-    }
+    return __SDK_VERSION__;
   }
 
   /**

@@ -58,8 +58,10 @@ jobs:
 
       - name: Download public OpenAPI spec
         if: github.event_name == 'repository_dispatch'
+        env:
+          OPENAPI_SPEC: ${{ github.event.client_payload.openapi_spec }}
         run: |
-          echo '${{ github.event.client_payload.openapi_spec }}' > public-openapi.json
+          printenv OPENAPI_SPEC > public-openapi.json
 
       - name: Validate OpenAPI spec exists
         run: |

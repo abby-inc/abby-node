@@ -2,6 +2,7 @@ import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
 import json from '@rollup/plugin-json';
+import replace from '@rollup/plugin-replace';
 import { readFileSync } from 'fs';
 
 const pkg = JSON.parse(readFileSync('./package.json', 'utf8'));
@@ -34,7 +35,17 @@ const outputOptions = {
   sourcemap: isDev,
 };
 
-const basePlugins = [commonjs(), resolve({ preferBuiltins: true }), json()];
+const basePlugins = [
+  replace({
+    preventAssignment: true,
+    values: {
+      __SDK_VERSION__: JSON.stringify(pkg.version),
+    },
+  }),
+  commonjs(),
+  resolve({ preferBuiltins: true }),
+  json(),
+];
 
 const baseTypeScriptOptions = {
   target: 'ES2022',
