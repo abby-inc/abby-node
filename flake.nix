@@ -20,6 +20,12 @@
             # pnpm package manager
             pnpm
             
+            # Bun runtime
+            bun
+            
+            # Deno runtime
+            deno
+            
             # Useful tools
             jq
           ];
@@ -28,6 +34,8 @@
             echo "🚀 Abby Node.js SDK development environment"
             echo "   Node.js: $(node --version)"
             echo "   pnpm: $(pnpm --version)"
+            echo "   Bun: $(bun --version)"
+            echo "   Deno: $(deno --version | head -1)"
           '';
         };
       }

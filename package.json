@@ -51,6 +51,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "test:bun": "bunx vitest run",
+    "test:deno": "deno run -A --node-modules-dir=auto node_modules/.bin/vitest run",
     "prepare": "husky",
     "prepublishOnly": "pnpm run clean && pnpm run build",
     "commitlint": "commitlint"

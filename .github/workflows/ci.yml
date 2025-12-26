@@ -142,8 +142,8 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: Run tests
-        run: bun test
+      - name: Run tests with vitest using Bun runtime
+        run: bunx vitest run
 
   test-deno:
     name: Test (Deno)
@@ -169,8 +169,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Run tests
-        run: deno test --allow-read --allow-env --allow-net
+      - name: Run tests with vitest using Deno runtime
+        run: deno run -A --node-modules-dir=auto node_modules/.bin/vitest run
 
   # Summary job that other jobs can depend on
   ci-success:
