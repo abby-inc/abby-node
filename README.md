@@ -56,7 +56,7 @@ import Abby from 'npm:@abby-inc/abby-node';
 
 ### Initialization
 
-Get your API key from the [Abby settings](https://app.abby.fr/settings/api).
+Get your API key from the [Abby settings](https://app.abby.fr/settings/integrations).
 
 ```typescript
 import Abby from '@abby-inc/abby-node';
