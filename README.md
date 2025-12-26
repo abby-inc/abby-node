@@ -257,8 +257,8 @@ Contributions are welcome! Please see our [Contributing Guidelines](CONTRIBUTING
 
 If you encounter any issues or have questions, please check the following resources:
 
-- [Official Documentation](https://abby.fr/docs)
-- [API Reference](https://api.abby.fr/api-docs)
+- [Official Documentation](https://docs.abby.fr)
+- [API Reference](https://api.app-abby.com/api-docs/public.json)
 - [GitHub Issues](https://github.com/abby-inc/abby-node/issues)
 - [Abby Support](https://abby.fr/contact)
 
