@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+
+# npm (using pnpm instead)
+package-lock.json
+
+# Build output
+dist/
+
+# Generated client is committed to repo for Node 18 compatibility
+# Regenerate with: pnpm run generate
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test coverage
+coverage/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Nix/Direnv
+.direnv/
+result
+

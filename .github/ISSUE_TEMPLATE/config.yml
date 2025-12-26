@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Abby Documentation
+    url: https://abby.fr/docs
+    about: Check out our documentation for guides and API reference
+  - name: Abby Support
+    url: https://abby.fr/contact
+    about: Contact Abby support for account-specific questions
+  - name: API Status
+    url: https://status.abby.fr
+    about: Check the current API status

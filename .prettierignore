@@ -1,0 +1,17 @@
+# Build output
+dist/
+
+# Dependencies
+node_modules/
+
+# Generated files
+src/client/
+public-openapi.json
+pnpm-lock.yaml
+
+# Coverage
+coverage/
+
+# Nix
+flake.lock
+

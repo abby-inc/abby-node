@@ -1,0 +1,96 @@
+{
+  "name": "@abby-inc/abby-node",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Node.js, Bun, and Deno library for the Abby API",
+  "author": "Abby <contact@abby.fr>",
+  "license": "MIT",
+  "homepage": "https://github.com/abby-inc/abby-node",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abby-inc/abby-node.git"
+  },
+  "bugs": {
+    "url": "https://github.com/abby-inc/abby-node/issues"
+  },
+  "keywords": [
+    "abby",
+    "api",
+    "sdk",
+    "client",
+    "invoicing",
+    "freelance",
+    "business",
+    "bun",
+    "deno"
+  ],
+  "main": "dist/cjs/index.cjs",
+  "module": "dist/esm/index.js",
+  "types": "dist/types/index.d.ts",
+  "files": [
+    "dist",
+    "!dist/types/**/*.js",
+    "!dist/types/**/*.js.map"
+  ],
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "packageManager": "pnpm@10.26.2+sha512.0e308ff2005fc7410366f154f625f6631ab2b16b1d2e70238444dd6ae9d630a8482d92a451144debc492416896ed16f7b114a86ec68b8404b2443869e68ffda6",
+  "scripts": {
+    "generate": "openapi-ts",
+    "build": "pnpm run generate && rollup -c rollup.config.mjs",
+    "build:only": "rollup -c rollup.config.mjs",
+    "clean": "rm -rf dist",
+    "lint": "eslint src test --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:bun": "bunx vitest run",
+    "test:deno": "deno run -A --node-modules-dir=auto node_modules/.bin/vitest run",
+    "prepare": "husky",
+    "prepublishOnly": "pnpm run clean && pnpm run build",
+    "commitlint": "commitlint"
+  },
+  "dependencies": {
+    "zod": "^4.2.1"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.2.0",
+    "@commitlint/config-conventional": "^20.2.0",
+    "@eslint/js": "^9.39.2",
+    "@hey-api/openapi-ts": "~0.89.2",
+    "@rollup/plugin-commonjs": "^29.0.0",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "@rollup/plugin-replace": "^6.0.3",
+    "@rollup/plugin-typescript": "^12.3.0",
+    "@types/node": "^22.19.3",
+    "@typescript-eslint/eslint-plugin": "^8.50.1",
+    "@typescript-eslint/parser": "^8.50.1",
+    "@vitest/coverage-v8": "^4.0.16",
+    "eslint": "^9.39.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.7.4",
+    "rollup": "^4.54.0",
+    "tslib": "^2.8.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.16"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "bun": ">=1.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
