@@ -28,7 +28,9 @@
   "module": "dist/esm/index.js",
   "types": "dist/types/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "!dist/types/**/*.js",
+    "!dist/types/**/*.js.map"
   ],
   "sideEffects": false,
   "exports": {

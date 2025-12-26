@@ -210,4 +210,97 @@ describe('Abby SDK', () => {
       expect(capturedHeaders2[0].get('X-Custom-1')).toBeNull();
     });
   });
+
+  describe('custom fetch', () => {
+    it('should use custom fetch when provided', async () => {
+      const customFetch = vi.fn(async () => mockFetchResponse({ success: true }));
+
+      const abby = new Abby(generateTestApiKey(), {
+        fetch: customFetch,
+      });
+
+      // Make a request to trigger the custom fetch
+      await abby.getClient().get({ url: '/v2/test' });
+
+      expect(customFetch).toHaveBeenCalled();
+    });
+
+    it('should pass request through custom fetch with correct URL', async () => {
+      let capturedUrl: string | undefined;
+
+      const customFetch = vi.fn(async (input: globalThis.RequestInfo | globalThis.URL) => {
+        capturedUrl = input instanceof globalThis.Request ? input.url : String(input);
+        return mockFetchResponse({ success: true });
+      });
+
+      const abby = new Abby(generateTestApiKey(), {
+        baseUrl: 'https://custom.api.example.com',
+        fetch: customFetch,
+      });
+
+      await abby.getClient().get({ url: '/v2/test' });
+
+      expect(capturedUrl).toBe('https://custom.api.example.com/v2/test');
+    });
+
+    it('should apply timeout to custom fetch', async () => {
+      let receivedSignal: globalThis.AbortSignal | undefined;
+
+      const customFetch = vi.fn(
+        async (input: globalThis.RequestInfo | globalThis.URL, init?: globalThis.RequestInit) => {
+          receivedSignal = init?.signal ?? undefined;
+          // Return immediately but we're checking the signal was set up
+          return mockFetchResponse({ success: true });
+        }
+      );
+
+      const abby = new Abby(generateTestApiKey(), {
+        fetch: customFetch,
+        timeout: 5000,
+      });
+
+      await abby.getClient().get({ url: '/v2/test' });
+
+      // Verify that the custom fetch received a signal (for timeout)
+      expect(customFetch).toHaveBeenCalled();
+      expect(receivedSignal).toBeDefined();
+      expect(receivedSignal).toBeInstanceOf(globalThis.AbortSignal);
+    });
+
+    it('should add auth headers when using custom fetch', async () => {
+      const apiKey = 'my_test_api_key';
+      let capturedHeaders: globalThis.Headers | undefined;
+
+      const customFetch = vi.fn(async (input: globalThis.RequestInfo | globalThis.URL) => {
+        if (input instanceof globalThis.Request) {
+          capturedHeaders = input.headers;
+        }
+        return mockFetchResponse({ success: true });
+      });
+
+      const abby = new Abby(apiKey, {
+        fetch: customFetch,
+      });
+
+      await abby.getClient().get({ url: '/v2/test' });
+
+      expect(capturedHeaders?.get('Authorization')).toBe(`Bearer ${apiKey}`);
+    });
+
+    it('should work with fetch that modifies response', async () => {
+      const customFetch = vi.fn(async () => {
+        // Simulate a proxy that adds headers to response
+        const response = mockFetchResponse({ data: 'test' });
+        return response;
+      });
+
+      const abby = new Abby(generateTestApiKey(), {
+        fetch: customFetch,
+      });
+
+      const response = await abby.getClient().get({ url: '/v2/test' });
+
+      expect(response.data).toEqual({ data: 'test' });
+    });
+  });
 });

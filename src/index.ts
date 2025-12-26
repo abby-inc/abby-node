@@ -80,12 +80,31 @@ export interface AbbyConfig {
    * Additional headers to include in every request.
    */
   headers?: Record<string, string>;
+
+  /**
+   * Custom fetch implementation.
+   * Use this to configure proxies, custom logging, or other advanced HTTP options.
+   *
+   * @example
+   * ```typescript
+   * // Using undici with a proxy
+   * import { fetch as undiciFetch, ProxyAgent } from 'undici';
+   *
+   * const abby = new Abby('your_api_key', {
+   *   fetch: (url, init) => undiciFetch(url, {
+   *     ...init,
+   *     dispatcher: new ProxyAgent('http://proxy.example.com:8080'),
+   *   }),
+   * });
+   * ```
+   */
+  fetch?: typeof globalThis.fetch;
 }
 
 /**
  * Default configuration values.
  */
-const DEFAULT_CONFIG: Required<Omit<AbbyConfig, 'headers'>> = {
+const DEFAULT_CONFIG: Required<Omit<AbbyConfig, 'headers' | 'fetch'>> = {
   baseUrl: 'https://api.app-abby.com',
   timeout: 30000,
 };
@@ -136,8 +155,9 @@ function createServiceProxy<T extends object>(service: T, instanceClient: Client
  */
 export class Abby {
   private readonly apiKey: string;
-  private readonly config: Required<Omit<AbbyConfig, 'headers'>> & {
+  private readonly config: Required<Omit<AbbyConfig, 'headers' | 'fetch'>> & {
     headers?: Record<string, string>;
+    fetch?: typeof globalThis.fetch;
   };
   private readonly instanceClient: Client;
 
@@ -184,6 +204,9 @@ export class Abby {
       ...config,
     };
 
+    // Use custom fetch if provided, otherwise use global fetch
+    const baseFetch = config.fetch ?? globalThis.fetch;
+
     // Create a fetch wrapper that implements timeout using AbortController
     const timeoutMs = this.config.timeout;
     const fetchWithTimeout: typeof globalThis.fetch = async (input, init) => {
@@ -203,7 +226,7 @@ export class Abby {
           }
         }
 
-        return await globalThis.fetch(input, {
+        return await baseFetch(input, {
           ...init,
           signal: controller.signal,
         });

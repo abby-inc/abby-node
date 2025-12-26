@@ -17,8 +17,10 @@ The official Node.js, Bun, and Deno library for the [Abby API](https://abby.fr).
   - [Services](#services)
   - [Basic Example](#basic-example)
   - [Configuration](#configuration)
+  - [Custom Fetch & Proxy Support](#custom-fetch--proxy-support)
   - [Error Handling](#error-handling)
   - [Interceptors](#interceptors)
+  - [Raw Requests](#raw-requests)
 - [Validation](#validation)
   - [Automatic Validation](#automatic-validation)
   - [Using Zod Schemas Directly](#using-zod-schemas-directly)
@@ -106,12 +108,96 @@ main().catch(console.error);
 You can pass optional configuration settings when initializing the SDK:
 
 ```typescript
+import Abby from '@abby-inc/abby-node';
+
 const abby = new Abby('your_api_key', {
-  baseUrl: 'https://api.app-abby.com', // Default
-  timeout: 30000, // Default: 30 seconds
+  baseUrl: 'https://api.app-abby.com',
+  timeout: 30000,
   headers: {
     'X-Custom-Header': 'value',
   },
+});
+```
+
+| Option    | Default                      | Description                                                                                                                     |
+| --------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `baseUrl` | `'https://api.app-abby.com'` | Base URL for the Abby API.                                                                                                      |
+| `timeout` | `30000`                      | Request timeout in milliseconds.                                                                                                |
+| `headers` | `undefined`                  | Additional headers to include in every request.                                                                                 |
+| `fetch`   | `globalThis.fetch`           | Custom fetch implementation for proxies, logging, or testing. See [Custom Fetch & Proxy Support](#custom-fetch--proxy-support). |
+
+### Custom Fetch & Proxy Support
+
+The SDK allows you to provide a custom `fetch` implementation for advanced use cases like proxies, custom logging, or testing.
+
+#### Using a Proxy
+
+With [undici](https://github.com/nodejs/undici) (recommended for Node.js):
+
+```typescript
+import Abby from '@abby-inc/abby-node';
+import { fetch as undiciFetch, ProxyAgent } from 'undici';
+
+const proxyAgent = new ProxyAgent('http://proxy.example.com:8080');
+
+const abby = new Abby('your_api_key', {
+  fetch: (url, init) =>
+    undiciFetch(url, {
+      ...init,
+      dispatcher: proxyAgent,
+    }),
+});
+```
+
+With [node-fetch](https://github.com/node-fetch/node-fetch) and [https-proxy-agent](https://github.com/TooTallNate/proxy-agents):
+
+```typescript
+import Abby from '@abby-inc/abby-node';
+import fetch from 'node-fetch';
+import { HttpsProxyAgent } from 'https-proxy-agent';
+
+const proxyAgent = new HttpsProxyAgent('http://proxy.example.com:8080');
+
+const abby = new Abby('your_api_key', {
+  fetch: (url, init) =>
+    fetch(url, {
+      ...init,
+      agent: proxyAgent,
+    }) as Promise<Response>,
+});
+```
+
+#### Custom Logging
+
+```typescript
+const abby = new Abby('your_api_key', {
+  fetch: async (url, init) => {
+    console.log(`[Abby SDK] ${init?.method ?? 'GET'} ${url}`);
+    const start = Date.now();
+
+    const response = await globalThis.fetch(url, init);
+
+    console.log(`[Abby SDK] ${response.status} in ${Date.now() - start}ms`);
+    return response;
+  },
+});
+```
+
+#### Testing with Mock Fetch
+
+```typescript
+import { vi } from 'vitest';
+
+const mockFetch = vi.fn(
+  async () =>
+    new Response(JSON.stringify({ success: true }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    })
+);
+
+const abby = new Abby('your_api_key', {
+  fetch: mockFetch,
 });
 ```
 
@@ -154,6 +240,34 @@ client.interceptors.response.use((response) => {
   return response;
 });
 ```
+
+### Raw Requests
+
+If you need to call an endpoint that isn't covered by the SDK, or prefer to specify request details directly, you can use the underlying HTTP client:
+
+```typescript
+import Abby from '@abby-inc/abby-node';
+
+const abby = new Abby('your_api_key');
+const client = abby.getClient();
+
+// GET request
+const { data } = await client.get({
+  url: '/v2/some/endpoint',
+});
+
+// POST request with body
+const { data: result } = await client.post({
+  url: '/v2/some/endpoint',
+  body: {
+    field: 'value',
+  },
+});
+
+// Other methods available: put, patch, delete, head, options
+```
+
+The client automatically includes your API key and SDK headers in all requests.
 
 ## Validation
 
@@ -222,7 +336,6 @@ Available schema patterns:
 
 - `z{DtoName}` - Schemas for DTOs (e.g., `zCreateContactDto`, `zReadInvoiceDto`)
 - `z{ControllerMethod}Data` - Request data schemas (e.g., `zContactControllerCreateContactData`)
-- `z{ControllerMethod}Response` - Response schemas (e.g., `zContactControllerCreateContactResponse`)
 
 ## TypeScript Support
 

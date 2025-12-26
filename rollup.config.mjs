@@ -112,9 +112,11 @@ export default [
   {
     input: 'src/index.ts',
     output: {
-      file: 'dist/types/index.d.ts',
+      dir: 'dist/types',
       format: 'es',
-      sourcemap: isDev,
+      preserveModules: true,
+      preserveModulesRoot: 'src',
+      sourcemap: true, // Required for declarationMap to work
     },
     external,
     plugins: [
@@ -123,7 +125,7 @@ export default [
         ...baseTypeScriptOptions,
         declaration: true,
         declarationDir: 'dist/types',
-        declarationMap: isDev,
+        declarationMap: true, // Always include for better DX
         emitDeclarationOnly: true,
         outDir: 'dist/types',
       }),
