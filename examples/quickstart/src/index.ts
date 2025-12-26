@@ -106,11 +106,6 @@ function handleError(message: string, error: unknown): void {
 
     // Fallback: stringify the error object
     console.error(`   ${JSON.stringify(err, null, 2)}`);
-    return;
-  }
-
-  if (error instanceof Error) {
-    console.error(`   ${error.message}`);
   }
 }
 
