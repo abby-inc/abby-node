@@ -194,8 +194,13 @@ export class Abby {
         // Merge any existing signal with our timeout signal
         const existingSignal = init?.signal;
         if (existingSignal) {
-          // If caller provided a signal, abort on either signal
-          existingSignal.addEventListener('abort', () => controller.abort());
+          // If the signal is already aborted, abort immediately
+          if (existingSignal.aborted) {
+            controller.abort();
+          } else {
+            // If caller provided a signal, abort on either signal
+            existingSignal.addEventListener('abort', () => controller.abort());
+          }
         }
 
         return await globalThis.fetch(input, {

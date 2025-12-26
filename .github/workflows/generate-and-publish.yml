@@ -53,7 +53,13 @@ jobs:
         id: version
         run: |
           if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
-            echo "version=${{ github.event.client_payload.version }}" >> $GITHUB_OUTPUT
+            VERSION="${{ github.event.client_payload.version }}"
+            if [ -z "$VERSION" ]; then
+              echo "Error: repository_dispatch triggered without version in payload"
+              echo "The client_payload.version field is required for repository_dispatch events"
+              exit 1
+            fi
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
             echo "dry_run=false" >> $GITHUB_OUTPUT
           else
             echo "version=${{ inputs.version }}" >> $GITHUB_OUTPUT
