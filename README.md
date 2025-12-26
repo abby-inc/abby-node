@@ -1,7 +1,7 @@
 # Abby Node.js, Bun & Deno SDK
 
-[![npm version](https://img.shields.io/npm/v/@abby-inc/abby.svg)](https://www.npmjs.com/package/@abby-inc/abby)
-[![npm downloads](https://img.shields.io/npm/dm/@abby-inc/abby.svg)](https://www.npmjs.com/package/@abby-inc/abby)
+[![npm version](https://img.shields.io/npm/v/@abby-inc/node.svg)](https://www.npmjs.com/package/@abby-inc/node)
+[![npm downloads](https://img.shields.io/npm/dm/@abby-inc/node.svg)](https://www.npmjs.com/package/@abby-inc/node)
 [![CI](https://github.com/abby-inc/abby-node/actions/workflows/ci.yml/badge.svg)](https://github.com/abby-inc/abby-node/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/abby-inc/abby-node/branch/master/graph/badge.svg?token=51rRlQV05f)](https://codecov.io/gh/abby-inc/abby-node)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
@@ -36,19 +36,19 @@ The official Node.js, Bun, and Deno library for the [Abby API](https://abby.fr).
 Install the package using your preferred package manager:
 
 ```bash
-npm install @abby-inc/abby
+npm install @abby-inc/node
 # or
-yarn add @abby-inc/abby
+yarn add @abby-inc/node
 # or
-pnpm add @abby-inc/abby
+pnpm add @abby-inc/node
 # or
-bun add @abby-inc/abby
+bun add @abby-inc/node
 ```
 
 For Deno, you can import directly from npm:
 
 ```typescript
-import Abby from 'npm:@abby-inc/abby';
+import Abby from 'npm:@abby-inc/node';
 ```
 
 ## Requirements
@@ -63,7 +63,7 @@ import Abby from 'npm:@abby-inc/abby';
 Get your API key from the [Abby settings](https://app.abby.fr/settings/integrations).
 
 ```typescript
-import Abby from '@abby-inc/abby';
+import Abby from '@abby-inc/node';
 
 const abby = new Abby('your_api_key');
 ```
@@ -85,7 +85,7 @@ The SDK provides several services to interact with different parts of the Abby A
 ### Basic Example
 
 ```typescript
-import Abby from '@abby-inc/abby';
+import Abby from '@abby-inc/node';
 
 const abby = new Abby('your_api_key');
 
@@ -110,7 +110,7 @@ main().catch(console.error);
 You can pass optional configuration settings when initializing the SDK:
 
 ```typescript
-import Abby from '@abby-inc/abby';
+import Abby from '@abby-inc/node';
 
 const abby = new Abby('your_api_key', {
   baseUrl: 'https://api.app-abby.com',
@@ -137,7 +137,7 @@ The SDK allows you to provide a custom `fetch` implementation for advanced use c
 With [undici](https://github.com/nodejs/undici) (recommended for Node.js):
 
 ```typescript
-import Abby from '@abby-inc/abby';
+import Abby from '@abby-inc/node';
 import { fetch as undiciFetch, ProxyAgent } from 'undici';
 
 const proxyAgent = new ProxyAgent('http://proxy.example.com:8080');
@@ -154,7 +154,7 @@ const abby = new Abby('your_api_key', {
 With [node-fetch](https://github.com/node-fetch/node-fetch) and [https-proxy-agent](https://github.com/TooTallNate/proxy-agents):
 
 ```typescript
-import Abby from '@abby-inc/abby';
+import Abby from '@abby-inc/node';
 import fetch from 'node-fetch';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 
@@ -232,7 +232,7 @@ The SDK provides an event emitter pattern for global error handling and logging.
 Subscribe to all API errors across your application:
 
 ```typescript
-import Abby from '@abby-inc/abby';
+import Abby from '@abby-inc/node';
 
 const abby = new Abby('your_api_key');
 
@@ -335,7 +335,7 @@ client.interceptors.response.use((response) => {
 If you need to call an endpoint that isn't covered by the SDK, or prefer to specify request details directly, you can use the underlying HTTP client:
 
 ```typescript
-import Abby from '@abby-inc/abby';
+import Abby from '@abby-inc/node';
 
 const abby = new Abby('your_api_key');
 const client = abby.getClient();
@@ -372,7 +372,7 @@ All SDK methods automatically validate:
 If validation fails, a `ZodError` is thrown with detailed information about what went wrong:
 
 ```typescript
-import Abby from '@abby-inc/abby';
+import Abby from '@abby-inc/node';
 import { ZodError } from 'zod';
 
 const abby = new Abby('your_api_key');
@@ -396,7 +396,7 @@ try {
 All Zod schemas are exported and can be used for your own validation needs:
 
 ```typescript
-import Abby, { zCreateContactDto, zReadContactDto } from '@abby-inc/abby';
+import Abby, { zCreateContactDto, zReadContactDto } from '@abby-inc/node';
 
 // Validate user input before sending to the API
 const userInput = {
@@ -431,7 +431,7 @@ Available schema patterns:
 The SDK is written in TypeScript and provides complete type definitions for all API resources and responses.
 
 ```typescript
-import Abby, { ReadMeDto } from '@abby-inc/abby';
+import Abby, { ReadMeDto } from '@abby-inc/node';
 
 const abby = new Abby('your_api_key');
 
@@ -445,7 +445,7 @@ You can also infer types directly from Zod schemas:
 
 ```typescript
 import { z } from 'zod';
-import { zReadContactDto } from '@abby-inc/abby';
+import { zReadContactDto } from '@abby-inc/node';
 
 // Infer the type from the Zod schema
 type Contact = z.infer<typeof zReadContactDto>;

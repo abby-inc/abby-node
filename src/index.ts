@@ -5,7 +5,7 @@
  *
  * @example
  * ```typescript
- * import Abby from '@abby-inc/abby';
+ * import Abby from '@abby-inc/node';
  *
  * const abby = new Abby('your_api_key');
  *
@@ -603,7 +603,7 @@ export class Abby {
  *
  * @example
  * ```typescript
- * import Abby from '@abby-inc/abby';
+ * import Abby from '@abby-inc/node';
  * const abby = new Abby('your_api_key');
  * ```
  */

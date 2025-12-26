@@ -67,7 +67,7 @@ jobs:
           VERSION="${{ steps.version.outputs.version }}"
 
           # Check if this version already exists on npm
-          if npm view "@abby-inc/abby@$VERSION" version 2>/dev/null; then
+          if npm view "@abby-inc/node@$VERSION" version 2>/dev/null; then
             echo "Version $VERSION is already published to npm"
             echo "already_published=true" >> $GITHUB_OUTPUT
           else
@@ -128,7 +128,7 @@ jobs:
 
             ### Installation
             ```bash
-            npm install @abby-inc/abby@${{ steps.version.outputs.version }}
+            npm install @abby-inc/node@${{ steps.version.outputs.version }}
             ```
 
             ### Documentation
@@ -158,5 +158,5 @@ jobs:
           else
             echo "**Status:** Published to npm ✓" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "- **npm:** https://www.npmjs.com/package/@abby-inc/abby/v/$VERSION" >> $GITHUB_STEP_SUMMARY
+            echo "- **npm:** https://www.npmjs.com/package/@abby-inc/node/v/$VERSION" >> $GITHUB_STEP_SUMMARY
           fi

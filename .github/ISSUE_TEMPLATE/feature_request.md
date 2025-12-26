@@ -19,7 +19,7 @@ A clear and concise description of what you want to happen.
 
 ```typescript
 // How would you like to use this feature?
-import Abby from '@abby-inc/abby';
+import Abby from '@abby-inc/node';
 
 const abby = new Abby('your_api_key');
 // Proposed usage...

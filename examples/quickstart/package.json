@@ -8,7 +8,7 @@
     "start": "npx tsx src/index.ts"
   },
   "dependencies": {
-    "@abby-inc/abby": "file:../.."
+    "@abby-inc/node": "file:../.."
   },
   "devDependencies": {
     "tsx": "^4.19.0",
