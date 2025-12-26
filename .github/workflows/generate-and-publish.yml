@@ -20,6 +20,10 @@ on:
         required: false
         type: boolean
         default: false
+      openapi_spec:
+        description: 'OpenAPI spec JSON content (optional - uses existing public-openapi.json if not provided)'
+        required: false
+        type: string
 
 jobs:
   generate-and-publish:
@@ -57,17 +61,25 @@ jobs:
           fi
 
       - name: Download public OpenAPI spec
-        if: github.event_name == 'repository_dispatch'
         env:
-          OPENAPI_SPEC: ${{ github.event.client_payload.openapi_spec }}
+          OPENAPI_SPEC_DISPATCH: ${{ github.event.client_payload.openapi_spec }}
+          OPENAPI_SPEC_MANUAL: ${{ inputs.openapi_spec }}
         run: |
-          printenv OPENAPI_SPEC > public-openapi.json
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            echo "Using OpenAPI spec from repository_dispatch payload"
+            printenv OPENAPI_SPEC_DISPATCH > public-openapi.json
+          elif [ -n "$OPENAPI_SPEC_MANUAL" ]; then
+            echo "Using OpenAPI spec from workflow_dispatch input"
+            printenv OPENAPI_SPEC_MANUAL > public-openapi.json
+          else
+            echo "Using existing public-openapi.json from repository"
+          fi
 
       - name: Validate OpenAPI spec exists
         run: |
           if [ ! -f "public-openapi.json" ]; then
             echo "Error: public-openapi.json not found"
-            echo "For manual runs, you need to provide the spec file"
+            echo "For manual runs, either provide the openapi_spec input or ensure public-openapi.json is committed to the repo"
             exit 1
           fi
           echo "OpenAPI spec found:"

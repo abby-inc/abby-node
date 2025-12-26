@@ -170,7 +170,7 @@ jobs:
         run: pnpm install
 
       - name: Run tests with vitest using Deno runtime
-        run: deno run -A --node-modules-dir=auto node_modules/.bin/vitest run
+        run: deno run -A --node-modules-dir=auto npm:vitest run
 
   # Summary job that other jobs can depend on
   ci-success:
