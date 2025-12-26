@@ -66,8 +66,14 @@ jobs:
           OPENAPI_SPEC_MANUAL: ${{ inputs.openapi_spec }}
         run: |
           if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
-            echo "Using OpenAPI spec from repository_dispatch payload"
-            printenv OPENAPI_SPEC_DISPATCH > public-openapi.json
+            if [ -n "$OPENAPI_SPEC_DISPATCH" ]; then
+              echo "Using OpenAPI spec from repository_dispatch payload"
+              printenv OPENAPI_SPEC_DISPATCH > public-openapi.json
+            else
+              echo "Error: repository_dispatch triggered without openapi_spec in payload"
+              echo "The client_payload.openapi_spec field is required for repository_dispatch events"
+              exit 1
+            fi
           elif [ -n "$OPENAPI_SPEC_MANUAL" ]; then
             echo "Using OpenAPI spec from workflow_dispatch input"
             printenv OPENAPI_SPEC_MANUAL > public-openapi.json
@@ -75,14 +81,29 @@ jobs:
             echo "Using existing public-openapi.json from repository"
           fi
 
-      - name: Validate OpenAPI spec exists
+      - name: Validate OpenAPI spec
         run: |
           if [ ! -f "public-openapi.json" ]; then
             echo "Error: public-openapi.json not found"
             echo "For manual runs, either provide the openapi_spec input or ensure public-openapi.json is committed to the repo"
             exit 1
           fi
-          echo "OpenAPI spec found:"
+
+          # Check file is not empty
+          if [ ! -s "public-openapi.json" ]; then
+            echo "Error: public-openapi.json is empty"
+            exit 1
+          fi
+
+          # Validate JSON syntax
+          if ! jq empty public-openapi.json 2>/dev/null; then
+            echo "Error: public-openapi.json is not valid JSON"
+            echo "First 20 lines of the file:"
+            head -20 public-openapi.json
+            exit 1
+          fi
+
+          echo "OpenAPI spec validated successfully:"
           head -20 public-openapi.json
 
       - name: Install dependencies
