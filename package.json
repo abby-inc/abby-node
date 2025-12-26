@@ -1,7 +1,7 @@
 {
   "name": "@abby-inc/abby-node",
   "version": "1.0.0",
-  "description": "Node.js library for the Abby API",
+  "description": "Node.js, Bun, and Deno library for the Abby API",
   "author": "Abby <contact@abby.fr>",
   "license": "MIT",
   "homepage": "https://github.com/abby-inc/abby-node",
@@ -19,7 +19,9 @@
     "client",
     "invoicing",
     "freelance",
-    "business"
+    "business",
+    "bun",
+    "deno"
   ],
   "main": "dist/cjs/index.cjs",
   "module": "dist/esm/index.js",
@@ -81,7 +83,8 @@
     "vitest": "^2.0.0"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=18.0.0",
+    "bun": ">=1.0.0"
   },
   "publishConfig": {
     "access": "public"

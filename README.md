@@ -1,4 +1,4 @@
-# Abby Node.js SDK
+# Abby Node.js, Bun & Deno SDK
 
 [![npm version](https://img.shields.io/npm/v/@abby-inc/abby-node.svg)](https://www.npmjs.com/package/@abby-inc/abby-node)
 [![npm downloads](https://img.shields.io/npm/dm/@abby-inc/abby-node.svg)](https://www.npmjs.com/package/@abby-inc/abby-node)
@@ -6,7 +6,7 @@
 [![codecov](https://codecov.io/gh/abby-inc/abby-node/graph/badge.svg)](https://codecov.io/gh/abby-inc/abby-node)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-The official Node.js library for the [Abby API](https://abby.fr). Abby is an all-in-one business management platform for freelancers and micro-enterprises.
+The official Node.js, Bun, and Deno library for the [Abby API](https://abby.fr). Abby is an all-in-one business management platform for freelancers and micro-enterprises.
 
 ## Table of Contents
 
@@ -37,11 +37,19 @@ npm install @abby-inc/abby-node
 yarn add @abby-inc/abby-node
 # or
 pnpm add @abby-inc/abby-node
+# or
+bun add @abby-inc/abby-node
+```
+
+For Deno, you can import directly from npm:
+
+```typescript
+import Abby from 'npm:@abby-inc/abby-node';
 ```
 
 ## Requirements
 
-- Node.js 18.0.0 or higher
+- Node.js 18.0.0 or higher, Bun 1.0.0 or higher, or Deno 2.0.0 or higher
 - An Abby account with an API key
 
 ## Usage
