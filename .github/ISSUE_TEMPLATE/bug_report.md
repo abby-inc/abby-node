@@ -26,7 +26,7 @@ A clear and concise description of what you expected to happen.
 
 ```typescript
 // Minimal code to reproduce the issue
-import Abby from '@abby-inc/abby-node';
+import Abby from '@abby-inc/abby';
 
 const abby = new Abby('your_api_key');
 // ...
