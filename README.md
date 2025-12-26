@@ -99,7 +99,7 @@ You can pass optional configuration settings when initializing the SDK:
 
 ```typescript
 const abby = new Abby('your_api_key', {
-  baseUrl: 'https://api.abby.fr', // Default
+  baseUrl: 'https://api.app-abby.com', // Default
   timeout: 30000, // Default: 30 seconds
   headers: {
     'X-Custom-Header': 'value',

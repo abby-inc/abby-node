@@ -66,7 +66,7 @@ export * from './client/zod.gen';
 export interface AbbyConfig {
   /**
    * Base URL for the Abby API.
-   * @default 'https://api.abby.fr'
+   * @default 'https://api.app-abby.com'
    */
   baseUrl?: string;
 
@@ -86,7 +86,7 @@ export interface AbbyConfig {
  * Default configuration values.
  */
 const DEFAULT_CONFIG: Required<Omit<AbbyConfig, 'headers'>> = {
-  baseUrl: 'https://api.abby.fr',
+  baseUrl: 'https://api.app-abby.com',
   timeout: 30000,
 };
 
@@ -166,7 +166,7 @@ export class Abby {
    *
    * // With custom configuration
    * const abby = new Abby('your_api_key', {
-   *   baseUrl: 'https://api.abby.fr',
+   *   baseUrl: 'https://api.app-abby.com',
    *   timeout: 60000,
    * });
    * ```
@@ -184,10 +184,34 @@ export class Abby {
       ...config,
     };
 
+    // Create a fetch wrapper that implements timeout using AbortController
+    const timeoutMs = this.config.timeout;
+    const fetchWithTimeout: typeof globalThis.fetch = async (input, init) => {
+      const controller = new globalThis.AbortController();
+      const timeoutId = globalThis.setTimeout(() => controller.abort(), timeoutMs);
+
+      try {
+        // Merge any existing signal with our timeout signal
+        const existingSignal = init?.signal;
+        if (existingSignal) {
+          // If caller provided a signal, abort on either signal
+          existingSignal.addEventListener('abort', () => controller.abort());
+        }
+
+        return await globalThis.fetch(input, {
+          ...init,
+          signal: controller.signal,
+        });
+      } finally {
+        globalThis.clearTimeout(timeoutId);
+      }
+    };
+
     // Create a new client instance for this Abby instance to ensure isolation
     this.instanceClient = createClient(
       createConfig({
         baseUrl: this.config.baseUrl,
+        fetch: fetchWithTimeout,
       })
     );
 
