@@ -23,6 +23,20 @@ export default defineConfig({
       dates: true,
       name: '@hey-api/transformers',
     },
+    // Zod plugin for schema validation
+    {
+      name: 'zod',
+      // Generate schemas for requests, responses, and reusable definitions
+      requests: true,
+      responses: true,
+      definitions: true,
+      // Include metadata from OpenAPI spec (descriptions, etc.)
+      metadata: true,
+      // Allow timezone offsets in datetime validation
+      dates: {
+        offset: true,
+      },
+    },
     {
       asClass: true,
       serviceNameBuilder: '{{name}}',
@@ -37,6 +51,8 @@ export default defineConfig({
       },
       name: '@hey-api/sdk',
       transformer: true,
+      // Enable Zod validation in SDK methods
+      validator: true,
     },
   ],
 });

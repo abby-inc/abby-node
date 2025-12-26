@@ -19,6 +19,9 @@ The official Node.js library for the [Abby API](https://abby.fr). Abby is an all
   - [Configuration](#configuration)
   - [Error Handling](#error-handling)
   - [Interceptors](#interceptors)
+- [Validation](#validation)
+  - [Automatic Validation](#automatic-validation)
+  - [Using Zod Schemas Directly](#using-zod-schemas-directly)
 - [TypeScript Support](#typescript-support)
 - [Development](#development)
 - [Support](#support)
@@ -144,6 +147,75 @@ client.interceptors.response.use((response) => {
 });
 ```
 
+## Validation
+
+The SDK includes built-in [Zod](https://zod.dev) validation for all API requests and responses, ensuring type safety at runtime.
+
+### Automatic Validation
+
+All SDK methods automatically validate:
+
+- **Request data**: Parameters, query strings, and request bodies are validated before sending
+- **Response data**: API responses are validated to ensure they match the expected schema
+
+If validation fails, a `ZodError` is thrown with detailed information about what went wrong:
+
+```typescript
+import Abby from '@abby-inc/abby-node';
+import { ZodError } from 'zod';
+
+const abby = new Abby('your_api_key');
+
+try {
+  // This will fail validation if the request body is invalid
+  await abby.contact.contactControllerCreateContact({
+    body: {
+      // Missing required fields will trigger a ZodError
+    },
+  });
+} catch (error) {
+  if (error instanceof ZodError) {
+    console.error('Validation failed:', error.errors);
+  }
+}
+```
+
+### Using Zod Schemas Directly
+
+All Zod schemas are exported and can be used for your own validation needs:
+
+```typescript
+import Abby, { zCreateContactDto, zReadContactDto } from '@abby-inc/abby-node';
+
+// Validate user input before sending to the API
+const userInput = {
+  firstname: 'John',
+  lastname: 'Doe',
+  email: 'john@example.com',
+};
+
+// Parse and validate (throws ZodError if invalid)
+const validatedContact = zCreateContactDto.parse(userInput);
+
+// Or use safeParse for non-throwing validation
+const result = zCreateContactDto.safeParse(userInput);
+if (result.success) {
+  console.log('Valid:', result.data);
+} else {
+  console.error('Invalid:', result.error.errors);
+}
+
+// Infer TypeScript types from schemas
+import { z } from 'zod';
+type CreateContactInput = z.infer<typeof zCreateContactDto>;
+```
+
+Available schema patterns:
+
+- `z{DtoName}` - Schemas for DTOs (e.g., `zCreateContactDto`, `zReadInvoiceDto`)
+- `z{ControllerMethod}Data` - Request data schemas (e.g., `zContactControllerCreateContactData`)
+- `z{ControllerMethod}Response` - Response schemas (e.g., `zContactControllerCreateContactResponse`)
+
 ## TypeScript Support
 
 The SDK is written in TypeScript and provides complete type definitions for all API resources and responses.
@@ -157,6 +229,16 @@ async function getCompanyData() {
   const { data }: { data: ReadMeDto } = await abby.company.getMe();
   return data;
 }
+```
+
+You can also infer types directly from Zod schemas:
+
+```typescript
+import { z } from 'zod';
+import { zReadContactDto } from '@abby-inc/abby-node';
+
+// Infer the type from the Zod schema
+type Contact = z.infer<typeof zReadContactDto>;
 ```
 
 ## Development

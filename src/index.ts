@@ -17,8 +17,8 @@
  * @packageDocumentation
  */
 
-import { client } from './client/client.gen';
-import type { ClientOptions } from './client/types.gen';
+import { createClient, createConfig } from './client/client';
+import type { Client } from './client/client/types.gen';
 import {
   Estimate,
   Invoice,
@@ -31,6 +31,7 @@ import {
   Opportunity,
   Company,
 } from './client/sdk.gen';
+import type { Options } from './client/sdk.gen';
 
 // Re-export all generated types for consumers
 export * from './client/types.gen';
@@ -49,6 +50,9 @@ export {
   Opportunity,
   Company,
 } from './client/sdk.gen';
+
+// Re-export Zod schemas for consumers who want to use them directly
+export * from './client/zod.gen';
 
 /**
  * Configuration options for the Abby SDK client.
@@ -81,10 +85,39 @@ const DEFAULT_CONFIG: Required<Omit<AbbyConfig, 'headers'>> = {
 };
 
 /**
+ * Helper type to create a service proxy that injects the client into every method.
+ */
+type ServiceProxy<T> = {
+  [K in keyof T]: T[K] extends (options: infer O) => infer R
+    ? (options: Omit<O, 'client'>) => R
+    : T[K];
+};
+
+/**
+ * Creates a proxy for a service class that automatically injects the client into every method call.
+ */
+function createServiceProxy<T extends object>(service: T, instanceClient: Client): ServiceProxy<T> {
+  return new Proxy(service, {
+    get(target, prop) {
+      const value = (target as Record<string | symbol, unknown>)[prop];
+      if (typeof value === 'function') {
+        return (options: Options) => {
+          return value({ ...options, client: instanceClient });
+        };
+      }
+      return value;
+    },
+  }) as ServiceProxy<T>;
+}
+
+/**
  * Abby API client.
  *
  * The main entry point for interacting with the Abby API.
  * Initialize with your API key to start making requests.
+ *
+ * Each instance creates its own isolated HTTP client with its own interceptors,
+ * ensuring multiple instances with different API keys work correctly.
  *
  * @example
  * ```typescript
@@ -100,6 +133,19 @@ export class Abby {
   private readonly config: Required<Omit<AbbyConfig, 'headers'>> & {
     headers?: Record<string, string>;
   };
+  private readonly instanceClient: Client;
+
+  // Cached service proxies
+  private _estimate?: ServiceProxy<typeof Estimate>;
+  private _invoice?: ServiceProxy<typeof Invoice>;
+  private _billing?: ServiceProxy<typeof Billing>;
+  private _advance?: ServiceProxy<typeof Advance>;
+  private _asset?: ServiceProxy<typeof Asset>;
+  private _customerPortal?: ServiceProxy<typeof CustomerPortal>;
+  private _contact?: ServiceProxy<typeof Contact>;
+  private _organization?: ServiceProxy<typeof Organization>;
+  private _opportunity?: ServiceProxy<typeof Opportunity>;
+  private _company?: ServiceProxy<typeof Company>;
 
   /**
    * Creates a new Abby API client.
@@ -132,6 +178,13 @@ export class Abby {
       ...config,
     };
 
+    // Create a new client instance for this Abby instance to ensure isolation
+    this.instanceClient = createClient(
+      createConfig({
+        baseUrl: this.config.baseUrl,
+      })
+    );
+
     this.initializeClient();
   }
 
@@ -139,12 +192,8 @@ export class Abby {
    * Initialize the underlying HTTP client with authentication and configuration.
    */
   private initializeClient(): void {
-    client.setConfig({
-      baseUrl: this.config.baseUrl,
-    } as ClientOptions);
-
-    // Add authentication header to all requests
-    client.interceptors.request.use((request) => {
+    // Add authentication header to all requests on this instance's client
+    this.instanceClient.interceptors.request.use((request) => {
       request.headers.set('Authorization', `Bearer ${this.apiKey}`);
 
       // Add any custom headers
@@ -177,7 +226,7 @@ export class Abby {
   /**
    * Get the underlying HTTP client for advanced usage.
    *
-   * @returns The configured HTTP client instance
+   * @returns The configured HTTP client instance for this Abby instance
    *
    * @example
    * ```typescript
@@ -189,8 +238,8 @@ export class Abby {
    * });
    * ```
    */
-  public getClient(): typeof client {
-    return client;
+  public getClient(): Client {
+    return this.instanceClient;
   }
 
   // ============================================
@@ -200,71 +249,101 @@ export class Abby {
   /**
    * Estimate service - Create and manage estimates/quotes
    */
-  get estimate(): typeof Estimate {
-    return Estimate;
+  get estimate(): ServiceProxy<typeof Estimate> {
+    if (!this._estimate) {
+      this._estimate = createServiceProxy(Estimate, this.instanceClient);
+    }
+    return this._estimate;
   }
 
   /**
    * Invoice service - Create and manage invoices
    */
-  get invoice(): typeof Invoice {
-    return Invoice;
+  get invoice(): ServiceProxy<typeof Invoice> {
+    if (!this._invoice) {
+      this._invoice = createServiceProxy(Invoice, this.instanceClient);
+    }
+    return this._invoice;
   }
 
   /**
    * Billing service - Common billing operations (download PDF, send emails, etc.)
    */
-  get billing(): typeof Billing {
-    return Billing;
+  get billing(): ServiceProxy<typeof Billing> {
+    if (!this._billing) {
+      this._billing = createServiceProxy(Billing, this.instanceClient);
+    }
+    return this._billing;
   }
 
   /**
    * Advance service - Manage advance invoices
    */
-  get advance(): typeof Advance {
-    return Advance;
+  get advance(): ServiceProxy<typeof Advance> {
+    if (!this._advance) {
+      this._advance = createServiceProxy(Advance, this.instanceClient);
+    }
+    return this._advance;
   }
 
   /**
    * Asset service - Manage assets
    */
-  get asset(): typeof Asset {
-    return Asset;
+  get asset(): ServiceProxy<typeof Asset> {
+    if (!this._asset) {
+      this._asset = createServiceProxy(Asset, this.instanceClient);
+    }
+    return this._asset;
   }
 
   /**
    * Customer Portal service - Customer-facing operations
    */
-  get customerPortal(): typeof CustomerPortal {
-    return CustomerPortal;
+  get customerPortal(): ServiceProxy<typeof CustomerPortal> {
+    if (!this._customerPortal) {
+      this._customerPortal = createServiceProxy(CustomerPortal, this.instanceClient);
+    }
+    return this._customerPortal;
   }
 
   /**
    * Contact service - Create and manage contacts
    */
-  get contact(): typeof Contact {
-    return Contact;
+  get contact(): ServiceProxy<typeof Contact> {
+    if (!this._contact) {
+      this._contact = createServiceProxy(Contact, this.instanceClient);
+    }
+    return this._contact;
   }
 
   /**
    * Organization service - Create and manage organizations
    */
-  get organization(): typeof Organization {
-    return Organization;
+  get organization(): ServiceProxy<typeof Organization> {
+    if (!this._organization) {
+      this._organization = createServiceProxy(Organization, this.instanceClient);
+    }
+    return this._organization;
   }
 
   /**
    * Opportunity service - Create and manage opportunities/deals
    */
-  get opportunity(): typeof Opportunity {
-    return Opportunity;
+  get opportunity(): ServiceProxy<typeof Opportunity> {
+    if (!this._opportunity) {
+      this._opportunity = createServiceProxy(Opportunity, this.instanceClient);
+    }
+    return this._opportunity;
   }
 
   /**
    * Company service - Get current company information
    */
-  get company(): typeof Company {
-    return Company;
+  get company(): ServiceProxy<typeof Company> {
+    if (!this._company) {
+      this._company = createServiceProxy(Company, this.instanceClient);
+    }
+    return this._company;
   }
 }
 
