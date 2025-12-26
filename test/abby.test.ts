@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import Abby from '../src/index';
+import Abby, { AbbyErrorEvent, AbbyResponseEvent } from '../src/index';
 import { generateTestApiKey, mockFetchResponse } from './helpers';
 
 describe('Abby SDK', () => {
@@ -301,6 +301,238 @@ describe('Abby SDK', () => {
       const response = await abby.getClient().get({ url: '/v2/test' });
 
       expect(response.data).toEqual({ data: 'test' });
+    });
+  });
+
+  describe('event listeners', () => {
+    it('should emit response event on successful request', async () => {
+      const abby = new Abby(generateTestApiKey());
+      const events: AbbyResponseEvent[] = [];
+
+      abby.on('response', (event) => {
+        events.push(event);
+      });
+
+      const mockFetch = vi.fn(async () => mockFetchResponse({ success: true }));
+      abby.getClient().setConfig({ fetch: mockFetch });
+
+      await abby.getClient().get({ url: '/v2/test' });
+
+      expect(events.length).toBe(1);
+      expect(events[0].status).toBe(200);
+      expect(events[0].ok).toBe(true);
+      expect(events[0].method).toBe('GET');
+      // Note: Response.url is read-only and empty for manually constructed responses
+      expect(events[0].url).toBeDefined();
+      expect(typeof events[0].duration).toBe('number');
+    });
+
+    it('should emit error event on 4xx response', async () => {
+      const abby = new Abby(generateTestApiKey());
+      const errorEvents: AbbyErrorEvent[] = [];
+      const responseEvents: AbbyResponseEvent[] = [];
+
+      abby.on('error', (event) => {
+        errorEvents.push(event);
+      });
+      abby.on('response', (event) => {
+        responseEvents.push(event);
+      });
+
+      const mockFetch = vi.fn(
+        async () =>
+          new globalThis.Response(JSON.stringify({ message: 'Not found' }), {
+            status: 404,
+            statusText: 'Not Found',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Request-Id': 'req-123',
+            },
+          })
+      );
+      abby.getClient().setConfig({ fetch: mockFetch });
+
+      try {
+        await abby.getClient().get({ url: '/v2/test' });
+      } catch {
+        // Expected to throw
+      }
+
+      // Both events should be emitted
+      expect(responseEvents.length).toBe(1);
+      expect(responseEvents[0].ok).toBe(false);
+
+      expect(errorEvents.length).toBe(1);
+      expect(errorEvents[0].status).toBe(404);
+      expect(errorEvents[0].statusText).toBe('Not Found');
+      expect(errorEvents[0].message).toBe('Not found');
+      expect(errorEvents[0].requestId).toBe('req-123');
+    });
+
+    it('should emit error event on 5xx response', async () => {
+      const abby = new Abby(generateTestApiKey());
+      const errorEvents: AbbyErrorEvent[] = [];
+
+      abby.on('error', (event) => {
+        errorEvents.push(event);
+      });
+
+      const mockFetch = vi.fn(
+        async () =>
+          new globalThis.Response(JSON.stringify({ error: 'Internal server error' }), {
+            status: 500,
+            statusText: 'Internal Server Error',
+            headers: { 'Content-Type': 'application/json' },
+          })
+      );
+      abby.getClient().setConfig({ fetch: mockFetch });
+
+      try {
+        await abby.getClient().get({ url: '/v2/test' });
+      } catch {
+        // Expected to throw
+      }
+
+      expect(errorEvents.length).toBe(1);
+      expect(errorEvents[0].status).toBe(500);
+      expect(errorEvents[0].message).toBe('Internal server error');
+    });
+
+    it('should allow multiple listeners for the same event', async () => {
+      const abby = new Abby(generateTestApiKey());
+      const calls: number[] = [];
+
+      abby.on('response', () => calls.push(1));
+      abby.on('response', () => calls.push(2));
+      abby.on('response', () => calls.push(3));
+
+      const mockFetch = vi.fn(async () => mockFetchResponse({ success: true }));
+      abby.getClient().setConfig({ fetch: mockFetch });
+
+      await abby.getClient().get({ url: '/v2/test' });
+
+      expect(calls).toEqual([1, 2, 3]);
+    });
+
+    it('should remove listener with off()', async () => {
+      const abby = new Abby(generateTestApiKey());
+      const events: AbbyResponseEvent[] = [];
+
+      const listener = (event: AbbyResponseEvent) => {
+        events.push(event);
+      };
+
+      abby.on('response', listener);
+      abby.off('response', listener);
+
+      const mockFetch = vi.fn(async () => mockFetchResponse({ success: true }));
+      abby.getClient().setConfig({ fetch: mockFetch });
+
+      await abby.getClient().get({ url: '/v2/test' });
+
+      expect(events.length).toBe(0);
+    });
+
+    it('should return this for chaining on/off', () => {
+      const abby = new Abby(generateTestApiKey());
+      const listener = () => {};
+
+      const result = abby.on('response', listener).on('error', listener).off('response', listener);
+
+      expect(result).toBe(abby);
+    });
+
+    it('should not break SDK when listener throws', async () => {
+      const abby = new Abby(generateTestApiKey());
+      const events: AbbyResponseEvent[] = [];
+
+      abby.on('response', () => {
+        throw new Error('Listener error');
+      });
+      abby.on('response', (event) => {
+        events.push(event);
+      });
+
+      const mockFetch = vi.fn(async () => mockFetchResponse({ success: true }));
+      abby.getClient().setConfig({ fetch: mockFetch });
+
+      // Should not throw despite listener error
+      await abby.getClient().get({ url: '/v2/test' });
+
+      // Second listener should still be called
+      expect(events.length).toBe(1);
+    });
+
+    it('should handle non-JSON error responses gracefully', async () => {
+      const abby = new Abby(generateTestApiKey());
+      const errorEvents: AbbyErrorEvent[] = [];
+
+      abby.on('error', (event) => {
+        errorEvents.push(event);
+      });
+
+      const mockFetch = vi.fn(
+        async () =>
+          new globalThis.Response('Bad Gateway', {
+            status: 502,
+            statusText: 'Bad Gateway',
+            headers: { 'Content-Type': 'text/plain' },
+          })
+      );
+      abby.getClient().setConfig({ fetch: mockFetch });
+
+      try {
+        await abby.getClient().get({ url: '/v2/test' });
+      } catch {
+        // Expected to throw
+      }
+
+      expect(errorEvents.length).toBe(1);
+      expect(errorEvents[0].status).toBe(502);
+      expect(errorEvents[0].message).toBeUndefined();
+      expect(errorEvents[0].body).toBeUndefined();
+    });
+
+    it('should isolate event listeners between instances', async () => {
+      const abby1 = new Abby(generateTestApiKey());
+      const abby2 = new Abby(generateTestApiKey());
+      const events1: AbbyResponseEvent[] = [];
+      const events2: AbbyResponseEvent[] = [];
+
+      abby1.on('response', (event) => events1.push(event));
+      abby2.on('response', (event) => events2.push(event));
+
+      const mockFetch1 = vi.fn(async () => mockFetchResponse({ success: true }));
+      const mockFetch2 = vi.fn(async () => mockFetchResponse({ success: true }));
+      abby1.getClient().setConfig({ fetch: mockFetch1 });
+      abby2.getClient().setConfig({ fetch: mockFetch2 });
+
+      await abby1.getClient().get({ url: '/v2/test' });
+
+      // Only abby1's listener should be called
+      expect(events1.length).toBe(1);
+      expect(events2.length).toBe(0);
+    });
+
+    it('should include duration in events', async () => {
+      const abby = new Abby(generateTestApiKey());
+      let duration: number | undefined;
+
+      abby.on('response', (event) => {
+        duration = event.duration;
+      });
+
+      // Create a mock that introduces a small delay
+      const mockFetch = vi.fn(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        return mockFetchResponse({ success: true });
+      });
+      abby.getClient().setConfig({ fetch: mockFetch });
+
+      await abby.getClient().get({ url: '/v2/test' });
+
+      expect(duration).toBeDefined();
+      expect(duration).toBeGreaterThanOrEqual(0);
     });
   });
 });

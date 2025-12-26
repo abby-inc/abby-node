@@ -1684,23 +1684,6 @@ export const zUpdateEstimateTimelineDto = z.object({
     })
 });
 
-export const zUpdateInvoiceBankInformationDto = z.object({
-    bankInformation: z.union([
-        zBankInformationDto,
-        z.null()
-    ])
-});
-
-export const zUpdateInvoiceDeliveryAddressDto = z.object({
-    deliveryAddress: z.union([
-        zUpdateDeliveryAddressDto,
-        z.null()
-    ]),
-    displayDeliveryAddress: z.boolean().register(z.globalRegistry, {
-        description: 'Display delivery address'
-    })
-});
-
 export const zUpdateInvoiceFrequencyDto = z.object({
     from: z.string(),
     to: z.string(),
@@ -2771,26 +2754,6 @@ export const zInvoiceControllerCreateInvoiceByContactOrOrganizationIdData = z.ob
     query: z.optional(z.never())
 });
 
-export const zInvoiceControllerUpdateInvoiceLinesData = z.object({
-    body: zUpdateBillingLinesDto,
-    path: z.object({
-        invoiceId: z.string().register(z.globalRegistry, {
-            description: 'ID of the invoice to update'
-        })
-    }),
-    query: z.optional(z.never())
-});
-
-export const zInvoiceControllerUpdateInvoiceDeliveryAddressData = z.object({
-    body: zUpdateInvoiceDeliveryAddressDto,
-    path: z.object({
-        invoiceId: z.string().register(z.globalRegistry, {
-            description: 'ID of the invoice to update'
-        })
-    }),
-    query: z.optional(z.never())
-});
-
 export const zInvoiceControllerUpdateTimelineData = z.object({
     body: zUpdateInvoiceTimelineDto,
     path: z.object({
@@ -2806,16 +2769,6 @@ export const zInvoiceControllerUpdateInvoicePaymentRequestData = z.object({
     path: z.object({
         invoiceId: z.string().register(z.globalRegistry, {
             description: 'ID of the invoice to update'
-        })
-    }),
-    query: z.optional(z.never())
-});
-
-export const zInvoiceControllerFinalizeInvoiceData = z.object({
-    body: z.optional(z.never()),
-    path: z.object({
-        invoiceId: z.string().register(z.globalRegistry, {
-            description: 'ID of the invoice to finalize'
         })
     }),
     query: z.optional(z.never())
@@ -2843,26 +2796,6 @@ export const zInvoiceControllerUpdateInvoiceLocaleData = z.object({
 
 export const zInvoiceControllerUpdateInvoiceCurrencyData = z.object({
     body: zUpdateBillingCurrencyDto,
-    path: z.object({
-        invoiceId: z.string().register(z.globalRegistry, {
-            description: 'ID of the invoice to update'
-        })
-    }),
-    query: z.optional(z.never())
-});
-
-export const zInvoiceControllerUpdateDisplaySettingsData = z.object({
-    body: zUpdateBillingDisplaySettingsDto,
-    path: z.object({
-        invoiceId: z.string().register(z.globalRegistry, {
-            description: 'ID de la facture à mettre à jour'
-        })
-    }),
-    query: z.optional(z.never())
-});
-
-export const zInvoiceControllerUpdateInvoiceBankInformationData = z.object({
-    body: zUpdateInvoiceBankInformationDto,
     path: z.object({
         invoiceId: z.string().register(z.globalRegistry, {
             description: 'ID of the invoice to update'

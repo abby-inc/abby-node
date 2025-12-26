@@ -1,6 +1,10 @@
-# This workflow is triggered by the monorepo when a new API version is released.
+# This workflow is triggered by the monorepo when the API spec changes.
 # It fetches the public OpenAPI spec from the live API, generates the SDK, and creates a PR.
 # Publishing happens separately via publish-release.yml after the PR is merged.
+#
+# SDK versioning is independent from API versioning:
+# - SDK version: follows semver for the SDK itself (bug fixes, features, breaking changes)
+# - apiVersion: tracks which API spec was used to generate the SDK (stored in package.json)
 
 name: Generate SDK
 
@@ -9,13 +13,18 @@ on:
   repository_dispatch:
     types: [update-sdk]
 
-  # Allow manual triggering for testing
+  # Allow manual triggering
   workflow_dispatch:
     inputs:
-      version:
-        description: 'Version to publish (e.g., 1.32.0)'
+      bump:
+        description: 'Version bump type'
         required: true
-        type: string
+        type: choice
+        options:
+          - minor
+          - patch
+          - major
+        default: 'minor'
       api_url:
         description: 'URL to fetch OpenAPI spec from'
         required: false
@@ -46,20 +55,19 @@ jobs:
           node-version: '22'
           cache: 'pnpm'
 
-      - name: Get version and API URL from event
+      - name: Get parameters from event
         id: params
         run: |
           if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
-            VERSION="${{ github.event.client_payload.version }}"
+            # Triggered by monorepo - always bump minor for API changes
+            BUMP="minor"
             API_URL="${{ github.event.client_payload.api_url }}"
+            API_VERSION="${{ github.event.client_payload.version }}"
           else
-            VERSION="${{ inputs.version }}"
+            # Manual trigger
+            BUMP="${{ inputs.bump }}"
             API_URL="${{ inputs.api_url }}"
-          fi
-
-          if [ -z "$VERSION" ]; then
-            echo "Error: version is required"
-            exit 1
+            API_VERSION=""  # Will be extracted from spec
           fi
 
           # Default API URL if not provided
@@ -67,14 +75,15 @@ jobs:
             API_URL="https://api.app-abby.com/api-docs/public.json"
           fi
 
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "bump=$BUMP" >> $GITHUB_OUTPUT
           echo "api_url=$API_URL" >> $GITHUB_OUTPUT
-          echo "branch_name=sdk-update-v$VERSION" >> $GITHUB_OUTPUT
+          echo "api_version_hint=$API_VERSION" >> $GITHUB_OUTPUT
 
-          echo "Version: $VERSION"
+          echo "Bump type: $BUMP"
           echo "API URL: $API_URL"
 
       - name: Fetch OpenAPI spec from API
+        id: fetch_spec
         run: |
           echo "Fetching OpenAPI spec from ${{ steps.params.outputs.api_url }}..."
 
@@ -92,13 +101,16 @@ jobs:
             exit 1
           fi
 
+          # Extract API version from spec
+          API_VERSION=$(jq -r '.info.version // "unknown"' public-openapi.json)
+          echo "api_version=$API_VERSION" >> $GITHUB_OUTPUT
+
           # Show summary
           ENDPOINT_COUNT=$(jq '[.paths | to_entries[] | .value | keys | length] | add // 0' public-openapi.json)
           SCHEMA_COUNT=$(jq '.components.schemas | keys | length // 0' public-openapi.json)
-          SPEC_VERSION=$(jq -r '.info.version // "unknown"' public-openapi.json)
 
           echo "OpenAPI spec fetched successfully:"
-          echo "  - Spec version: $SPEC_VERSION"
+          echo "  - API version: $API_VERSION"
           echo "  - Endpoints: $ENDPOINT_COUNT"
           echo "  - Schemas: $SCHEMA_COUNT"
 
@@ -114,9 +126,30 @@ jobs:
       - name: Run tests
         run: pnpm run test
 
-      - name: Update package version
+      - name: Bump SDK version and update apiVersion
+        id: version
         run: |
-          pnpm version ${{ steps.params.outputs.version }} --no-git-tag-version --allow-same-version
+          # Get current SDK version
+          CURRENT_VERSION=$(jq -r '.version' package.json)
+          CURRENT_API_VERSION=$(jq -r '.apiVersion // "unknown"' package.json)
+          API_VERSION="${{ steps.fetch_spec.outputs.api_version }}"
+
+          echo "Current SDK version: $CURRENT_VERSION"
+          echo "Current API version: $CURRENT_API_VERSION"
+          echo "New API version: $API_VERSION"
+
+          # Bump SDK version
+          BUMP_TYPE="${{ steps.params.outputs.bump }}"
+          NEW_VERSION=$(pnpm version $BUMP_TYPE --no-git-tag-version | tr -d 'v')
+
+          echo "New SDK version: $NEW_VERSION"
+          echo "sdk_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+          # Update apiVersion field in package.json
+          jq --arg apiVersion "$API_VERSION" '.apiVersion = $apiVersion' package.json > package.json.tmp
+          mv package.json.tmp package.json
+
+          echo "Updated apiVersion to: $API_VERSION"
 
       - name: Create branch and commit
         id: commit
@@ -124,7 +157,11 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          BRANCH_NAME="${{ steps.params.outputs.branch_name }}"
+          SDK_VERSION="${{ steps.version.outputs.sdk_version }}"
+          API_VERSION="${{ steps.fetch_spec.outputs.api_version }}"
+          BRANCH_NAME="sdk-update-v${SDK_VERSION}"
+
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
           # Check if branch already exists remotely
           if git ls-remote --heads origin "$BRANCH_NAME" | grep -q "$BRANCH_NAME"; then
@@ -139,9 +176,10 @@ jobs:
             echo "No changes detected"
             echo "has_changes=false" >> $GITHUB_OUTPUT
           else
-            git commit -m "chore: update SDK to v${{ steps.params.outputs.version }}
+            git commit -m "chore: update SDK to v${SDK_VERSION}
 
-            - Generated from OpenAPI spec v${{ steps.params.outputs.version }}
+            - SDK version: ${SDK_VERSION}
+            - API version: ${API_VERSION}
             - Fetched from: ${{ steps.params.outputs.api_url }}"
             
             git push origin "$BRANCH_NAME"
@@ -153,16 +191,22 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ steps.params.outputs.branch_name }}
+          branch: ${{ steps.commit.outputs.branch_name }}
           base: master
-          title: 'chore: update SDK to v${{ steps.params.outputs.version }}'
+          title: 'chore: update SDK to v${{ steps.version.outputs.sdk_version }}'
           body: |
-            ## SDK Update v${{ steps.params.outputs.version }}
+            ## SDK Update v${{ steps.version.outputs.sdk_version }}
 
             This PR was automatically generated from the Abby API.
 
+            ### Version Info
+            | | Version |
+            |---|---|
+            | **SDK version** | `${{ steps.version.outputs.sdk_version }}` |
+            | **API version** | `${{ steps.fetch_spec.outputs.api_version }}` |
+
             ### Changes
-            - Updated SDK from OpenAPI spec v${{ steps.params.outputs.version }}
+            - Regenerated SDK from latest OpenAPI spec
             - Fetched from: ${{ steps.params.outputs.api_url }}
 
             ### After Merge
@@ -188,12 +232,18 @@ jobs:
         run: |
           echo "## SDK Generation Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- **Version:** ${{ steps.params.outputs.version }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Spec Source:** ${{ steps.params.outputs.api_url }}" >> $GITHUB_STEP_SUMMARY
+          echo "| Field | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| **SDK Version** | \`${{ steps.version.outputs.sdk_version }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **API Version** | \`${{ steps.fetch_spec.outputs.api_version }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Bump Type** | ${{ steps.params.outputs.bump }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Spec Source** | ${{ steps.params.outputs.api_url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
           if [ "${{ steps.commit.outputs.has_changes }}" = "true" ]; then
-            echo "- **Status:** PR created ✓" >> $GITHUB_STEP_SUMMARY
-            echo "- **Branch:** ${{ steps.params.outputs.branch_name }}" >> $GITHUB_STEP_SUMMARY
-            echo "- **Next:** Merge PR to trigger publish" >> $GITHUB_STEP_SUMMARY
+            echo "### Status: PR Created ✓" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "- Branch: \`${{ steps.commit.outputs.branch_name }}\`" >> $GITHUB_STEP_SUMMARY
+            echo "- Next: Merge PR to trigger publish" >> $GITHUB_STEP_SUMMARY
           else
-            echo "- **Status:** No changes detected" >> $GITHUB_STEP_SUMMARY
+            echo "### Status: No Changes Detected" >> $GITHUB_STEP_SUMMARY
           fi
