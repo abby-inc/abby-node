@@ -1899,8 +1899,6 @@ export const zBillingControllerDownloadPdfData = z.object({
     }).optional()
 });
 
-export const zBillingControllerDownloadPdfResponse = z.string();
-
 export const zBillingControllerDeleteBillingDocumentData = z.object({
     body: z.never().optional(),
     path: z.object({
@@ -1909,21 +1907,11 @@ export const zBillingControllerDeleteBillingDocumentData = z.object({
     query: z.never().optional()
 });
 
-/**
- * Document deleted successfully
- */
-export const zBillingControllerDeleteBillingDocumentResponse = z.void().describe('Document deleted successfully');
-
 export const zBillingControllerSendTestEmailSignatureData = z.object({
     body: zSendTestEmailSignatureDto,
     path: z.never().optional(),
     query: z.never().optional()
 });
-
-/**
- * Email sent successfully
- */
-export const zBillingControllerSendTestEmailSignatureResponse = z.void().describe('Email sent successfully');
 
 export const zBillingControllerRenderEmailData = z.object({
     body: z.never().optional(),
@@ -1934,11 +1922,6 @@ export const zBillingControllerRenderEmailData = z.object({
     query: z.never().optional()
 });
 
-/**
- * Email rendu avec succès
- */
-export const zBillingControllerRenderEmailResponse = zReadBillingEmailDto;
-
 export const zBillingControllerSendEmailTestData = z.object({
     body: z.never().optional(),
     path: z.object({
@@ -1948,11 +1931,6 @@ export const zBillingControllerSendEmailTestData = z.object({
     query: z.never().optional()
 });
 
-/**
- * Email sent successfully
- */
-export const zBillingControllerSendEmailTestResponse = z.void().describe('Email sent successfully');
-
 export const zBillingControllerSendByEmailData = z.object({
     body: zSendBillingByEmailDto,
     path: z.object({
@@ -1961,21 +1939,11 @@ export const zBillingControllerSendByEmailData = z.object({
     query: z.never().optional()
 });
 
-/**
- * Email sent successfully
- */
-export const zBillingControllerSendByEmailResponse = z.void().describe('Email sent successfully');
-
 export const zBillingControllerRetrievePaymentAccountData = z.object({
     body: z.never().optional(),
     path: z.never().optional(),
     query: z.never().optional()
 });
-
-/**
- * Payment account retrieved successfully
- */
-export const zBillingControllerRetrievePaymentAccountResponse = zReadPaymentAccountDto;
 
 export const zCustomerPortalControllerGetPaymentsData = z.object({
     body: z.never().optional(),
@@ -1986,18 +1954,11 @@ export const zCustomerPortalControllerGetPaymentsData = z.object({
     })
 });
 
-export const zCustomerPortalControllerGetPaymentsResponse = zRetrieveCustomerPortalPaymentsDto;
-
 export const zContactControllerCreateContactData = z.object({
     body: zCreateContactDto,
     path: z.never().optional(),
     query: z.never().optional()
 });
-
-/**
- * The contact has been successfully created.
- */
-export const zContactControllerCreateContactResponse = zReadContactDto;
 
 export const zContactControllerDeleteContactData = z.object({
     body: z.never().optional(),
@@ -2015,11 +1976,6 @@ export const zContactControllerGetContactData = z.object({
     query: z.never().optional()
 });
 
-/**
- * The contact has been successfully retrieved.
- */
-export const zContactControllerGetContactResponse = zReadContactDto;
-
 export const zContactControllerUpdateContactData = z.object({
     body: zUpdateContactDto,
     path: z.object({
@@ -2028,11 +1984,6 @@ export const zContactControllerUpdateContactData = z.object({
     query: z.never().optional()
 });
 
-/**
- * The contact has been successfully updated.
- */
-export const zContactControllerUpdateContactResponse = zReadContactDto;
-
 export const zContactControllerGetContactByLegacyIdData = z.object({
     body: z.never().optional(),
     path: z.object({
@@ -2040,11 +1991,6 @@ export const zContactControllerGetContactByLegacyIdData = z.object({
     }),
     query: z.never().optional()
 });
-
-/**
- * The contact has been successfully retrieved.
- */
-export const zContactControllerGetContactByLegacyIdResponse = zReadContactDto;
 
 export const zContactsControllerRetrieveContactsData = z.object({
     body: z.never().optional(),
@@ -2060,18 +2006,11 @@ export const zContactsControllerRetrieveContactsData = z.object({
     }).optional()
 });
 
-/**
- * Successfully retrieved contacts
- */
-export const zContactsControllerRetrieveContactsResponse = zReadContactsDto;
-
 export const zOrganizationControllerCreateOrganizationData = z.object({
     body: zCreateOrganizationDto,
     path: z.never().optional(),
     query: z.never().optional()
 });
-
-export const zOrganizationControllerCreateOrganizationResponse = zReadOrganizationDto;
 
 export const zOrganizationControllerRetrieveOrganizationData = z.object({
     body: z.never().optional(),
@@ -2081,8 +2020,6 @@ export const zOrganizationControllerRetrieveOrganizationData = z.object({
     query: z.never().optional()
 });
 
-export const zOrganizationControllerRetrieveOrganizationResponse = zReadOrganizationDto;
-
 export const zOrganizationControllerUpdateOrganizationData = z.object({
     body: zUpdateOrganizationDto,
     path: z.object({
@@ -2090,8 +2027,6 @@ export const zOrganizationControllerUpdateOrganizationData = z.object({
     }),
     query: z.never().optional()
 });
-
-export const zOrganizationControllerUpdateOrganizationResponse = zReadOrganizationDto;
 
 export const zOrganizationControllerRetrieveOrganizationContactsData = z.object({
     body: z.never().optional(),
@@ -2101,8 +2036,6 @@ export const zOrganizationControllerRetrieveOrganizationContactsData = z.object(
     query: z.never().optional()
 });
 
-export const zOrganizationControllerRetrieveOrganizationContactsResponse = z.array(zReadContactListItemDto);
-
 export const zOrganizationControllerCreateOrganizationContactData = z.object({
     body: zCreateOrganizationContactDto,
     path: z.object({
@@ -2111,8 +2044,6 @@ export const zOrganizationControllerCreateOrganizationContactData = z.object({
     query: z.never().optional()
 });
 
-export const zOrganizationControllerCreateOrganizationContactResponse = zReadContactDto;
-
 export const zOrganizationControllerUpdateOrganizationContactData = z.object({
     body: zUpdateOrganizationContactDto,
     path: z.object({
@@ -2120,8 +2051,6 @@ export const zOrganizationControllerUpdateOrganizationContactData = z.object({
     }),
     query: z.never().optional()
 });
-
-export const zOrganizationControllerUpdateOrganizationContactResponse = zReadContactDto;
 
 export const zOrganizationControllerDeleteOrganizationData = z.object({
     body: z.never().optional(),
@@ -2152,15 +2081,11 @@ export const zOrganizationsControllerRetrieveOrganizationsData = z.object({
     })
 });
 
-export const zOrganizationsControllerRetrieveOrganizationsResponse = zReadOrganizationsDto;
-
 export const zOpportunityControllerRetrieveCategoriesData = z.object({
     body: z.never().optional(),
     path: z.never().optional(),
     query: z.never().optional()
 });
-
-export const zOpportunityControllerRetrieveCategoriesResponse = z.array(zReadCategoryDto);
 
 export const zOpportunityControllerDeleteOpportunityData = z.object({
     body: z.never().optional(),
@@ -2178,8 +2103,6 @@ export const zOpportunityControllerRetrieveOpportunityData = z.object({
     query: z.never().optional()
 });
 
-export const zOpportunityControllerRetrieveOpportunityResponse = zReadOpportunityDto;
-
 export const zOpportunityControllerUpdateOpportunityData = z.object({
     body: zUpdateOpportunityDto,
     path: z.object({
@@ -2188,26 +2111,17 @@ export const zOpportunityControllerUpdateOpportunityData = z.object({
     query: z.never().optional()
 });
 
-export const zOpportunityControllerUpdateOpportunityResponse = zReadOpportunityDto;
-
 export const zOpportunityControllerCreateOpportunityData = z.object({
     body: zCreateOpportunityDto,
     path: z.never().optional(),
     query: z.never().optional()
 });
 
-export const zOpportunityControllerCreateOpportunityResponse = zReadOpportunityDto;
-
 export const zCompanyControllerGetMeData = z.object({
     body: z.never().optional(),
     path: z.never().optional(),
     query: z.never().optional()
 });
-
-/**
- * Current company, user and preferences retrieved successfully
- */
-export const zCompanyControllerGetMeResponse = zReadMeDto;
 
 export const zEstimateControllerCreateEstimateByContactOrOrganizationIdData = z.object({
     body: zCreateEstimateByCustomerIdDto,
@@ -2217,11 +2131,6 @@ export const zEstimateControllerCreateEstimateByContactOrOrganizationIdData = z.
     query: z.never().optional()
 });
 
-/**
- * Estimate created successfully
- */
-export const zEstimateControllerCreateEstimateByContactOrOrganizationIdResponse = zReadEstimateDto;
-
 export const zEstimateControllerUpdateTimelineData = z.object({
     body: zUpdateEstimateTimelineDto,
     path: z.object({
@@ -2229,11 +2138,6 @@ export const zEstimateControllerUpdateTimelineData = z.object({
     }),
     query: z.never().optional()
 });
-
-/**
- * Estimate timeline updated successfully
- */
-export const zEstimateControllerUpdateTimelineResponse = zReadEstimateDto;
 
 export const zEstimateControllerSignData = z.object({
     body: z.never().optional(),
@@ -2243,11 +2147,6 @@ export const zEstimateControllerSignData = z.object({
     query: z.never().optional()
 });
 
-/**
- * Estimate or purchase order signed successfully
- */
-export const zEstimateControllerSignResponse = zReadEstimateDto;
-
 export const zEstimateControllerUnsignData = z.object({
     body: z.never().optional(),
     path: z.object({
@@ -2255,11 +2154,6 @@ export const zEstimateControllerUnsignData = z.object({
     }),
     query: z.never().optional()
 });
-
-/**
- * Estimate or purchase order unsigned successfully
- */
-export const zEstimateControllerUnsignResponse = zReadEstimateDto;
 
 export const zEstimateControllerRefuseData = z.object({
     body: z.never().optional(),
@@ -2269,11 +2163,6 @@ export const zEstimateControllerRefuseData = z.object({
     query: z.never().optional()
 });
 
-/**
- * Estimate or purchase order refused successfully
- */
-export const zEstimateControllerRefuseResponse = zReadEstimateDto;
-
 export const zEstimateControllerUnrefuseData = z.object({
     body: z.never().optional(),
     path: z.object({
@@ -2281,11 +2170,6 @@ export const zEstimateControllerUnrefuseData = z.object({
     }),
     query: z.never().optional()
 });
-
-/**
- * Estimate or purchase order unrefused successfully
- */
-export const zEstimateControllerUnrefuseResponse = zReadEstimateDto;
 
 export const zEstimateControllerCreateAdvanceData = z.object({
     body: z.never().optional(),
@@ -2295,11 +2179,6 @@ export const zEstimateControllerCreateAdvanceData = z.object({
     query: z.never().optional()
 });
 
-/**
- * Invoice advance created successfully
- */
-export const zEstimateControllerCreateAdvanceResponse = zReadAdvanceDto;
-
 export const zEstimateControllerUpdateGeneralInformationsData = z.object({
     body: zUpdateEstimateGeneralInformationsDto,
     path: z.object({
@@ -2307,11 +2186,6 @@ export const zEstimateControllerUpdateGeneralInformationsData = z.object({
     }),
     query: z.never().optional()
 });
-
-/**
- * Estimate general informations updated successfully
- */
-export const zEstimateControllerUpdateGeneralInformationsResponse = zReadEstimateDto;
 
 export const zEstimateControllerUpdateLocaleData = z.object({
     body: zUpdateBillingLocaleDto,
@@ -2321,11 +2195,6 @@ export const zEstimateControllerUpdateLocaleData = z.object({
     query: z.never().optional()
 });
 
-/**
- * Estimate locale updated successfully
- */
-export const zEstimateControllerUpdateLocaleResponse = zReadEstimateDto;
-
 export const zEstimateControllerUpdateCurrencyData = z.object({
     body: zUpdateBillingCurrencyDto,
     path: z.object({
@@ -2333,11 +2202,6 @@ export const zEstimateControllerUpdateCurrencyData = z.object({
     }),
     query: z.never().optional()
 });
-
-/**
- * Asset currency updated successfully
- */
-export const zEstimateControllerUpdateCurrencyResponse = zReadEstimateDto;
 
 export const zEstimateControllerUpdateAdvanceLinesData = z.object({
     body: zUpdateEstimateAdvanceLinesDto,
@@ -2347,11 +2211,6 @@ export const zEstimateControllerUpdateAdvanceLinesData = z.object({
     query: z.never().optional()
 });
 
-/**
- * Estimate advance lines updated successfully
- */
-export const zEstimateControllerUpdateAdvanceLinesResponse = zReadEstimateDto;
-
 export const zInvoiceControllerGetInvoiceData = z.object({
     body: z.never().optional(),
     path: z.object({
@@ -2359,11 +2218,6 @@ export const zInvoiceControllerGetInvoiceData = z.object({
     }),
     query: z.never().optional()
 });
-
-/**
- * Invoice retrieved successfully
- */
-export const zInvoiceControllerGetInvoiceResponse = zReadInvoiceDto;
 
 export const zInvoiceControllerCreateInvoiceByContactOrOrganizationIdData = z.object({
     body: z.never().optional(),
@@ -2373,11 +2227,6 @@ export const zInvoiceControllerCreateInvoiceByContactOrOrganizationIdData = z.ob
     query: z.never().optional()
 });
 
-/**
- * Invoice created successfully
- */
-export const zInvoiceControllerCreateInvoiceByContactOrOrganizationIdResponse = zReadInvoiceDto;
-
 export const zInvoiceControllerUpdateInvoiceLinesData = z.object({
     body: zUpdateBillingLinesDto,
     path: z.object({
@@ -2385,11 +2234,6 @@ export const zInvoiceControllerUpdateInvoiceLinesData = z.object({
     }),
     query: z.never().optional()
 });
-
-/**
- * Invoice lines updated successfully
- */
-export const zInvoiceControllerUpdateInvoiceLinesResponse = zReadInvoiceDto;
 
 export const zInvoiceControllerUpdateInvoiceDeliveryAddressData = z.object({
     body: zUpdateInvoiceDeliveryAddressDto,
@@ -2399,11 +2243,6 @@ export const zInvoiceControllerUpdateInvoiceDeliveryAddressData = z.object({
     query: z.never().optional()
 });
 
-/**
- * Invoice delivery address updated successfully
- */
-export const zInvoiceControllerUpdateInvoiceDeliveryAddressResponse = zReadInvoiceDto;
-
 export const zInvoiceControllerUpdateTimelineData = z.object({
     body: zUpdateInvoiceTimelineDto,
     path: z.object({
@@ -2411,11 +2250,6 @@ export const zInvoiceControllerUpdateTimelineData = z.object({
     }),
     query: z.never().optional()
 });
-
-/**
- * Invoice timeline updated successfully
- */
-export const zInvoiceControllerUpdateTimelineResponse = zReadInvoiceDto;
 
 export const zInvoiceControllerUpdateInvoicePaymentRequestData = z.object({
     body: zUpdateInvoicePaymentRequestDto,
@@ -2425,11 +2259,6 @@ export const zInvoiceControllerUpdateInvoicePaymentRequestData = z.object({
     query: z.never().optional()
 });
 
-/**
- * Payment request updated successfully
- */
-export const zInvoiceControllerUpdateInvoicePaymentRequestResponse = zReadInvoiceDto;
-
 export const zInvoiceControllerFinalizeInvoiceData = z.object({
     body: z.never().optional(),
     path: z.object({
@@ -2437,11 +2266,6 @@ export const zInvoiceControllerFinalizeInvoiceData = z.object({
     }),
     query: z.never().optional()
 });
-
-/**
- * Invoice finalized successfully
- */
-export const zInvoiceControllerFinalizeInvoiceResponse = zReadInvoiceDto;
 
 export const zInvoiceControllerUpdateInvoiceGeneralInformationsData = z.object({
     body: zUpdateInvoiceGeneralInformationsDto,
@@ -2451,11 +2275,6 @@ export const zInvoiceControllerUpdateInvoiceGeneralInformationsData = z.object({
     query: z.never().optional()
 });
 
-/**
- * Invoice general informations updated successfully
- */
-export const zInvoiceControllerUpdateInvoiceGeneralInformationsResponse = zReadInvoiceDto;
-
 export const zInvoiceControllerUpdateInvoiceLocaleData = z.object({
     body: zUpdateBillingLocaleDto,
     path: z.object({
@@ -2463,11 +2282,6 @@ export const zInvoiceControllerUpdateInvoiceLocaleData = z.object({
     }),
     query: z.never().optional()
 });
-
-/**
- * Invoice locale updated successfully
- */
-export const zInvoiceControllerUpdateInvoiceLocaleResponse = zReadInvoiceDto;
 
 export const zInvoiceControllerUpdateInvoiceCurrencyData = z.object({
     body: zUpdateBillingCurrencyDto,
@@ -2477,11 +2291,6 @@ export const zInvoiceControllerUpdateInvoiceCurrencyData = z.object({
     query: z.never().optional()
 });
 
-/**
- * Invoice currency updated successfully
- */
-export const zInvoiceControllerUpdateInvoiceCurrencyResponse = zReadInvoiceDto;
-
 export const zInvoiceControllerUpdateDisplaySettingsData = z.object({
     body: zUpdateBillingDisplaySettingsDto,
     path: z.object({
@@ -2489,11 +2298,6 @@ export const zInvoiceControllerUpdateDisplaySettingsData = z.object({
     }),
     query: z.never().optional()
 });
-
-/**
- * Paramètres d'affichage de la facture mis à jour avec succès
- */
-export const zInvoiceControllerUpdateDisplaySettingsResponse = zReadInvoiceDto;
 
 export const zInvoiceControllerUpdateInvoiceBankInformationData = z.object({
     body: zUpdateInvoiceBankInformationDto,
@@ -2503,11 +2307,6 @@ export const zInvoiceControllerUpdateInvoiceBankInformationData = z.object({
     query: z.never().optional()
 });
 
-/**
- * Invoice bank information updated successfully
- */
-export const zInvoiceControllerUpdateInvoiceBankInformationResponse = zReadInvoiceDto;
-
 export const zInvoiceControllerDeleteInvoiceFrequencyData = z.object({
     body: z.never().optional(),
     path: z.object({
@@ -2516,11 +2315,6 @@ export const zInvoiceControllerDeleteInvoiceFrequencyData = z.object({
     query: z.never().optional()
 });
 
-/**
- * Invoice frequency deleted successfully
- */
-export const zInvoiceControllerDeleteInvoiceFrequencyResponse = zReadInvoiceDto;
-
 export const zInvoiceControllerCreateInvoiceFrequencyData = z.object({
     body: zCreateInvoiceFrequencyDto,
     path: z.object({
@@ -2528,11 +2322,6 @@ export const zInvoiceControllerCreateInvoiceFrequencyData = z.object({
     }),
     query: z.never().optional()
 });
-
-/**
- * Invoice frequency created successfully
- */
-export const zInvoiceControllerCreateInvoiceFrequencyResponse = zReadInvoiceDto;
 
 export const zInvoiceControllerUpdateInvoiceFrequencyData = z.object({
     body: zUpdateInvoiceFrequencyDto,
@@ -2543,11 +2332,6 @@ export const zInvoiceControllerUpdateInvoiceFrequencyData = z.object({
     query: z.never().optional()
 });
 
-/**
- * Invoice bank information updated successfully
- */
-export const zInvoiceControllerUpdateInvoiceFrequencyResponse = zReadInvoiceDto;
-
 export const zInvoiceControllerCreateAssetData = z.object({
     body: z.never().optional(),
     path: z.object({
@@ -2555,11 +2339,6 @@ export const zInvoiceControllerCreateAssetData = z.object({
     }),
     query: z.never().optional()
 });
-
-/**
- * Asset created successfully
- */
-export const zInvoiceControllerCreateAssetResponse = zReadAssetDto;
 
 export const zBillingControllerArchiveBillingDocumentData = z.object({
     body: z.never().optional(),
@@ -2569,16 +2348,6 @@ export const zBillingControllerArchiveBillingDocumentData = z.object({
     query: z.never().optional()
 });
 
-/**
- * Document archived successfully
- */
-export const zBillingControllerArchiveBillingDocumentResponse = z.union([
-    zReadInvoiceDto,
-    zReadEstimateDto,
-    zReadAdvanceDto,
-    zReadAssetDto
-]);
-
 export const zBillingControllerUnarchiveBillingDocumentData = z.object({
     body: z.never().optional(),
     path: z.object({
@@ -2586,16 +2355,6 @@ export const zBillingControllerUnarchiveBillingDocumentData = z.object({
     }),
     query: z.never().optional()
 });
-
-/**
- * Document unarchived successfully
- */
-export const zBillingControllerUnarchiveBillingDocumentResponse = z.union([
-    zReadInvoiceDto,
-    zReadEstimateDto,
-    zReadAdvanceDto,
-    zReadAssetDto
-]);
 
 export const zBillingControllerUpdateTitleData = z.object({
     body: zUpdateTitleDto,
@@ -2605,16 +2364,6 @@ export const zBillingControllerUpdateTitleData = z.object({
     query: z.never().optional()
 });
 
-/**
- * Title updated successfully
- */
-export const zBillingControllerUpdateTitleResponse = z.union([
-    zReadInvoiceDto,
-    zReadEstimateDto,
-    zReadAdvanceDto,
-    zReadAssetDto
-]);
-
 export const zBillingControllerGetBillingByIdData = z.object({
     body: z.never().optional(),
     path: z.object({
@@ -2622,16 +2371,6 @@ export const zBillingControllerGetBillingByIdData = z.object({
     }),
     query: z.never().optional()
 });
-
-/**
- * Billing document retrieved successfully
- */
-export const zBillingControllerGetBillingByIdResponse = z.union([
-    zReadInvoiceDto,
-    zReadEstimateDto,
-    zReadAdvanceDto,
-    zReadAssetDto
-]);
 
 export const zBillingControllerUpdateBankInformationData = z.object({
     body: zUpdateBillingBankInformationDto,
@@ -2641,16 +2380,6 @@ export const zBillingControllerUpdateBankInformationData = z.object({
     query: z.never().optional()
 });
 
-/**
- * Billing bank information updated successfully
- */
-export const zBillingControllerUpdateBankInformationResponse = z.union([
-    zReadInvoiceDto,
-    zReadEstimateDto,
-    zReadAdvanceDto,
-    zReadAssetDto
-]);
-
 export const zBillingControllerUpdateBillingDeliveryAddressData = z.object({
     body: zUpdateBillingDeliveryAddressDto,
     path: z.object({
@@ -2658,16 +2387,6 @@ export const zBillingControllerUpdateBillingDeliveryAddressData = z.object({
     }),
     query: z.never().optional()
 });
-
-/**
- * Billing delivery address updated successfully
- */
-export const zBillingControllerUpdateBillingDeliveryAddressResponse = z.union([
-    zReadInvoiceDto,
-    zReadEstimateDto,
-    zReadAdvanceDto,
-    zReadAssetDto
-]);
 
 export const zBillingControllerFinalizeData = z.object({
     body: z.never().optional(),
@@ -2677,16 +2396,6 @@ export const zBillingControllerFinalizeData = z.object({
     query: z.never().optional()
 });
 
-/**
- * Billing finalized successfully
- */
-export const zBillingControllerFinalizeResponse = z.union([
-    zReadInvoiceDto,
-    zReadEstimateDto,
-    zReadAdvanceDto,
-    zReadAssetDto
-]);
-
 export const zBillingControllerUpdateLinesData = z.object({
     body: zUpdateBillingLinesDto,
     path: z.object({
@@ -2695,15 +2404,6 @@ export const zBillingControllerUpdateLinesData = z.object({
     query: z.never().optional()
 });
 
-/**
- * Billing lines updated successfully
- */
-export const zBillingControllerUpdateLinesResponse = z.union([
-    zReadInvoiceDto,
-    zReadEstimateDto,
-    zReadAssetDto
-]);
-
 export const zBillingControllerMigrateSapProductsData = z.object({
     body: zMigrateSapProductsDto,
     path: z.object({
@@ -2711,11 +2411,6 @@ export const zBillingControllerMigrateSapProductsData = z.object({
     }),
     query: z.never().optional()
 });
-
-/**
- * Invoice lines updated successfully
- */
-export const zBillingControllerMigrateSapProductsResponse = zReadInvoiceDto;
 
 export const zBillingControllerToggleIncludeDiscountDisbursementData = z.object({
     body: z.object({
@@ -2727,15 +2422,6 @@ export const zBillingControllerToggleIncludeDiscountDisbursementData = z.object(
     query: z.never().optional()
 });
 
-/**
- * Billing updated successfully
- */
-export const zBillingControllerToggleIncludeDiscountDisbursementResponse = z.union([
-    zReadInvoiceDto,
-    zReadEstimateDto,
-    zReadAssetDto
-]);
-
 export const zBillingControllerUpdateDisplaySettingsData = z.object({
     body: zUpdateBillingDisplaySettingsDto,
     path: z.object({
@@ -2743,16 +2429,6 @@ export const zBillingControllerUpdateDisplaySettingsData = z.object({
     }),
     query: z.never().optional()
 });
-
-/**
- * Billing display settings updated successfully
- */
-export const zBillingControllerUpdateDisplaySettingsResponse = z.union([
-    zReadInvoiceDto,
-    zReadEstimateDto,
-    zReadAdvanceDto,
-    zReadAssetDto
-]);
 
 export const zAdvanceControllerUpdateGeneralInformationsData = z.object({
     body: zUpdateAdvanceGeneralInformationsDto,
@@ -2762,11 +2438,6 @@ export const zAdvanceControllerUpdateGeneralInformationsData = z.object({
     query: z.never().optional()
 });
 
-/**
- * Advance general informations updated successfully
- */
-export const zAdvanceControllerUpdateGeneralInformationsResponse = zReadAdvanceDto;
-
 export const zAdvanceControllerCreateAssetData = z.object({
     body: z.never().optional(),
     path: z.object({
@@ -2774,11 +2445,6 @@ export const zAdvanceControllerCreateAssetData = z.object({
     }),
     query: z.never().optional()
 });
-
-/**
- * Asset created successfully
- */
-export const zAdvanceControllerCreateAssetResponse = zReadAssetDto;
 
 export const zAssetControllerGetAssetData = z.object({
     body: z.never().optional(),
@@ -2788,11 +2454,6 @@ export const zAssetControllerGetAssetData = z.object({
     query: z.never().optional()
 });
 
-/**
- * Asset retrieved successfully
- */
-export const zAssetControllerGetAssetResponse = zReadAssetDto;
-
 export const zAssetControllerUpdateGeneralInformationsData = z.object({
     body: zUpdateAssetGeneralInformationsDto,
     path: z.object({
@@ -2800,11 +2461,6 @@ export const zAssetControllerUpdateGeneralInformationsData = z.object({
     }),
     query: z.never().optional()
 });
-
-/**
- * Asset general informations updated successfully
- */
-export const zAssetControllerUpdateGeneralInformationsResponse = zReadAssetDto;
 
 export const zAssetControllerUpdateLocaleData = z.object({
     body: zUpdateBillingLocaleDto,
@@ -2814,11 +2470,6 @@ export const zAssetControllerUpdateLocaleData = z.object({
     query: z.never().optional()
 });
 
-/**
- * Asset locale updated successfully
- */
-export const zAssetControllerUpdateLocaleResponse = zReadAssetDto;
-
 export const zAssetControllerUpdateCurrencyData = z.object({
     body: zUpdateBillingCurrencyDto,
     path: z.object({
@@ -2826,8 +2477,3 @@ export const zAssetControllerUpdateCurrencyData = z.object({
     }),
     query: z.never().optional()
 });
-
-/**
- * Asset currency updated successfully
- */
-export const zAssetControllerUpdateCurrencyResponse = zReadAssetDto;

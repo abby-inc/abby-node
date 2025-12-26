@@ -10,6 +10,7 @@ export default defineConfig({
     ...defaultPlugins,
     {
       name: '@hey-api/client-fetch',
+      throwOnError: true,
     },
     {
       name: '@hey-api/schemas',
@@ -26,9 +27,9 @@ export default defineConfig({
     // Zod plugin for schema validation
     {
       name: 'zod',
-      // Generate schemas for requests, responses, and reusable definitions
+      // Generate schemas for requests only (response validation disabled due to API/spec mismatches)
       requests: true,
-      responses: true,
+      responses: false,
       definitions: true,
       // Include metadata from OpenAPI spec (descriptions, etc.)
       metadata: true,
@@ -41,11 +42,10 @@ export default defineConfig({
       asClass: true,
       serviceNameBuilder: '{{name}}',
       methodNameBuilder: (context: { id: string }) => {
-        // Transform "CompanyController-getMe" to "getMe"
-        const parts = context.id.split('-');
-        if (parts.length > 1) {
-          const methodName = parts.slice(1).join('-');
-          return methodName.charAt(0).toLowerCase() + methodName.slice(1);
+        // Transform "companyControllerGetMe" to "getMe"
+        const name = context.id.split('Controller')[1];
+        if (name) {
+          return name.charAt(0).toLowerCase() + name.slice(1);
         }
         return context.id;
       },

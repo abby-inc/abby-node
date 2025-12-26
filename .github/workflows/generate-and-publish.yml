@@ -126,6 +126,7 @@ jobs:
           pnpm version ${{ steps.version.outputs.version }} --no-git-tag-version --allow-same-version
 
       - name: Commit generated files
+        if: steps.version.outputs.dry_run != 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -133,10 +134,12 @@ jobs:
           git diff --staged --quiet || git commit -m "chore: generate SDK v${{ steps.version.outputs.version }}"
 
       - name: Create git tag
+        if: steps.version.outputs.dry_run != 'true'
         run: |
           git tag -a "v${{ steps.version.outputs.version }}" -m "Release v${{ steps.version.outputs.version }}"
 
       - name: Push changes and tags
+        if: steps.version.outputs.dry_run != 'true'
         run: |
           git push origin master --follow-tags
 

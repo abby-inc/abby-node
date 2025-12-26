@@ -4,7 +4,7 @@ import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
 import { advanceControllerCreateAssetResponseTransformer, advanceControllerUpdateGeneralInformationsResponseTransformer, assetControllerGetAssetResponseTransformer, assetControllerUpdateCurrencyResponseTransformer, assetControllerUpdateGeneralInformationsResponseTransformer, assetControllerUpdateLocaleResponseTransformer, billingControllerMigrateSapProductsResponseTransformer, estimateControllerCreateAdvanceResponseTransformer, estimateControllerCreateEstimateByContactOrOrganizationIdResponseTransformer, estimateControllerRefuseResponseTransformer, estimateControllerSignResponseTransformer, estimateControllerUnrefuseResponseTransformer, estimateControllerUnsignResponseTransformer, estimateControllerUpdateAdvanceLinesResponseTransformer, estimateControllerUpdateCurrencyResponseTransformer, estimateControllerUpdateGeneralInformationsResponseTransformer, estimateControllerUpdateLocaleResponseTransformer, estimateControllerUpdateTimelineResponseTransformer, invoiceControllerCreateAssetResponseTransformer, invoiceControllerCreateInvoiceByContactOrOrganizationIdResponseTransformer, invoiceControllerCreateInvoiceFrequencyResponseTransformer, invoiceControllerDeleteInvoiceFrequencyResponseTransformer, invoiceControllerFinalizeInvoiceResponseTransformer, invoiceControllerGetInvoiceResponseTransformer, invoiceControllerUpdateDisplaySettingsResponseTransformer, invoiceControllerUpdateInvoiceBankInformationResponseTransformer, invoiceControllerUpdateInvoiceCurrencyResponseTransformer, invoiceControllerUpdateInvoiceDeliveryAddressResponseTransformer, invoiceControllerUpdateInvoiceFrequencyResponseTransformer, invoiceControllerUpdateInvoiceGeneralInformationsResponseTransformer, invoiceControllerUpdateInvoiceLinesResponseTransformer, invoiceControllerUpdateInvoiceLocaleResponseTransformer, invoiceControllerUpdateInvoicePaymentRequestResponseTransformer, invoiceControllerUpdateTimelineResponseTransformer, opportunityControllerCreateOpportunityResponseTransformer, opportunityControllerRetrieveOpportunityResponseTransformer, opportunityControllerUpdateOpportunityResponseTransformer } from './transformers.gen';
 import type { AdvanceControllerCreateAssetData, AdvanceControllerCreateAssetErrors, AdvanceControllerCreateAssetResponses, AdvanceControllerUpdateGeneralInformationsData, AdvanceControllerUpdateGeneralInformationsErrors, AdvanceControllerUpdateGeneralInformationsResponses, AssetControllerGetAssetData, AssetControllerGetAssetErrors, AssetControllerGetAssetResponses, AssetControllerUpdateCurrencyData, AssetControllerUpdateCurrencyErrors, AssetControllerUpdateCurrencyResponses, AssetControllerUpdateGeneralInformationsData, AssetControllerUpdateGeneralInformationsErrors, AssetControllerUpdateGeneralInformationsResponses, AssetControllerUpdateLocaleData, AssetControllerUpdateLocaleErrors, AssetControllerUpdateLocaleResponses, BillingControllerArchiveBillingDocumentData, BillingControllerArchiveBillingDocumentErrors, BillingControllerArchiveBillingDocumentResponses, BillingControllerDeleteBillingDocumentData, BillingControllerDeleteBillingDocumentErrors, BillingControllerDeleteBillingDocumentResponses, BillingControllerDownloadPdfData, BillingControllerDownloadPdfErrors, BillingControllerDownloadPdfResponses, BillingControllerFinalizeData, BillingControllerFinalizeErrors, BillingControllerFinalizeResponses, BillingControllerGetBillingByIdData, BillingControllerGetBillingByIdErrors, BillingControllerGetBillingByIdResponses, BillingControllerMigrateSapProductsData, BillingControllerMigrateSapProductsErrors, BillingControllerMigrateSapProductsResponses, BillingControllerRenderEmailData, BillingControllerRenderEmailErrors, BillingControllerRenderEmailResponses, BillingControllerRetrievePaymentAccountData, BillingControllerRetrievePaymentAccountErrors, BillingControllerRetrievePaymentAccountResponses, BillingControllerSendByEmailData, BillingControllerSendByEmailErrors, BillingControllerSendByEmailResponses, BillingControllerSendEmailTestData, BillingControllerSendEmailTestErrors, BillingControllerSendEmailTestResponses, BillingControllerSendTestEmailSignatureData, BillingControllerSendTestEmailSignatureErrors, BillingControllerSendTestEmailSignatureResponses, BillingControllerToggleIncludeDiscountDisbursementData, BillingControllerToggleIncludeDiscountDisbursementResponses, BillingControllerUnarchiveBillingDocumentData, BillingControllerUnarchiveBillingDocumentErrors, BillingControllerUnarchiveBillingDocumentResponses, BillingControllerUpdateBankInformationData, BillingControllerUpdateBankInformationErrors, BillingControllerUpdateBankInformationResponses, BillingControllerUpdateBillingDeliveryAddressData, BillingControllerUpdateBillingDeliveryAddressErrors, BillingControllerUpdateBillingDeliveryAddressResponses, BillingControllerUpdateDisplaySettingsData, BillingControllerUpdateDisplaySettingsErrors, BillingControllerUpdateDisplaySettingsResponses, BillingControllerUpdateLinesData, BillingControllerUpdateLinesErrors, BillingControllerUpdateLinesResponses, BillingControllerUpdateTitleData, BillingControllerUpdateTitleErrors, BillingControllerUpdateTitleResponses, CompanyControllerGetMeData, CompanyControllerGetMeErrors, CompanyControllerGetMeResponses, ContactControllerCreateContactData, ContactControllerCreateContactErrors, ContactControllerCreateContactResponses, ContactControllerDeleteContactData, ContactControllerDeleteContactErrors, ContactControllerDeleteContactResponses, ContactControllerGetContactByLegacyIdData, ContactControllerGetContactByLegacyIdErrors, ContactControllerGetContactByLegacyIdResponses, ContactControllerGetContactData, ContactControllerGetContactErrors, ContactControllerGetContactResponses, ContactControllerUpdateContactData, ContactControllerUpdateContactErrors, ContactControllerUpdateContactResponses, ContactsControllerRetrieveContactsData, ContactsControllerRetrieveContactsErrors, ContactsControllerRetrieveContactsResponses, CustomerPortalControllerGetPaymentsData, CustomerPortalControllerGetPaymentsResponses, EstimateControllerCreateAdvanceData, EstimateControllerCreateAdvanceErrors, EstimateControllerCreateAdvanceResponses, EstimateControllerCreateEstimateByContactOrOrganizationIdData, EstimateControllerCreateEstimateByContactOrOrganizationIdErrors, EstimateControllerCreateEstimateByContactOrOrganizationIdResponses, EstimateControllerRefuseData, EstimateControllerRefuseErrors, EstimateControllerRefuseResponses, EstimateControllerSignData, EstimateControllerSignErrors, EstimateControllerSignResponses, EstimateControllerUnrefuseData, EstimateControllerUnrefuseErrors, EstimateControllerUnrefuseResponses, EstimateControllerUnsignData, EstimateControllerUnsignErrors, EstimateControllerUnsignResponses, EstimateControllerUpdateAdvanceLinesData, EstimateControllerUpdateAdvanceLinesErrors, EstimateControllerUpdateAdvanceLinesResponses, EstimateControllerUpdateCurrencyData, EstimateControllerUpdateCurrencyErrors, EstimateControllerUpdateCurrencyResponses, EstimateControllerUpdateGeneralInformationsData, EstimateControllerUpdateGeneralInformationsErrors, EstimateControllerUpdateGeneralInformationsResponses, EstimateControllerUpdateLocaleData, EstimateControllerUpdateLocaleErrors, EstimateControllerUpdateLocaleResponses, EstimateControllerUpdateTimelineData, EstimateControllerUpdateTimelineErrors, EstimateControllerUpdateTimelineResponses, InvoiceControllerCreateAssetData, InvoiceControllerCreateAssetErrors, InvoiceControllerCreateAssetResponses, InvoiceControllerCreateInvoiceByContactOrOrganizationIdData, InvoiceControllerCreateInvoiceByContactOrOrganizationIdErrors, InvoiceControllerCreateInvoiceByContactOrOrganizationIdResponses, InvoiceControllerCreateInvoiceFrequencyData, InvoiceControllerCreateInvoiceFrequencyErrors, InvoiceControllerCreateInvoiceFrequencyResponses, InvoiceControllerDeleteInvoiceFrequencyData, InvoiceControllerDeleteInvoiceFrequencyErrors, InvoiceControllerDeleteInvoiceFrequencyResponses, InvoiceControllerFinalizeInvoiceData, InvoiceControllerFinalizeInvoiceErrors, InvoiceControllerFinalizeInvoiceResponses, InvoiceControllerGetInvoiceData, InvoiceControllerGetInvoiceErrors, InvoiceControllerGetInvoiceResponses, InvoiceControllerUpdateDisplaySettingsData, InvoiceControllerUpdateDisplaySettingsErrors, InvoiceControllerUpdateDisplaySettingsResponses, InvoiceControllerUpdateInvoiceBankInformationData, InvoiceControllerUpdateInvoiceBankInformationErrors, InvoiceControllerUpdateInvoiceBankInformationResponses, InvoiceControllerUpdateInvoiceCurrencyData, InvoiceControllerUpdateInvoiceCurrencyErrors, InvoiceControllerUpdateInvoiceCurrencyResponses, InvoiceControllerUpdateInvoiceDeliveryAddressData, InvoiceControllerUpdateInvoiceDeliveryAddressErrors, InvoiceControllerUpdateInvoiceDeliveryAddressResponses, InvoiceControllerUpdateInvoiceFrequencyData, InvoiceControllerUpdateInvoiceFrequencyErrors, InvoiceControllerUpdateInvoiceFrequencyResponses, InvoiceControllerUpdateInvoiceGeneralInformationsData, InvoiceControllerUpdateInvoiceGeneralInformationsErrors, InvoiceControllerUpdateInvoiceGeneralInformationsResponses, InvoiceControllerUpdateInvoiceLinesData, InvoiceControllerUpdateInvoiceLinesErrors, InvoiceControllerUpdateInvoiceLinesResponses, InvoiceControllerUpdateInvoiceLocaleData, InvoiceControllerUpdateInvoiceLocaleErrors, InvoiceControllerUpdateInvoiceLocaleResponses, InvoiceControllerUpdateInvoicePaymentRequestData, InvoiceControllerUpdateInvoicePaymentRequestErrors, InvoiceControllerUpdateInvoicePaymentRequestResponses, InvoiceControllerUpdateTimelineData, InvoiceControllerUpdateTimelineErrors, InvoiceControllerUpdateTimelineResponses, OpportunityControllerCreateOpportunityData, OpportunityControllerCreateOpportunityResponses, OpportunityControllerDeleteOpportunityData, OpportunityControllerDeleteOpportunityResponses, OpportunityControllerRetrieveCategoriesData, OpportunityControllerRetrieveCategoriesResponses, OpportunityControllerRetrieveOpportunityData, OpportunityControllerRetrieveOpportunityResponses, OpportunityControllerUpdateOpportunityData, OpportunityControllerUpdateOpportunityResponses, OrganizationControllerCreateOrganizationContactData, OrganizationControllerCreateOrganizationContactResponses, OrganizationControllerCreateOrganizationData, OrganizationControllerCreateOrganizationResponses, OrganizationControllerDeleteOrganizationData, OrganizationControllerDeleteOrganizationResponses, OrganizationControllerRetrieveOrganizationContactsData, OrganizationControllerRetrieveOrganizationContactsResponses, OrganizationControllerRetrieveOrganizationData, OrganizationControllerRetrieveOrganizationResponses, OrganizationControllerSetDefaultContactData, OrganizationControllerSetDefaultContactResponses, OrganizationControllerUpdateOrganizationContactData, OrganizationControllerUpdateOrganizationContactResponses, OrganizationControllerUpdateOrganizationData, OrganizationControllerUpdateOrganizationResponses, OrganizationsControllerRetrieveOrganizationsData, OrganizationsControllerRetrieveOrganizationsResponses } from './types.gen';
-import { zAdvanceControllerCreateAssetData, zAdvanceControllerCreateAssetResponse, zAdvanceControllerUpdateGeneralInformationsData, zAdvanceControllerUpdateGeneralInformationsResponse, zAssetControllerGetAssetData, zAssetControllerGetAssetResponse, zAssetControllerUpdateCurrencyData, zAssetControllerUpdateCurrencyResponse, zAssetControllerUpdateGeneralInformationsData, zAssetControllerUpdateGeneralInformationsResponse, zAssetControllerUpdateLocaleData, zAssetControllerUpdateLocaleResponse, zBillingControllerArchiveBillingDocumentData, zBillingControllerArchiveBillingDocumentResponse, zBillingControllerDeleteBillingDocumentData, zBillingControllerDeleteBillingDocumentResponse, zBillingControllerDownloadPdfData, zBillingControllerDownloadPdfResponse, zBillingControllerFinalizeData, zBillingControllerFinalizeResponse, zBillingControllerGetBillingByIdData, zBillingControllerGetBillingByIdResponse, zBillingControllerMigrateSapProductsData, zBillingControllerMigrateSapProductsResponse, zBillingControllerRenderEmailData, zBillingControllerRenderEmailResponse, zBillingControllerRetrievePaymentAccountData, zBillingControllerRetrievePaymentAccountResponse, zBillingControllerSendByEmailData, zBillingControllerSendByEmailResponse, zBillingControllerSendEmailTestData, zBillingControllerSendEmailTestResponse, zBillingControllerSendTestEmailSignatureData, zBillingControllerSendTestEmailSignatureResponse, zBillingControllerToggleIncludeDiscountDisbursementData, zBillingControllerToggleIncludeDiscountDisbursementResponse, zBillingControllerUnarchiveBillingDocumentData, zBillingControllerUnarchiveBillingDocumentResponse, zBillingControllerUpdateBankInformationData, zBillingControllerUpdateBankInformationResponse, zBillingControllerUpdateBillingDeliveryAddressData, zBillingControllerUpdateBillingDeliveryAddressResponse, zBillingControllerUpdateDisplaySettingsData, zBillingControllerUpdateDisplaySettingsResponse, zBillingControllerUpdateLinesData, zBillingControllerUpdateLinesResponse, zBillingControllerUpdateTitleData, zBillingControllerUpdateTitleResponse, zCompanyControllerGetMeData, zCompanyControllerGetMeResponse, zContactControllerCreateContactData, zContactControllerCreateContactResponse, zContactControllerDeleteContactData, zContactControllerGetContactByLegacyIdData, zContactControllerGetContactByLegacyIdResponse, zContactControllerGetContactData, zContactControllerGetContactResponse, zContactControllerUpdateContactData, zContactControllerUpdateContactResponse, zContactsControllerRetrieveContactsData, zContactsControllerRetrieveContactsResponse, zCustomerPortalControllerGetPaymentsData, zCustomerPortalControllerGetPaymentsResponse, zEstimateControllerCreateAdvanceData, zEstimateControllerCreateAdvanceResponse, zEstimateControllerCreateEstimateByContactOrOrganizationIdData, zEstimateControllerCreateEstimateByContactOrOrganizationIdResponse, zEstimateControllerRefuseData, zEstimateControllerRefuseResponse, zEstimateControllerSignData, zEstimateControllerSignResponse, zEstimateControllerUnrefuseData, zEstimateControllerUnrefuseResponse, zEstimateControllerUnsignData, zEstimateControllerUnsignResponse, zEstimateControllerUpdateAdvanceLinesData, zEstimateControllerUpdateAdvanceLinesResponse, zEstimateControllerUpdateCurrencyData, zEstimateControllerUpdateCurrencyResponse, zEstimateControllerUpdateGeneralInformationsData, zEstimateControllerUpdateGeneralInformationsResponse, zEstimateControllerUpdateLocaleData, zEstimateControllerUpdateLocaleResponse, zEstimateControllerUpdateTimelineData, zEstimateControllerUpdateTimelineResponse, zInvoiceControllerCreateAssetData, zInvoiceControllerCreateAssetResponse, zInvoiceControllerCreateInvoiceByContactOrOrganizationIdData, zInvoiceControllerCreateInvoiceByContactOrOrganizationIdResponse, zInvoiceControllerCreateInvoiceFrequencyData, zInvoiceControllerCreateInvoiceFrequencyResponse, zInvoiceControllerDeleteInvoiceFrequencyData, zInvoiceControllerDeleteInvoiceFrequencyResponse, zInvoiceControllerFinalizeInvoiceData, zInvoiceControllerFinalizeInvoiceResponse, zInvoiceControllerGetInvoiceData, zInvoiceControllerGetInvoiceResponse, zInvoiceControllerUpdateDisplaySettingsData, zInvoiceControllerUpdateDisplaySettingsResponse, zInvoiceControllerUpdateInvoiceBankInformationData, zInvoiceControllerUpdateInvoiceBankInformationResponse, zInvoiceControllerUpdateInvoiceCurrencyData, zInvoiceControllerUpdateInvoiceCurrencyResponse, zInvoiceControllerUpdateInvoiceDeliveryAddressData, zInvoiceControllerUpdateInvoiceDeliveryAddressResponse, zInvoiceControllerUpdateInvoiceFrequencyData, zInvoiceControllerUpdateInvoiceFrequencyResponse, zInvoiceControllerUpdateInvoiceGeneralInformationsData, zInvoiceControllerUpdateInvoiceGeneralInformationsResponse, zInvoiceControllerUpdateInvoiceLinesData, zInvoiceControllerUpdateInvoiceLinesResponse, zInvoiceControllerUpdateInvoiceLocaleData, zInvoiceControllerUpdateInvoiceLocaleResponse, zInvoiceControllerUpdateInvoicePaymentRequestData, zInvoiceControllerUpdateInvoicePaymentRequestResponse, zInvoiceControllerUpdateTimelineData, zInvoiceControllerUpdateTimelineResponse, zOpportunityControllerCreateOpportunityData, zOpportunityControllerCreateOpportunityResponse, zOpportunityControllerDeleteOpportunityData, zOpportunityControllerRetrieveCategoriesData, zOpportunityControllerRetrieveCategoriesResponse, zOpportunityControllerRetrieveOpportunityData, zOpportunityControllerRetrieveOpportunityResponse, zOpportunityControllerUpdateOpportunityData, zOpportunityControllerUpdateOpportunityResponse, zOrganizationControllerCreateOrganizationContactData, zOrganizationControllerCreateOrganizationContactResponse, zOrganizationControllerCreateOrganizationData, zOrganizationControllerCreateOrganizationResponse, zOrganizationControllerDeleteOrganizationData, zOrganizationControllerRetrieveOrganizationContactsData, zOrganizationControllerRetrieveOrganizationContactsResponse, zOrganizationControllerRetrieveOrganizationData, zOrganizationControllerRetrieveOrganizationResponse, zOrganizationControllerSetDefaultContactData, zOrganizationControllerUpdateOrganizationContactData, zOrganizationControllerUpdateOrganizationContactResponse, zOrganizationControllerUpdateOrganizationData, zOrganizationControllerUpdateOrganizationResponse, zOrganizationsControllerRetrieveOrganizationsData, zOrganizationsControllerRetrieveOrganizationsResponse } from './zod.gen';
+import { zAdvanceControllerCreateAssetData, zAdvanceControllerUpdateGeneralInformationsData, zAssetControllerGetAssetData, zAssetControllerUpdateCurrencyData, zAssetControllerUpdateGeneralInformationsData, zAssetControllerUpdateLocaleData, zBillingControllerArchiveBillingDocumentData, zBillingControllerDeleteBillingDocumentData, zBillingControllerDownloadPdfData, zBillingControllerFinalizeData, zBillingControllerGetBillingByIdData, zBillingControllerMigrateSapProductsData, zBillingControllerRenderEmailData, zBillingControllerRetrievePaymentAccountData, zBillingControllerSendByEmailData, zBillingControllerSendEmailTestData, zBillingControllerSendTestEmailSignatureData, zBillingControllerToggleIncludeDiscountDisbursementData, zBillingControllerUnarchiveBillingDocumentData, zBillingControllerUpdateBankInformationData, zBillingControllerUpdateBillingDeliveryAddressData, zBillingControllerUpdateDisplaySettingsData, zBillingControllerUpdateLinesData, zBillingControllerUpdateTitleData, zCompanyControllerGetMeData, zContactControllerCreateContactData, zContactControllerDeleteContactData, zContactControllerGetContactByLegacyIdData, zContactControllerGetContactData, zContactControllerUpdateContactData, zContactsControllerRetrieveContactsData, zCustomerPortalControllerGetPaymentsData, zEstimateControllerCreateAdvanceData, zEstimateControllerCreateEstimateByContactOrOrganizationIdData, zEstimateControllerRefuseData, zEstimateControllerSignData, zEstimateControllerUnrefuseData, zEstimateControllerUnsignData, zEstimateControllerUpdateAdvanceLinesData, zEstimateControllerUpdateCurrencyData, zEstimateControllerUpdateGeneralInformationsData, zEstimateControllerUpdateLocaleData, zEstimateControllerUpdateTimelineData, zInvoiceControllerCreateAssetData, zInvoiceControllerCreateInvoiceByContactOrOrganizationIdData, zInvoiceControllerCreateInvoiceFrequencyData, zInvoiceControllerDeleteInvoiceFrequencyData, zInvoiceControllerFinalizeInvoiceData, zInvoiceControllerGetInvoiceData, zInvoiceControllerUpdateDisplaySettingsData, zInvoiceControllerUpdateInvoiceBankInformationData, zInvoiceControllerUpdateInvoiceCurrencyData, zInvoiceControllerUpdateInvoiceDeliveryAddressData, zInvoiceControllerUpdateInvoiceFrequencyData, zInvoiceControllerUpdateInvoiceGeneralInformationsData, zInvoiceControllerUpdateInvoiceLinesData, zInvoiceControllerUpdateInvoiceLocaleData, zInvoiceControllerUpdateInvoicePaymentRequestData, zInvoiceControllerUpdateTimelineData, zOpportunityControllerCreateOpportunityData, zOpportunityControllerDeleteOpportunityData, zOpportunityControllerRetrieveCategoriesData, zOpportunityControllerRetrieveOpportunityData, zOpportunityControllerUpdateOpportunityData, zOrganizationControllerCreateOrganizationContactData, zOrganizationControllerCreateOrganizationData, zOrganizationControllerDeleteOrganizationData, zOrganizationControllerRetrieveOrganizationContactsData, zOrganizationControllerRetrieveOrganizationData, zOrganizationControllerSetDefaultContactData, zOrganizationControllerUpdateOrganizationContactData, zOrganizationControllerUpdateOrganizationData, zOrganizationsControllerRetrieveOrganizationsData } from './zod.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -24,11 +24,10 @@ export class Estimate {
     /**
      * Create a new estimate with a customerId that can be a contactId or an organizationId
      */
-    public static estimateControllerCreateEstimateByContactOrOrganizationId<ThrowOnError extends boolean = false>(options: Options<EstimateControllerCreateEstimateByContactOrOrganizationIdData, ThrowOnError>) {
+    public static createEstimateByContactOrOrganizationId<ThrowOnError extends boolean = true>(options: Options<EstimateControllerCreateEstimateByContactOrOrganizationIdData, ThrowOnError>) {
         return (options.client ?? client).post<EstimateControllerCreateEstimateByContactOrOrganizationIdResponses, EstimateControllerCreateEstimateByContactOrOrganizationIdErrors, ThrowOnError>({
             requestValidator: async (data) => await zEstimateControllerCreateEstimateByContactOrOrganizationIdData.parseAsync(data),
             responseTransformer: estimateControllerCreateEstimateByContactOrOrganizationIdResponseTransformer,
-            responseValidator: async (data) => await zEstimateControllerCreateEstimateByContactOrOrganizationIdResponse.parseAsync(data),
             url: '/v2/billing/estimate/{customerId}',
             ...options,
             headers: {
@@ -41,11 +40,10 @@ export class Estimate {
     /**
      * Update estimate timeline
      */
-    public static estimateControllerUpdateTimeline<ThrowOnError extends boolean = false>(options: Options<EstimateControllerUpdateTimelineData, ThrowOnError>) {
+    public static updateTimeline<ThrowOnError extends boolean = true>(options: Options<EstimateControllerUpdateTimelineData, ThrowOnError>) {
         return (options.client ?? client).patch<EstimateControllerUpdateTimelineResponses, EstimateControllerUpdateTimelineErrors, ThrowOnError>({
             requestValidator: async (data) => await zEstimateControllerUpdateTimelineData.parseAsync(data),
             responseTransformer: estimateControllerUpdateTimelineResponseTransformer,
-            responseValidator: async (data) => await zEstimateControllerUpdateTimelineResponse.parseAsync(data),
             url: '/v2/billing/estimate/{estimateId}/timeline',
             ...options,
             headers: {
@@ -58,11 +56,10 @@ export class Estimate {
     /**
      * Sign estimate or purchase order
      */
-    public static estimateControllerSign<ThrowOnError extends boolean = false>(options: Options<EstimateControllerSignData, ThrowOnError>) {
+    public static sign<ThrowOnError extends boolean = true>(options: Options<EstimateControllerSignData, ThrowOnError>) {
         return (options.client ?? client).patch<EstimateControllerSignResponses, EstimateControllerSignErrors, ThrowOnError>({
             requestValidator: async (data) => await zEstimateControllerSignData.parseAsync(data),
             responseTransformer: estimateControllerSignResponseTransformer,
-            responseValidator: async (data) => await zEstimateControllerSignResponse.parseAsync(data),
             url: '/v2/billing/estimate/{estimateId}/sign',
             ...options
         });
@@ -71,11 +68,10 @@ export class Estimate {
     /**
      * Unsign estimate or purchase order
      */
-    public static estimateControllerUnsign<ThrowOnError extends boolean = false>(options: Options<EstimateControllerUnsignData, ThrowOnError>) {
+    public static unsign<ThrowOnError extends boolean = true>(options: Options<EstimateControllerUnsignData, ThrowOnError>) {
         return (options.client ?? client).patch<EstimateControllerUnsignResponses, EstimateControllerUnsignErrors, ThrowOnError>({
             requestValidator: async (data) => await zEstimateControllerUnsignData.parseAsync(data),
             responseTransformer: estimateControllerUnsignResponseTransformer,
-            responseValidator: async (data) => await zEstimateControllerUnsignResponse.parseAsync(data),
             url: '/v2/billing/estimate/{estimateId}/unsign',
             ...options
         });
@@ -84,11 +80,10 @@ export class Estimate {
     /**
      * Refuse estimate or purchase order
      */
-    public static estimateControllerRefuse<ThrowOnError extends boolean = false>(options: Options<EstimateControllerRefuseData, ThrowOnError>) {
+    public static refuse<ThrowOnError extends boolean = true>(options: Options<EstimateControllerRefuseData, ThrowOnError>) {
         return (options.client ?? client).patch<EstimateControllerRefuseResponses, EstimateControllerRefuseErrors, ThrowOnError>({
             requestValidator: async (data) => await zEstimateControllerRefuseData.parseAsync(data),
             responseTransformer: estimateControllerRefuseResponseTransformer,
-            responseValidator: async (data) => await zEstimateControllerRefuseResponse.parseAsync(data),
             url: '/v2/billing/estimate/{estimateId}/refuse',
             ...options
         });
@@ -97,11 +92,10 @@ export class Estimate {
     /**
      * Unrefuse estimate or purchase order
      */
-    public static estimateControllerUnrefuse<ThrowOnError extends boolean = false>(options: Options<EstimateControllerUnrefuseData, ThrowOnError>) {
+    public static unrefuse<ThrowOnError extends boolean = true>(options: Options<EstimateControllerUnrefuseData, ThrowOnError>) {
         return (options.client ?? client).patch<EstimateControllerUnrefuseResponses, EstimateControllerUnrefuseErrors, ThrowOnError>({
             requestValidator: async (data) => await zEstimateControllerUnrefuseData.parseAsync(data),
             responseTransformer: estimateControllerUnrefuseResponseTransformer,
-            responseValidator: async (data) => await zEstimateControllerUnrefuseResponse.parseAsync(data),
             url: '/v2/billing/estimate/{estimateId}/unrefuse',
             ...options
         });
@@ -110,11 +104,10 @@ export class Estimate {
     /**
      * Create invoice advance
      */
-    public static estimateControllerCreateAdvance<ThrowOnError extends boolean = false>(options: Options<EstimateControllerCreateAdvanceData, ThrowOnError>) {
+    public static createAdvance<ThrowOnError extends boolean = true>(options: Options<EstimateControllerCreateAdvanceData, ThrowOnError>) {
         return (options.client ?? client).post<EstimateControllerCreateAdvanceResponses, EstimateControllerCreateAdvanceErrors, ThrowOnError>({
             requestValidator: async (data) => await zEstimateControllerCreateAdvanceData.parseAsync(data),
             responseTransformer: estimateControllerCreateAdvanceResponseTransformer,
-            responseValidator: async (data) => await zEstimateControllerCreateAdvanceResponse.parseAsync(data),
             url: '/v2/billing/estimate/{id}/advance',
             ...options
         });
@@ -123,11 +116,10 @@ export class Estimate {
     /**
      * Update estimate general informations
      */
-    public static estimateControllerUpdateGeneralInformations<ThrowOnError extends boolean = false>(options: Options<EstimateControllerUpdateGeneralInformationsData, ThrowOnError>) {
+    public static updateGeneralInformations<ThrowOnError extends boolean = true>(options: Options<EstimateControllerUpdateGeneralInformationsData, ThrowOnError>) {
         return (options.client ?? client).patch<EstimateControllerUpdateGeneralInformationsResponses, EstimateControllerUpdateGeneralInformationsErrors, ThrowOnError>({
             requestValidator: async (data) => await zEstimateControllerUpdateGeneralInformationsData.parseAsync(data),
             responseTransformer: estimateControllerUpdateGeneralInformationsResponseTransformer,
-            responseValidator: async (data) => await zEstimateControllerUpdateGeneralInformationsResponse.parseAsync(data),
             url: '/v2/billing/estimate/{estimateId}/general-informations',
             ...options,
             headers: {
@@ -140,11 +132,10 @@ export class Estimate {
     /**
      * Update estimate locale
      */
-    public static estimateControllerUpdateLocale<ThrowOnError extends boolean = false>(options: Options<EstimateControllerUpdateLocaleData, ThrowOnError>) {
+    public static updateLocale<ThrowOnError extends boolean = true>(options: Options<EstimateControllerUpdateLocaleData, ThrowOnError>) {
         return (options.client ?? client).put<EstimateControllerUpdateLocaleResponses, EstimateControllerUpdateLocaleErrors, ThrowOnError>({
             requestValidator: async (data) => await zEstimateControllerUpdateLocaleData.parseAsync(data),
             responseTransformer: estimateControllerUpdateLocaleResponseTransformer,
-            responseValidator: async (data) => await zEstimateControllerUpdateLocaleResponse.parseAsync(data),
             url: '/v2/billing/estimate/{estimateId}/locale',
             ...options,
             headers: {
@@ -157,11 +148,10 @@ export class Estimate {
     /**
      * Update asset currency
      */
-    public static estimateControllerUpdateCurrency<ThrowOnError extends boolean = false>(options: Options<EstimateControllerUpdateCurrencyData, ThrowOnError>) {
+    public static updateCurrency<ThrowOnError extends boolean = true>(options: Options<EstimateControllerUpdateCurrencyData, ThrowOnError>) {
         return (options.client ?? client).put<EstimateControllerUpdateCurrencyResponses, EstimateControllerUpdateCurrencyErrors, ThrowOnError>({
             requestValidator: async (data) => await zEstimateControllerUpdateCurrencyData.parseAsync(data),
             responseTransformer: estimateControllerUpdateCurrencyResponseTransformer,
-            responseValidator: async (data) => await zEstimateControllerUpdateCurrencyResponse.parseAsync(data),
             url: '/v2/billing/estimate/{estimateId}/currency',
             ...options,
             headers: {
@@ -174,11 +164,10 @@ export class Estimate {
     /**
      * Update estimate advance lines
      */
-    public static estimateControllerUpdateAdvanceLines<ThrowOnError extends boolean = false>(options: Options<EstimateControllerUpdateAdvanceLinesData, ThrowOnError>) {
+    public static updateAdvanceLines<ThrowOnError extends boolean = true>(options: Options<EstimateControllerUpdateAdvanceLinesData, ThrowOnError>) {
         return (options.client ?? client).patch<EstimateControllerUpdateAdvanceLinesResponses, EstimateControllerUpdateAdvanceLinesErrors, ThrowOnError>({
             requestValidator: async (data) => await zEstimateControllerUpdateAdvanceLinesData.parseAsync(data),
             responseTransformer: estimateControllerUpdateAdvanceLinesResponseTransformer,
-            responseValidator: async (data) => await zEstimateControllerUpdateAdvanceLinesResponse.parseAsync(data),
             url: '/v2/billing/estimate/{estimateId}/advance-lines',
             ...options,
             headers: {
@@ -193,11 +182,10 @@ export class Invoice {
     /**
      * Get an invoice by ID
      */
-    public static invoiceControllerGetInvoice<ThrowOnError extends boolean = false>(options: Options<InvoiceControllerGetInvoiceData, ThrowOnError>) {
+    public static getInvoice<ThrowOnError extends boolean = true>(options: Options<InvoiceControllerGetInvoiceData, ThrowOnError>) {
         return (options.client ?? client).get<InvoiceControllerGetInvoiceResponses, InvoiceControllerGetInvoiceErrors, ThrowOnError>({
             requestValidator: async (data) => await zInvoiceControllerGetInvoiceData.parseAsync(data),
             responseTransformer: invoiceControllerGetInvoiceResponseTransformer,
-            responseValidator: async (data) => await zInvoiceControllerGetInvoiceResponse.parseAsync(data),
             url: '/v2/billing/invoice/{invoiceId}',
             ...options
         });
@@ -206,11 +194,10 @@ export class Invoice {
     /**
      * Create a new invoice with a customerId that can be a contactId or an organizationId
      */
-    public static invoiceControllerCreateInvoiceByContactOrOrganizationId<ThrowOnError extends boolean = false>(options: Options<InvoiceControllerCreateInvoiceByContactOrOrganizationIdData, ThrowOnError>) {
+    public static createInvoiceByContactOrOrganizationId<ThrowOnError extends boolean = true>(options: Options<InvoiceControllerCreateInvoiceByContactOrOrganizationIdData, ThrowOnError>) {
         return (options.client ?? client).post<InvoiceControllerCreateInvoiceByContactOrOrganizationIdResponses, InvoiceControllerCreateInvoiceByContactOrOrganizationIdErrors, ThrowOnError>({
             requestValidator: async (data) => await zInvoiceControllerCreateInvoiceByContactOrOrganizationIdData.parseAsync(data),
             responseTransformer: invoiceControllerCreateInvoiceByContactOrOrganizationIdResponseTransformer,
-            responseValidator: async (data) => await zInvoiceControllerCreateInvoiceByContactOrOrganizationIdResponse.parseAsync(data),
             url: '/v2/billing/invoice/{customerId}',
             ...options
         });
@@ -223,11 +210,10 @@ export class Invoice {
      *
      * @deprecated
      */
-    public static invoiceControllerUpdateInvoiceLines<ThrowOnError extends boolean = false>(options: Options<InvoiceControllerUpdateInvoiceLinesData, ThrowOnError>) {
+    public static updateInvoiceLines<ThrowOnError extends boolean = true>(options: Options<InvoiceControllerUpdateInvoiceLinesData, ThrowOnError>) {
         return (options.client ?? client).patch<InvoiceControllerUpdateInvoiceLinesResponses, InvoiceControllerUpdateInvoiceLinesErrors, ThrowOnError>({
             requestValidator: async (data) => await zInvoiceControllerUpdateInvoiceLinesData.parseAsync(data),
             responseTransformer: invoiceControllerUpdateInvoiceLinesResponseTransformer,
-            responseValidator: async (data) => await zInvoiceControllerUpdateInvoiceLinesResponse.parseAsync(data),
             url: '/v2/billing/invoice/{invoiceId}/lines',
             ...options,
             headers: {
@@ -244,11 +230,10 @@ export class Invoice {
      *
      * @deprecated
      */
-    public static invoiceControllerUpdateInvoiceDeliveryAddress<ThrowOnError extends boolean = false>(options: Options<InvoiceControllerUpdateInvoiceDeliveryAddressData, ThrowOnError>) {
+    public static updateInvoiceDeliveryAddress<ThrowOnError extends boolean = true>(options: Options<InvoiceControllerUpdateInvoiceDeliveryAddressData, ThrowOnError>) {
         return (options.client ?? client).patch<InvoiceControllerUpdateInvoiceDeliveryAddressResponses, InvoiceControllerUpdateInvoiceDeliveryAddressErrors, ThrowOnError>({
             requestValidator: async (data) => await zInvoiceControllerUpdateInvoiceDeliveryAddressData.parseAsync(data),
             responseTransformer: invoiceControllerUpdateInvoiceDeliveryAddressResponseTransformer,
-            responseValidator: async (data) => await zInvoiceControllerUpdateInvoiceDeliveryAddressResponse.parseAsync(data),
             url: '/v2/billing/invoice/{invoiceId}/delivery-address',
             ...options,
             headers: {
@@ -261,11 +246,10 @@ export class Invoice {
     /**
      * Update invoice timeline
      */
-    public static invoiceControllerUpdateTimeline<ThrowOnError extends boolean = false>(options: Options<InvoiceControllerUpdateTimelineData, ThrowOnError>) {
+    public static updateTimeline<ThrowOnError extends boolean = true>(options: Options<InvoiceControllerUpdateTimelineData, ThrowOnError>) {
         return (options.client ?? client).patch<InvoiceControllerUpdateTimelineResponses, InvoiceControllerUpdateTimelineErrors, ThrowOnError>({
             requestValidator: async (data) => await zInvoiceControllerUpdateTimelineData.parseAsync(data),
             responseTransformer: invoiceControllerUpdateTimelineResponseTransformer,
-            responseValidator: async (data) => await zInvoiceControllerUpdateTimelineResponse.parseAsync(data),
             url: '/v2/billing/invoice/{invoiceId}/timeline',
             ...options,
             headers: {
@@ -278,11 +262,10 @@ export class Invoice {
     /**
      * Create or update invoice payment request infos
      */
-    public static invoiceControllerUpdateInvoicePaymentRequest<ThrowOnError extends boolean = false>(options: Options<InvoiceControllerUpdateInvoicePaymentRequestData, ThrowOnError>) {
+    public static updateInvoicePaymentRequest<ThrowOnError extends boolean = true>(options: Options<InvoiceControllerUpdateInvoicePaymentRequestData, ThrowOnError>) {
         return (options.client ?? client).patch<InvoiceControllerUpdateInvoicePaymentRequestResponses, InvoiceControllerUpdateInvoicePaymentRequestErrors, ThrowOnError>({
             requestValidator: async (data) => await zInvoiceControllerUpdateInvoicePaymentRequestData.parseAsync(data),
             responseTransformer: invoiceControllerUpdateInvoicePaymentRequestResponseTransformer,
-            responseValidator: async (data) => await zInvoiceControllerUpdateInvoicePaymentRequestResponse.parseAsync(data),
             url: '/v2/billing/invoice/{invoiceId}/payment-request',
             ...options,
             headers: {
@@ -299,11 +282,10 @@ export class Invoice {
      *
      * @deprecated
      */
-    public static invoiceControllerFinalizeInvoice<ThrowOnError extends boolean = false>(options: Options<InvoiceControllerFinalizeInvoiceData, ThrowOnError>) {
+    public static finalizeInvoice<ThrowOnError extends boolean = true>(options: Options<InvoiceControllerFinalizeInvoiceData, ThrowOnError>) {
         return (options.client ?? client).patch<InvoiceControllerFinalizeInvoiceResponses, InvoiceControllerFinalizeInvoiceErrors, ThrowOnError>({
             requestValidator: async (data) => await zInvoiceControllerFinalizeInvoiceData.parseAsync(data),
             responseTransformer: invoiceControllerFinalizeInvoiceResponseTransformer,
-            responseValidator: async (data) => await zInvoiceControllerFinalizeInvoiceResponse.parseAsync(data),
             url: '/v2/billing/invoice/{invoiceId}/finalize',
             ...options
         });
@@ -312,11 +294,10 @@ export class Invoice {
     /**
      * Update invoice general informations
      */
-    public static invoiceControllerUpdateInvoiceGeneralInformations<ThrowOnError extends boolean = false>(options: Options<InvoiceControllerUpdateInvoiceGeneralInformationsData, ThrowOnError>) {
+    public static updateInvoiceGeneralInformations<ThrowOnError extends boolean = true>(options: Options<InvoiceControllerUpdateInvoiceGeneralInformationsData, ThrowOnError>) {
         return (options.client ?? client).patch<InvoiceControllerUpdateInvoiceGeneralInformationsResponses, InvoiceControllerUpdateInvoiceGeneralInformationsErrors, ThrowOnError>({
             requestValidator: async (data) => await zInvoiceControllerUpdateInvoiceGeneralInformationsData.parseAsync(data),
             responseTransformer: invoiceControllerUpdateInvoiceGeneralInformationsResponseTransformer,
-            responseValidator: async (data) => await zInvoiceControllerUpdateInvoiceGeneralInformationsResponse.parseAsync(data),
             url: '/v2/billing/invoice/{invoiceId}/general-informations',
             ...options,
             headers: {
@@ -329,11 +310,10 @@ export class Invoice {
     /**
      * Update invoice locale
      */
-    public static invoiceControllerUpdateInvoiceLocale<ThrowOnError extends boolean = false>(options: Options<InvoiceControllerUpdateInvoiceLocaleData, ThrowOnError>) {
+    public static updateInvoiceLocale<ThrowOnError extends boolean = true>(options: Options<InvoiceControllerUpdateInvoiceLocaleData, ThrowOnError>) {
         return (options.client ?? client).put<InvoiceControllerUpdateInvoiceLocaleResponses, InvoiceControllerUpdateInvoiceLocaleErrors, ThrowOnError>({
             requestValidator: async (data) => await zInvoiceControllerUpdateInvoiceLocaleData.parseAsync(data),
             responseTransformer: invoiceControllerUpdateInvoiceLocaleResponseTransformer,
-            responseValidator: async (data) => await zInvoiceControllerUpdateInvoiceLocaleResponse.parseAsync(data),
             url: '/v2/billing/invoice/{invoiceId}/locale',
             ...options,
             headers: {
@@ -346,11 +326,10 @@ export class Invoice {
     /**
      * Update invoice currency
      */
-    public static invoiceControllerUpdateInvoiceCurrency<ThrowOnError extends boolean = false>(options: Options<InvoiceControllerUpdateInvoiceCurrencyData, ThrowOnError>) {
+    public static updateInvoiceCurrency<ThrowOnError extends boolean = true>(options: Options<InvoiceControllerUpdateInvoiceCurrencyData, ThrowOnError>) {
         return (options.client ?? client).put<InvoiceControllerUpdateInvoiceCurrencyResponses, InvoiceControllerUpdateInvoiceCurrencyErrors, ThrowOnError>({
             requestValidator: async (data) => await zInvoiceControllerUpdateInvoiceCurrencyData.parseAsync(data),
             responseTransformer: invoiceControllerUpdateInvoiceCurrencyResponseTransformer,
-            responseValidator: async (data) => await zInvoiceControllerUpdateInvoiceCurrencyResponse.parseAsync(data),
             url: '/v2/billing/invoice/{invoiceId}/currency',
             ...options,
             headers: {
@@ -367,11 +346,10 @@ export class Invoice {
      *
      * @deprecated
      */
-    public static invoiceControllerUpdateDisplaySettings<ThrowOnError extends boolean = false>(options: Options<InvoiceControllerUpdateDisplaySettingsData, ThrowOnError>) {
+    public static updateDisplaySettings<ThrowOnError extends boolean = true>(options: Options<InvoiceControllerUpdateDisplaySettingsData, ThrowOnError>) {
         return (options.client ?? client).patch<InvoiceControllerUpdateDisplaySettingsResponses, InvoiceControllerUpdateDisplaySettingsErrors, ThrowOnError>({
             requestValidator: async (data) => await zInvoiceControllerUpdateDisplaySettingsData.parseAsync(data),
             responseTransformer: invoiceControllerUpdateDisplaySettingsResponseTransformer,
-            responseValidator: async (data) => await zInvoiceControllerUpdateDisplaySettingsResponse.parseAsync(data),
             url: '/v2/billing/invoice/{invoiceId}/display-settings',
             ...options,
             headers: {
@@ -388,11 +366,10 @@ export class Invoice {
      *
      * @deprecated
      */
-    public static invoiceControllerUpdateInvoiceBankInformation<ThrowOnError extends boolean = false>(options: Options<InvoiceControllerUpdateInvoiceBankInformationData, ThrowOnError>) {
+    public static updateInvoiceBankInformation<ThrowOnError extends boolean = true>(options: Options<InvoiceControllerUpdateInvoiceBankInformationData, ThrowOnError>) {
         return (options.client ?? client).patch<InvoiceControllerUpdateInvoiceBankInformationResponses, InvoiceControllerUpdateInvoiceBankInformationErrors, ThrowOnError>({
             requestValidator: async (data) => await zInvoiceControllerUpdateInvoiceBankInformationData.parseAsync(data),
             responseTransformer: invoiceControllerUpdateInvoiceBankInformationResponseTransformer,
-            responseValidator: async (data) => await zInvoiceControllerUpdateInvoiceBankInformationResponse.parseAsync(data),
             url: '/v2/billing/invoice/{invoiceId}/bank-information',
             ...options,
             headers: {
@@ -405,11 +382,10 @@ export class Invoice {
     /**
      * Create invoice frequency
      */
-    public static invoiceControllerDeleteInvoiceFrequency<ThrowOnError extends boolean = false>(options: Options<InvoiceControllerDeleteInvoiceFrequencyData, ThrowOnError>) {
+    public static deleteInvoiceFrequency<ThrowOnError extends boolean = true>(options: Options<InvoiceControllerDeleteInvoiceFrequencyData, ThrowOnError>) {
         return (options.client ?? client).delete<InvoiceControllerDeleteInvoiceFrequencyResponses, InvoiceControllerDeleteInvoiceFrequencyErrors, ThrowOnError>({
             requestValidator: async (data) => await zInvoiceControllerDeleteInvoiceFrequencyData.parseAsync(data),
             responseTransformer: invoiceControllerDeleteInvoiceFrequencyResponseTransformer,
-            responseValidator: async (data) => await zInvoiceControllerDeleteInvoiceFrequencyResponse.parseAsync(data),
             url: '/v2/billing/invoice/{invoiceId}/frequency',
             ...options
         });
@@ -418,11 +394,10 @@ export class Invoice {
     /**
      * Create invoice frequency
      */
-    public static invoiceControllerCreateInvoiceFrequency<ThrowOnError extends boolean = false>(options: Options<InvoiceControllerCreateInvoiceFrequencyData, ThrowOnError>) {
+    public static createInvoiceFrequency<ThrowOnError extends boolean = true>(options: Options<InvoiceControllerCreateInvoiceFrequencyData, ThrowOnError>) {
         return (options.client ?? client).post<InvoiceControllerCreateInvoiceFrequencyResponses, InvoiceControllerCreateInvoiceFrequencyErrors, ThrowOnError>({
             requestValidator: async (data) => await zInvoiceControllerCreateInvoiceFrequencyData.parseAsync(data),
             responseTransformer: invoiceControllerCreateInvoiceFrequencyResponseTransformer,
-            responseValidator: async (data) => await zInvoiceControllerCreateInvoiceFrequencyResponse.parseAsync(data),
             url: '/v2/billing/invoice/{invoiceId}/frequency',
             ...options,
             headers: {
@@ -435,11 +410,10 @@ export class Invoice {
     /**
      * Update invoice frequency
      */
-    public static invoiceControllerUpdateInvoiceFrequency<ThrowOnError extends boolean = false>(options: Options<InvoiceControllerUpdateInvoiceFrequencyData, ThrowOnError>) {
+    public static updateInvoiceFrequency<ThrowOnError extends boolean = true>(options: Options<InvoiceControllerUpdateInvoiceFrequencyData, ThrowOnError>) {
         return (options.client ?? client).put<InvoiceControllerUpdateInvoiceFrequencyResponses, InvoiceControllerUpdateInvoiceFrequencyErrors, ThrowOnError>({
             requestValidator: async (data) => await zInvoiceControllerUpdateInvoiceFrequencyData.parseAsync(data),
             responseTransformer: invoiceControllerUpdateInvoiceFrequencyResponseTransformer,
-            responseValidator: async (data) => await zInvoiceControllerUpdateInvoiceFrequencyResponse.parseAsync(data),
             url: '/v2/billing/invoice/{invoiceId}/frequency',
             ...options,
             headers: {
@@ -452,11 +426,10 @@ export class Invoice {
     /**
      * Create asset from invoice
      */
-    public static invoiceControllerCreateAsset<ThrowOnError extends boolean = false>(options: Options<InvoiceControllerCreateAssetData, ThrowOnError>) {
+    public static createAsset<ThrowOnError extends boolean = true>(options: Options<InvoiceControllerCreateAssetData, ThrowOnError>) {
         return (options.client ?? client).post<InvoiceControllerCreateAssetResponses, InvoiceControllerCreateAssetErrors, ThrowOnError>({
             requestValidator: async (data) => await zInvoiceControllerCreateAssetData.parseAsync(data),
             responseTransformer: invoiceControllerCreateAssetResponseTransformer,
-            responseValidator: async (data) => await zInvoiceControllerCreateAssetResponse.parseAsync(data),
             url: '/v2/billing/invoice/{invoiceId}/asset',
             ...options
         });
@@ -467,10 +440,9 @@ export class Billing {
     /**
      * Download a billing document
      */
-    public static billingControllerDownloadPdf<ThrowOnError extends boolean = false>(options: Options<BillingControllerDownloadPdfData, ThrowOnError>) {
+    public static downloadPdf<ThrowOnError extends boolean = true>(options: Options<BillingControllerDownloadPdfData, ThrowOnError>) {
         return (options.client ?? client).get<BillingControllerDownloadPdfResponses, BillingControllerDownloadPdfErrors, ThrowOnError>({
             requestValidator: async (data) => await zBillingControllerDownloadPdfData.parseAsync(data),
-            responseValidator: async (data) => await zBillingControllerDownloadPdfResponse.parseAsync(data),
             url: '/v2/billing/{billingId}/download',
             ...options
         });
@@ -479,10 +451,9 @@ export class Billing {
     /**
      * Archive a document
      */
-    public static billingControllerArchiveBillingDocument<ThrowOnError extends boolean = false>(options: Options<BillingControllerArchiveBillingDocumentData, ThrowOnError>) {
+    public static archiveBillingDocument<ThrowOnError extends boolean = true>(options: Options<BillingControllerArchiveBillingDocumentData, ThrowOnError>) {
         return (options.client ?? client).patch<BillingControllerArchiveBillingDocumentResponses, BillingControllerArchiveBillingDocumentErrors, ThrowOnError>({
             requestValidator: async (data) => await zBillingControllerArchiveBillingDocumentData.parseAsync(data),
-            responseValidator: async (data) => await zBillingControllerArchiveBillingDocumentResponse.parseAsync(data),
             url: '/v2/billing/{documentId}/archive',
             ...options
         });
@@ -491,10 +462,9 @@ export class Billing {
     /**
      * Unarchive a document
      */
-    public static billingControllerUnarchiveBillingDocument<ThrowOnError extends boolean = false>(options: Options<BillingControllerUnarchiveBillingDocumentData, ThrowOnError>) {
+    public static unarchiveBillingDocument<ThrowOnError extends boolean = true>(options: Options<BillingControllerUnarchiveBillingDocumentData, ThrowOnError>) {
         return (options.client ?? client).patch<BillingControllerUnarchiveBillingDocumentResponses, BillingControllerUnarchiveBillingDocumentErrors, ThrowOnError>({
             requestValidator: async (data) => await zBillingControllerUnarchiveBillingDocumentData.parseAsync(data),
-            responseValidator: async (data) => await zBillingControllerUnarchiveBillingDocumentResponse.parseAsync(data),
             url: '/v2/billing/{documentId}/unarchive',
             ...options
         });
@@ -503,10 +473,9 @@ export class Billing {
     /**
      * Update title of a document
      */
-    public static billingControllerUpdateTitle<ThrowOnError extends boolean = false>(options: Options<BillingControllerUpdateTitleData, ThrowOnError>) {
+    public static updateTitle<ThrowOnError extends boolean = true>(options: Options<BillingControllerUpdateTitleData, ThrowOnError>) {
         return (options.client ?? client).patch<BillingControllerUpdateTitleResponses, BillingControllerUpdateTitleErrors, ThrowOnError>({
             requestValidator: async (data) => await zBillingControllerUpdateTitleData.parseAsync(data),
-            responseValidator: async (data) => await zBillingControllerUpdateTitleResponse.parseAsync(data),
             url: '/v2/billing/{documentId}/title',
             ...options,
             headers: {
@@ -519,10 +488,9 @@ export class Billing {
     /**
      * Definitely delete a document
      */
-    public static billingControllerDeleteBillingDocument<ThrowOnError extends boolean = false>(options: Options<BillingControllerDeleteBillingDocumentData, ThrowOnError>) {
+    public static deleteBillingDocument<ThrowOnError extends boolean = true>(options: Options<BillingControllerDeleteBillingDocumentData, ThrowOnError>) {
         return (options.client ?? client).delete<BillingControllerDeleteBillingDocumentResponses, BillingControllerDeleteBillingDocumentErrors, ThrowOnError>({
             requestValidator: async (data) => await zBillingControllerDeleteBillingDocumentData.parseAsync(data),
-            responseValidator: async (data) => await zBillingControllerDeleteBillingDocumentResponse.parseAsync(data),
             url: '/v2/billing/{documentId}',
             ...options
         });
@@ -531,19 +499,17 @@ export class Billing {
     /**
      * Get a billing document by ID (any type)
      */
-    public static billingControllerGetBillingById<ThrowOnError extends boolean = false>(options: Options<BillingControllerGetBillingByIdData, ThrowOnError>) {
+    public static getBillingById<ThrowOnError extends boolean = true>(options: Options<BillingControllerGetBillingByIdData, ThrowOnError>) {
         return (options.client ?? client).get<BillingControllerGetBillingByIdResponses, BillingControllerGetBillingByIdErrors, ThrowOnError>({
             requestValidator: async (data) => await zBillingControllerGetBillingByIdData.parseAsync(data),
-            responseValidator: async (data) => await zBillingControllerGetBillingByIdResponse.parseAsync(data),
             url: '/v2/billing/{documentId}',
             ...options
         });
     }
     
-    public static billingControllerSendTestEmailSignature<ThrowOnError extends boolean = false>(options: Options<BillingControllerSendTestEmailSignatureData, ThrowOnError>) {
+    public static sendTestEmailSignature<ThrowOnError extends boolean = true>(options: Options<BillingControllerSendTestEmailSignatureData, ThrowOnError>) {
         return (options.client ?? client).post<BillingControllerSendTestEmailSignatureResponses, BillingControllerSendTestEmailSignatureErrors, ThrowOnError>({
             requestValidator: async (data) => await zBillingControllerSendTestEmailSignatureData.parseAsync(data),
-            responseValidator: async (data) => await zBillingControllerSendTestEmailSignatureResponse.parseAsync(data),
             url: '/v2/billing/send-test-signature',
             ...options,
             headers: {
@@ -556,10 +522,9 @@ export class Billing {
     /**
      * Render a billing email
      */
-    public static billingControllerRenderEmail<ThrowOnError extends boolean = false>(options: Options<BillingControllerRenderEmailData, ThrowOnError>) {
+    public static renderEmail<ThrowOnError extends boolean = true>(options: Options<BillingControllerRenderEmailData, ThrowOnError>) {
         return (options.client ?? client).get<BillingControllerRenderEmailResponses, BillingControllerRenderEmailErrors, ThrowOnError>({
             requestValidator: async (data) => await zBillingControllerRenderEmailData.parseAsync(data),
-            responseValidator: async (data) => await zBillingControllerRenderEmailResponse.parseAsync(data),
             url: '/v2/billing/{billingId}/email/{emailType}/render',
             ...options
         });
@@ -568,10 +533,9 @@ export class Billing {
     /**
      * Send an invoice email test
      */
-    public static billingControllerSendEmailTest<ThrowOnError extends boolean = false>(options: Options<BillingControllerSendEmailTestData, ThrowOnError>) {
+    public static sendEmailTest<ThrowOnError extends boolean = true>(options: Options<BillingControllerSendEmailTestData, ThrowOnError>) {
         return (options.client ?? client).post<BillingControllerSendEmailTestResponses, BillingControllerSendEmailTestErrors, ThrowOnError>({
             requestValidator: async (data) => await zBillingControllerSendEmailTestData.parseAsync(data),
-            responseValidator: async (data) => await zBillingControllerSendEmailTestResponse.parseAsync(data),
             url: '/v2/billing/{billingId}/email/{emailType}/test',
             ...options
         });
@@ -580,10 +544,9 @@ export class Billing {
     /**
      * Send billing document by email
      */
-    public static billingControllerSendByEmail<ThrowOnError extends boolean = false>(options: Options<BillingControllerSendByEmailData, ThrowOnError>) {
+    public static sendByEmail<ThrowOnError extends boolean = true>(options: Options<BillingControllerSendByEmailData, ThrowOnError>) {
         return (options.client ?? client).post<BillingControllerSendByEmailResponses, BillingControllerSendByEmailErrors, ThrowOnError>({
             requestValidator: async (data) => await zBillingControllerSendByEmailData.parseAsync(data),
-            responseValidator: async (data) => await zBillingControllerSendByEmailResponse.parseAsync(data),
             url: '/v2/billing/{billingId}/send-by-email',
             ...options,
             headers: {
@@ -596,10 +559,9 @@ export class Billing {
     /**
      * Update document bank information
      */
-    public static billingControllerUpdateBankInformation<ThrowOnError extends boolean = false>(options: Options<BillingControllerUpdateBankInformationData, ThrowOnError>) {
+    public static updateBankInformation<ThrowOnError extends boolean = true>(options: Options<BillingControllerUpdateBankInformationData, ThrowOnError>) {
         return (options.client ?? client).patch<BillingControllerUpdateBankInformationResponses, BillingControllerUpdateBankInformationErrors, ThrowOnError>({
             requestValidator: async (data) => await zBillingControllerUpdateBankInformationData.parseAsync(data),
-            responseValidator: async (data) => await zBillingControllerUpdateBankInformationResponse.parseAsync(data),
             url: '/v2/billing/{billingId}/bank-information',
             ...options,
             headers: {
@@ -612,10 +574,9 @@ export class Billing {
     /**
      * Update document delivery address
      */
-    public static billingControllerUpdateBillingDeliveryAddress<ThrowOnError extends boolean = false>(options: Options<BillingControllerUpdateBillingDeliveryAddressData, ThrowOnError>) {
+    public static updateBillingDeliveryAddress<ThrowOnError extends boolean = true>(options: Options<BillingControllerUpdateBillingDeliveryAddressData, ThrowOnError>) {
         return (options.client ?? client).patch<BillingControllerUpdateBillingDeliveryAddressResponses, BillingControllerUpdateBillingDeliveryAddressErrors, ThrowOnError>({
             requestValidator: async (data) => await zBillingControllerUpdateBillingDeliveryAddressData.parseAsync(data),
-            responseValidator: async (data) => await zBillingControllerUpdateBillingDeliveryAddressResponse.parseAsync(data),
             url: '/v2/billing/{billingId}/delivery-address',
             ...options,
             headers: {
@@ -628,10 +589,9 @@ export class Billing {
     /**
      * Finalize a billing document
      */
-    public static billingControllerFinalize<ThrowOnError extends boolean = false>(options: Options<BillingControllerFinalizeData, ThrowOnError>) {
+    public static finalize<ThrowOnError extends boolean = true>(options: Options<BillingControllerFinalizeData, ThrowOnError>) {
         return (options.client ?? client).patch<BillingControllerFinalizeResponses, BillingControllerFinalizeErrors, ThrowOnError>({
             requestValidator: async (data) => await zBillingControllerFinalizeData.parseAsync(data),
-            responseValidator: async (data) => await zBillingControllerFinalizeResponse.parseAsync(data),
             url: '/v2/billing/{billingId}/finalize',
             ...options
         });
@@ -640,10 +600,9 @@ export class Billing {
     /**
      * Update billing lines
      */
-    public static billingControllerUpdateLines<ThrowOnError extends boolean = false>(options: Options<BillingControllerUpdateLinesData, ThrowOnError>) {
+    public static updateLines<ThrowOnError extends boolean = true>(options: Options<BillingControllerUpdateLinesData, ThrowOnError>) {
         return (options.client ?? client).patch<BillingControllerUpdateLinesResponses, BillingControllerUpdateLinesErrors, ThrowOnError>({
             requestValidator: async (data) => await zBillingControllerUpdateLinesData.parseAsync(data),
-            responseValidator: async (data) => await zBillingControllerUpdateLinesResponse.parseAsync(data),
             url: '/v2/billing/{billingId}/lines',
             ...options,
             headers: {
@@ -656,11 +615,10 @@ export class Billing {
     /**
      * Migrate invoice lines for SAP compliance
      */
-    public static billingControllerMigrateSapProducts<ThrowOnError extends boolean = false>(options: Options<BillingControllerMigrateSapProductsData, ThrowOnError>) {
+    public static migrateSapProducts<ThrowOnError extends boolean = true>(options: Options<BillingControllerMigrateSapProductsData, ThrowOnError>) {
         return (options.client ?? client).patch<BillingControllerMigrateSapProductsResponses, BillingControllerMigrateSapProductsErrors, ThrowOnError>({
             requestValidator: async (data) => await zBillingControllerMigrateSapProductsData.parseAsync(data),
             responseTransformer: billingControllerMigrateSapProductsResponseTransformer,
-            responseValidator: async (data) => await zBillingControllerMigrateSapProductsResponse.parseAsync(data),
             url: '/v2/billing/{billingId}/sap-products',
             ...options,
             headers: {
@@ -673,10 +631,9 @@ export class Billing {
     /**
      * Toggle includeDiscountDisbursement option on billing (no parent allowed)
      */
-    public static billingControllerToggleIncludeDiscountDisbursement<ThrowOnError extends boolean = false>(options: Options<BillingControllerToggleIncludeDiscountDisbursementData, ThrowOnError>) {
+    public static toggleIncludeDiscountDisbursement<ThrowOnError extends boolean = true>(options: Options<BillingControllerToggleIncludeDiscountDisbursementData, ThrowOnError>) {
         return (options.client ?? client).patch<BillingControllerToggleIncludeDiscountDisbursementResponses, unknown, ThrowOnError>({
             requestValidator: async (data) => await zBillingControllerToggleIncludeDiscountDisbursementData.parseAsync(data),
-            responseValidator: async (data) => await zBillingControllerToggleIncludeDiscountDisbursementResponse.parseAsync(data),
             url: '/v2/billing/{billingId}/include-discount-disbursement',
             ...options,
             headers: {
@@ -689,10 +646,9 @@ export class Billing {
     /**
      * Update billing display settings
      */
-    public static billingControllerUpdateDisplaySettings<ThrowOnError extends boolean = false>(options: Options<BillingControllerUpdateDisplaySettingsData, ThrowOnError>) {
+    public static updateDisplaySettings<ThrowOnError extends boolean = true>(options: Options<BillingControllerUpdateDisplaySettingsData, ThrowOnError>) {
         return (options.client ?? client).patch<BillingControllerUpdateDisplaySettingsResponses, BillingControllerUpdateDisplaySettingsErrors, ThrowOnError>({
             requestValidator: async (data) => await zBillingControllerUpdateDisplaySettingsData.parseAsync(data),
-            responseValidator: async (data) => await zBillingControllerUpdateDisplaySettingsResponse.parseAsync(data),
             url: '/v2/billing/{billingId}/display-settings',
             ...options,
             headers: {
@@ -705,10 +661,9 @@ export class Billing {
     /**
      * Retrieve payment account
      */
-    public static billingControllerRetrievePaymentAccount<ThrowOnError extends boolean = false>(options?: Options<BillingControllerRetrievePaymentAccountData, ThrowOnError>) {
+    public static retrievePaymentAccount<ThrowOnError extends boolean = true>(options?: Options<BillingControllerRetrievePaymentAccountData, ThrowOnError>) {
         return (options?.client ?? client).get<BillingControllerRetrievePaymentAccountResponses, BillingControllerRetrievePaymentAccountErrors, ThrowOnError>({
             requestValidator: async (data) => await zBillingControllerRetrievePaymentAccountData.parseAsync(data),
-            responseValidator: async (data) => await zBillingControllerRetrievePaymentAccountResponse.parseAsync(data),
             url: '/v2/billing/payment-account',
             ...options
         });
@@ -719,11 +674,10 @@ export class Advance {
     /**
      * Update advance general informations
      */
-    public static advanceControllerUpdateGeneralInformations<ThrowOnError extends boolean = false>(options: Options<AdvanceControllerUpdateGeneralInformationsData, ThrowOnError>) {
+    public static updateGeneralInformations<ThrowOnError extends boolean = true>(options: Options<AdvanceControllerUpdateGeneralInformationsData, ThrowOnError>) {
         return (options.client ?? client).patch<AdvanceControllerUpdateGeneralInformationsResponses, AdvanceControllerUpdateGeneralInformationsErrors, ThrowOnError>({
             requestValidator: async (data) => await zAdvanceControllerUpdateGeneralInformationsData.parseAsync(data),
             responseTransformer: advanceControllerUpdateGeneralInformationsResponseTransformer,
-            responseValidator: async (data) => await zAdvanceControllerUpdateGeneralInformationsResponse.parseAsync(data),
             url: '/v2/billing/advance/{advanceId}/general-informations',
             ...options,
             headers: {
@@ -736,11 +690,10 @@ export class Advance {
     /**
      * Create asset from advance
      */
-    public static advanceControllerCreateAsset<ThrowOnError extends boolean = false>(options: Options<AdvanceControllerCreateAssetData, ThrowOnError>) {
+    public static createAsset<ThrowOnError extends boolean = true>(options: Options<AdvanceControllerCreateAssetData, ThrowOnError>) {
         return (options.client ?? client).post<AdvanceControllerCreateAssetResponses, AdvanceControllerCreateAssetErrors, ThrowOnError>({
             requestValidator: async (data) => await zAdvanceControllerCreateAssetData.parseAsync(data),
             responseTransformer: advanceControllerCreateAssetResponseTransformer,
-            responseValidator: async (data) => await zAdvanceControllerCreateAssetResponse.parseAsync(data),
             url: '/v2/billing/advance/{advanceId}/asset',
             ...options
         });
@@ -751,11 +704,10 @@ export class Asset {
     /**
      * Get an asset by ID
      */
-    public static assetControllerGetAsset<ThrowOnError extends boolean = false>(options: Options<AssetControllerGetAssetData, ThrowOnError>) {
+    public static getAsset<ThrowOnError extends boolean = true>(options: Options<AssetControllerGetAssetData, ThrowOnError>) {
         return (options.client ?? client).get<AssetControllerGetAssetResponses, AssetControllerGetAssetErrors, ThrowOnError>({
             requestValidator: async (data) => await zAssetControllerGetAssetData.parseAsync(data),
             responseTransformer: assetControllerGetAssetResponseTransformer,
-            responseValidator: async (data) => await zAssetControllerGetAssetResponse.parseAsync(data),
             url: '/v2/billing/asset/{assetId}',
             ...options
         });
@@ -764,11 +716,10 @@ export class Asset {
     /**
      * Update asset general informations
      */
-    public static assetControllerUpdateGeneralInformations<ThrowOnError extends boolean = false>(options: Options<AssetControllerUpdateGeneralInformationsData, ThrowOnError>) {
+    public static updateGeneralInformations<ThrowOnError extends boolean = true>(options: Options<AssetControllerUpdateGeneralInformationsData, ThrowOnError>) {
         return (options.client ?? client).patch<AssetControllerUpdateGeneralInformationsResponses, AssetControllerUpdateGeneralInformationsErrors, ThrowOnError>({
             requestValidator: async (data) => await zAssetControllerUpdateGeneralInformationsData.parseAsync(data),
             responseTransformer: assetControllerUpdateGeneralInformationsResponseTransformer,
-            responseValidator: async (data) => await zAssetControllerUpdateGeneralInformationsResponse.parseAsync(data),
             url: '/v2/billing/asset/{assetId}/general-informations',
             ...options,
             headers: {
@@ -781,11 +732,10 @@ export class Asset {
     /**
      * Update asset locale
      */
-    public static assetControllerUpdateLocale<ThrowOnError extends boolean = false>(options: Options<AssetControllerUpdateLocaleData, ThrowOnError>) {
+    public static updateLocale<ThrowOnError extends boolean = true>(options: Options<AssetControllerUpdateLocaleData, ThrowOnError>) {
         return (options.client ?? client).put<AssetControllerUpdateLocaleResponses, AssetControllerUpdateLocaleErrors, ThrowOnError>({
             requestValidator: async (data) => await zAssetControllerUpdateLocaleData.parseAsync(data),
             responseTransformer: assetControllerUpdateLocaleResponseTransformer,
-            responseValidator: async (data) => await zAssetControllerUpdateLocaleResponse.parseAsync(data),
             url: '/v2/billing/asset/{assetId}/locale',
             ...options,
             headers: {
@@ -798,11 +748,10 @@ export class Asset {
     /**
      * Update asset currency
      */
-    public static assetControllerUpdateCurrency<ThrowOnError extends boolean = false>(options: Options<AssetControllerUpdateCurrencyData, ThrowOnError>) {
+    public static updateCurrency<ThrowOnError extends boolean = true>(options: Options<AssetControllerUpdateCurrencyData, ThrowOnError>) {
         return (options.client ?? client).put<AssetControllerUpdateCurrencyResponses, AssetControllerUpdateCurrencyErrors, ThrowOnError>({
             requestValidator: async (data) => await zAssetControllerUpdateCurrencyData.parseAsync(data),
             responseTransformer: assetControllerUpdateCurrencyResponseTransformer,
-            responseValidator: async (data) => await zAssetControllerUpdateCurrencyResponse.parseAsync(data),
             url: '/v2/billing/asset/{assetId}/currency',
             ...options,
             headers: {
@@ -817,10 +766,9 @@ export class CustomerPortal {
     /**
      * Retrieve customer portal billings and metadata
      */
-    public static customerPortalControllerGetPayments<ThrowOnError extends boolean = false>(options: Options<CustomerPortalControllerGetPaymentsData, ThrowOnError>) {
+    public static getPayments<ThrowOnError extends boolean = true>(options: Options<CustomerPortalControllerGetPaymentsData, ThrowOnError>) {
         return (options.client ?? client).get<CustomerPortalControllerGetPaymentsResponses, unknown, ThrowOnError>({
             requestValidator: async (data) => await zCustomerPortalControllerGetPaymentsData.parseAsync(data),
-            responseValidator: async (data) => await zCustomerPortalControllerGetPaymentsResponse.parseAsync(data),
             security: [{ scheme: 'bearer', type: 'http' }],
             url: '/v2/customer-portal/payments',
             ...options
@@ -832,10 +780,9 @@ export class Contact {
     /**
      * Create a new contact
      */
-    public static contactControllerCreateContact<ThrowOnError extends boolean = false>(options: Options<ContactControllerCreateContactData, ThrowOnError>) {
+    public static createContact<ThrowOnError extends boolean = true>(options: Options<ContactControllerCreateContactData, ThrowOnError>) {
         return (options.client ?? client).post<ContactControllerCreateContactResponses, ContactControllerCreateContactErrors, ThrowOnError>({
             requestValidator: async (data) => await zContactControllerCreateContactData.parseAsync(data),
-            responseValidator: async (data) => await zContactControllerCreateContactResponse.parseAsync(data),
             url: '/contact',
             ...options,
             headers: {
@@ -848,7 +795,7 @@ export class Contact {
     /**
      * Delete a contact
      */
-    public static contactControllerDeleteContact<ThrowOnError extends boolean = false>(options: Options<ContactControllerDeleteContactData, ThrowOnError>) {
+    public static deleteContact<ThrowOnError extends boolean = true>(options: Options<ContactControllerDeleteContactData, ThrowOnError>) {
         return (options.client ?? client).delete<ContactControllerDeleteContactResponses, ContactControllerDeleteContactErrors, ThrowOnError>({
             requestValidator: async (data) => await zContactControllerDeleteContactData.parseAsync(data),
             url: '/contact/{id}',
@@ -859,10 +806,9 @@ export class Contact {
     /**
      * Get a contact by ID
      */
-    public static contactControllerGetContact<ThrowOnError extends boolean = false>(options: Options<ContactControllerGetContactData, ThrowOnError>) {
+    public static getContact<ThrowOnError extends boolean = true>(options: Options<ContactControllerGetContactData, ThrowOnError>) {
         return (options.client ?? client).get<ContactControllerGetContactResponses, ContactControllerGetContactErrors, ThrowOnError>({
             requestValidator: async (data) => await zContactControllerGetContactData.parseAsync(data),
-            responseValidator: async (data) => await zContactControllerGetContactResponse.parseAsync(data),
             url: '/contact/{id}',
             ...options
         });
@@ -871,10 +817,9 @@ export class Contact {
     /**
      * Update a contact
      */
-    public static contactControllerUpdateContact<ThrowOnError extends boolean = false>(options: Options<ContactControllerUpdateContactData, ThrowOnError>) {
+    public static updateContact<ThrowOnError extends boolean = true>(options: Options<ContactControllerUpdateContactData, ThrowOnError>) {
         return (options.client ?? client).put<ContactControllerUpdateContactResponses, ContactControllerUpdateContactErrors, ThrowOnError>({
             requestValidator: async (data) => await zContactControllerUpdateContactData.parseAsync(data),
-            responseValidator: async (data) => await zContactControllerUpdateContactResponse.parseAsync(data),
             url: '/contact/{id}',
             ...options,
             headers: {
@@ -887,10 +832,9 @@ export class Contact {
     /**
      * Get a contact by legacy ID
      */
-    public static contactControllerGetContactByLegacyId<ThrowOnError extends boolean = false>(options: Options<ContactControllerGetContactByLegacyIdData, ThrowOnError>) {
+    public static getContactByLegacyId<ThrowOnError extends boolean = true>(options: Options<ContactControllerGetContactByLegacyIdData, ThrowOnError>) {
         return (options.client ?? client).get<ContactControllerGetContactByLegacyIdResponses, ContactControllerGetContactByLegacyIdErrors, ThrowOnError>({
             requestValidator: async (data) => await zContactControllerGetContactByLegacyIdData.parseAsync(data),
-            responseValidator: async (data) => await zContactControllerGetContactByLegacyIdResponse.parseAsync(data),
             url: '/contact/by-legacy/{legacyId}',
             ...options
         });
@@ -901,10 +845,9 @@ export class Contact {
      *
      * Get a paginated list of contacts for the current company
      */
-    public static contactsControllerRetrieveContacts<ThrowOnError extends boolean = false>(options?: Options<ContactsControllerRetrieveContactsData, ThrowOnError>) {
+    public static retrieveContacts<ThrowOnError extends boolean = true>(options?: Options<ContactsControllerRetrieveContactsData, ThrowOnError>) {
         return (options?.client ?? client).get<ContactsControllerRetrieveContactsResponses, ContactsControllerRetrieveContactsErrors, ThrowOnError>({
             requestValidator: async (data) => await zContactsControllerRetrieveContactsData.parseAsync(data),
-            responseValidator: async (data) => await zContactsControllerRetrieveContactsResponse.parseAsync(data),
             url: '/contacts',
             ...options
         });
@@ -912,10 +855,9 @@ export class Contact {
 }
 
 export class Organization {
-    public static organizationControllerCreateOrganization<ThrowOnError extends boolean = false>(options: Options<OrganizationControllerCreateOrganizationData, ThrowOnError>) {
+    public static createOrganization<ThrowOnError extends boolean = true>(options: Options<OrganizationControllerCreateOrganizationData, ThrowOnError>) {
         return (options.client ?? client).post<OrganizationControllerCreateOrganizationResponses, unknown, ThrowOnError>({
             requestValidator: async (data) => await zOrganizationControllerCreateOrganizationData.parseAsync(data),
-            responseValidator: async (data) => await zOrganizationControllerCreateOrganizationResponse.parseAsync(data),
             url: '/organization',
             ...options,
             headers: {
@@ -925,19 +867,17 @@ export class Organization {
         });
     }
     
-    public static organizationControllerRetrieveOrganization<ThrowOnError extends boolean = false>(options: Options<OrganizationControllerRetrieveOrganizationData, ThrowOnError>) {
+    public static retrieveOrganization<ThrowOnError extends boolean = true>(options: Options<OrganizationControllerRetrieveOrganizationData, ThrowOnError>) {
         return (options.client ?? client).get<OrganizationControllerRetrieveOrganizationResponses, unknown, ThrowOnError>({
             requestValidator: async (data) => await zOrganizationControllerRetrieveOrganizationData.parseAsync(data),
-            responseValidator: async (data) => await zOrganizationControllerRetrieveOrganizationResponse.parseAsync(data),
             url: '/organization/{id}',
             ...options
         });
     }
     
-    public static organizationControllerUpdateOrganization<ThrowOnError extends boolean = false>(options: Options<OrganizationControllerUpdateOrganizationData, ThrowOnError>) {
+    public static updateOrganization<ThrowOnError extends boolean = true>(options: Options<OrganizationControllerUpdateOrganizationData, ThrowOnError>) {
         return (options.client ?? client).put<OrganizationControllerUpdateOrganizationResponses, unknown, ThrowOnError>({
             requestValidator: async (data) => await zOrganizationControllerUpdateOrganizationData.parseAsync(data),
-            responseValidator: async (data) => await zOrganizationControllerUpdateOrganizationResponse.parseAsync(data),
             url: '/organization/{id}',
             ...options,
             headers: {
@@ -947,19 +887,17 @@ export class Organization {
         });
     }
     
-    public static organizationControllerRetrieveOrganizationContacts<ThrowOnError extends boolean = false>(options: Options<OrganizationControllerRetrieveOrganizationContactsData, ThrowOnError>) {
+    public static retrieveOrganizationContacts<ThrowOnError extends boolean = true>(options: Options<OrganizationControllerRetrieveOrganizationContactsData, ThrowOnError>) {
         return (options.client ?? client).get<OrganizationControllerRetrieveOrganizationContactsResponses, unknown, ThrowOnError>({
             requestValidator: async (data) => await zOrganizationControllerRetrieveOrganizationContactsData.parseAsync(data),
-            responseValidator: async (data) => await zOrganizationControllerRetrieveOrganizationContactsResponse.parseAsync(data),
             url: '/organization/{id}/contacts',
             ...options
         });
     }
     
-    public static organizationControllerCreateOrganizationContact<ThrowOnError extends boolean = false>(options: Options<OrganizationControllerCreateOrganizationContactData, ThrowOnError>) {
+    public static createOrganizationContact<ThrowOnError extends boolean = true>(options: Options<OrganizationControllerCreateOrganizationContactData, ThrowOnError>) {
         return (options.client ?? client).post<OrganizationControllerCreateOrganizationContactResponses, unknown, ThrowOnError>({
             requestValidator: async (data) => await zOrganizationControllerCreateOrganizationContactData.parseAsync(data),
-            responseValidator: async (data) => await zOrganizationControllerCreateOrganizationContactResponse.parseAsync(data),
             url: '/organization/{id}/contact',
             ...options,
             headers: {
@@ -969,10 +907,9 @@ export class Organization {
         });
     }
     
-    public static organizationControllerUpdateOrganizationContact<ThrowOnError extends boolean = false>(options: Options<OrganizationControllerUpdateOrganizationContactData, ThrowOnError>) {
+    public static updateOrganizationContact<ThrowOnError extends boolean = true>(options: Options<OrganizationControllerUpdateOrganizationContactData, ThrowOnError>) {
         return (options.client ?? client).put<OrganizationControllerUpdateOrganizationContactResponses, unknown, ThrowOnError>({
             requestValidator: async (data) => await zOrganizationControllerUpdateOrganizationContactData.parseAsync(data),
-            responseValidator: async (data) => await zOrganizationControllerUpdateOrganizationContactResponse.parseAsync(data),
             url: '/organization/contact/{id}',
             ...options,
             headers: {
@@ -982,7 +919,7 @@ export class Organization {
         });
     }
     
-    public static organizationControllerDeleteOrganization<ThrowOnError extends boolean = false>(options: Options<OrganizationControllerDeleteOrganizationData, ThrowOnError>) {
+    public static deleteOrganization<ThrowOnError extends boolean = true>(options: Options<OrganizationControllerDeleteOrganizationData, ThrowOnError>) {
         return (options.client ?? client).delete<OrganizationControllerDeleteOrganizationResponses, unknown, ThrowOnError>({
             requestValidator: async (data) => await zOrganizationControllerDeleteOrganizationData.parseAsync(data),
             url: '/organization/{organizationId}',
@@ -990,7 +927,7 @@ export class Organization {
         });
     }
     
-    public static organizationControllerSetDefaultContact<ThrowOnError extends boolean = false>(options: Options<OrganizationControllerSetDefaultContactData, ThrowOnError>) {
+    public static setDefaultContact<ThrowOnError extends boolean = true>(options: Options<OrganizationControllerSetDefaultContactData, ThrowOnError>) {
         return (options.client ?? client).patch<OrganizationControllerSetDefaultContactResponses, unknown, ThrowOnError>({
             requestValidator: async (data) => await zOrganizationControllerSetDefaultContactData.parseAsync(data),
             url: '/organization/{organizationId}/default-contact',
@@ -1002,10 +939,9 @@ export class Organization {
         });
     }
     
-    public static organizationsControllerRetrieveOrganizations<ThrowOnError extends boolean = false>(options: Options<OrganizationsControllerRetrieveOrganizationsData, ThrowOnError>) {
+    public static retrieveOrganizations<ThrowOnError extends boolean = true>(options: Options<OrganizationsControllerRetrieveOrganizationsData, ThrowOnError>) {
         return (options.client ?? client).get<OrganizationsControllerRetrieveOrganizationsResponses, unknown, ThrowOnError>({
             requestValidator: async (data) => await zOrganizationsControllerRetrieveOrganizationsData.parseAsync(data),
-            responseValidator: async (data) => await zOrganizationsControllerRetrieveOrganizationsResponse.parseAsync(data),
             url: '/organizations',
             ...options
         });
@@ -1013,16 +949,15 @@ export class Organization {
 }
 
 export class Opportunity {
-    public static opportunityControllerRetrieveCategories<ThrowOnError extends boolean = false>(options?: Options<OpportunityControllerRetrieveCategoriesData, ThrowOnError>) {
+    public static retrieveCategories<ThrowOnError extends boolean = true>(options?: Options<OpportunityControllerRetrieveCategoriesData, ThrowOnError>) {
         return (options?.client ?? client).get<OpportunityControllerRetrieveCategoriesResponses, unknown, ThrowOnError>({
             requestValidator: async (data) => await zOpportunityControllerRetrieveCategoriesData.parseAsync(data),
-            responseValidator: async (data) => await zOpportunityControllerRetrieveCategoriesResponse.parseAsync(data),
             url: '/v2/opportunity/categories',
             ...options
         });
     }
     
-    public static opportunityControllerDeleteOpportunity<ThrowOnError extends boolean = false>(options: Options<OpportunityControllerDeleteOpportunityData, ThrowOnError>) {
+    public static deleteOpportunity<ThrowOnError extends boolean = true>(options: Options<OpportunityControllerDeleteOpportunityData, ThrowOnError>) {
         return (options.client ?? client).delete<OpportunityControllerDeleteOpportunityResponses, unknown, ThrowOnError>({
             requestValidator: async (data) => await zOpportunityControllerDeleteOpportunityData.parseAsync(data),
             url: '/v2/opportunity/{id}',
@@ -1030,21 +965,19 @@ export class Opportunity {
         });
     }
     
-    public static opportunityControllerRetrieveOpportunity<ThrowOnError extends boolean = false>(options: Options<OpportunityControllerRetrieveOpportunityData, ThrowOnError>) {
+    public static retrieveOpportunity<ThrowOnError extends boolean = true>(options: Options<OpportunityControllerRetrieveOpportunityData, ThrowOnError>) {
         return (options.client ?? client).get<OpportunityControllerRetrieveOpportunityResponses, unknown, ThrowOnError>({
             requestValidator: async (data) => await zOpportunityControllerRetrieveOpportunityData.parseAsync(data),
             responseTransformer: opportunityControllerRetrieveOpportunityResponseTransformer,
-            responseValidator: async (data) => await zOpportunityControllerRetrieveOpportunityResponse.parseAsync(data),
             url: '/v2/opportunity/{id}',
             ...options
         });
     }
     
-    public static opportunityControllerUpdateOpportunity<ThrowOnError extends boolean = false>(options: Options<OpportunityControllerUpdateOpportunityData, ThrowOnError>) {
+    public static updateOpportunity<ThrowOnError extends boolean = true>(options: Options<OpportunityControllerUpdateOpportunityData, ThrowOnError>) {
         return (options.client ?? client).put<OpportunityControllerUpdateOpportunityResponses, unknown, ThrowOnError>({
             requestValidator: async (data) => await zOpportunityControllerUpdateOpportunityData.parseAsync(data),
             responseTransformer: opportunityControllerUpdateOpportunityResponseTransformer,
-            responseValidator: async (data) => await zOpportunityControllerUpdateOpportunityResponse.parseAsync(data),
             url: '/v2/opportunity/{id}',
             ...options,
             headers: {
@@ -1054,11 +987,10 @@ export class Opportunity {
         });
     }
     
-    public static opportunityControllerCreateOpportunity<ThrowOnError extends boolean = false>(options: Options<OpportunityControllerCreateOpportunityData, ThrowOnError>) {
+    public static createOpportunity<ThrowOnError extends boolean = true>(options: Options<OpportunityControllerCreateOpportunityData, ThrowOnError>) {
         return (options.client ?? client).post<OpportunityControllerCreateOpportunityResponses, unknown, ThrowOnError>({
             requestValidator: async (data) => await zOpportunityControllerCreateOpportunityData.parseAsync(data),
             responseTransformer: opportunityControllerCreateOpportunityResponseTransformer,
-            responseValidator: async (data) => await zOpportunityControllerCreateOpportunityResponse.parseAsync(data),
             url: '/v2/opportunity',
             ...options,
             headers: {
@@ -1073,10 +1005,9 @@ export class Company {
     /**
      * Get current company, user and preferences
      */
-    public static companyControllerGetMe<ThrowOnError extends boolean = false>(options?: Options<CompanyControllerGetMeData, ThrowOnError>) {
+    public static getMe<ThrowOnError extends boolean = true>(options?: Options<CompanyControllerGetMeData, ThrowOnError>) {
         return (options?.client ?? client).get<CompanyControllerGetMeResponses, CompanyControllerGetMeErrors, ThrowOnError>({
             requestValidator: async (data) => await zCompanyControllerGetMeData.parseAsync(data),
-            responseValidator: async (data) => await zCompanyControllerGetMeResponse.parseAsync(data),
             url: '/v2/company/me',
             ...options
         });

@@ -91,11 +91,11 @@ async function main() {
   console.log(`Welcome back, ${me.user.firstname}!`);
 
   // List all contacts
-  const { data: contacts } = await abby.contact.contactsControllerRetrieveContacts({
+  const { data: contacts } = await abby.contact.retrieveContacts({
     query: { limit: 10 },
   });
 
-  console.log(`Found ${contacts.length} contacts.`);
+  console.log(`Found ${contacts.docs.length} contacts.`);
 }
 
 main().catch(console.error);
@@ -176,7 +176,7 @@ const abby = new Abby('your_api_key');
 
 try {
   // This will fail validation if the request body is invalid
-  await abby.contact.contactControllerCreateContact({
+  await abby.contact.createContact({
     body: {
       // Missing required fields will trigger a ZodError
     },

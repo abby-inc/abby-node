@@ -217,6 +217,7 @@ export class Abby {
       createConfig({
         baseUrl: this.config.baseUrl,
         fetch: fetchWithTimeout,
+        throwOnError: true,
       })
     );
 
