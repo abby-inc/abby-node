@@ -1,5 +1,15 @@
 # Security Policy
 
+## Supported Versions
+
+We only provide security updates for the latest major version of the Abby Node.js SDK.
+
+| Version | Supported          |
+| ------- | ------------------ |
+| 1.x     | :white_check_mark: |
+
+If you are using an older version, we recommend upgrading to the latest version to ensure you have the latest security fixes.
+
 ## Reporting a Vulnerability
 
 If you discover a potential security vulnerability in this project, please let us know immediately. **Do not report security vulnerabilities via public GitHub issues.**
@@ -12,10 +22,6 @@ Please send an email to contact@abby.fr with details of the vulnerability. We wi
 - Steps to reproduce the issue.
 - Any potential impact.
 - Your contact information for follow-up.
-
-## Supported Versions
-
-We only provide security updates for the latest major version of the Abby Node.js SDK. If you are using an older version, we recommend upgrading to the latest version to ensure you have the latest security fixes.
 
 ## Disclosure Process
 
