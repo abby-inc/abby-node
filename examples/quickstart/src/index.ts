@@ -10,7 +10,7 @@
  * Run with: npm start
  */
 
-import { Abby } from '@abby-inc/abby-node';
+import Abby from '@abby-inc/abby-node';
 
 // Get API key from environment variable
 const apiKey = process.env.ABBY_API_KEY;
