@@ -60,6 +60,63 @@ export {
 // Re-export Zod schemas for consumers who want to use them directly
 export * from './client/zod.gen';
 
+// ============================================
+// Event Types
+// ============================================
+
+/**
+ * Event emitted when an API error occurs.
+ * Subscribe with `abby.on('error', callback)`.
+ */
+export interface AbbyErrorEvent {
+  /** HTTP status code (4xx or 5xx) */
+  status: number;
+  /** HTTP status text */
+  statusText: string;
+  /** Request URL */
+  url: string;
+  /** HTTP method (GET, POST, etc.) */
+  method: string;
+  /** Error message extracted from response body, if available */
+  message?: string;
+  /** Response body, if available */
+  body?: unknown;
+  /** Request ID from X-Request-Id header, if available */
+  requestId?: string;
+  /** Request duration in milliseconds */
+  duration: number;
+}
+
+/**
+ * Event emitted for every API response (success or error).
+ * Subscribe with `abby.on('response', callback)`.
+ */
+export interface AbbyResponseEvent {
+  /** HTTP status code */
+  status: number;
+  /** Request URL */
+  url: string;
+  /** HTTP method (GET, POST, etc.) */
+  method: string;
+  /** Request duration in milliseconds */
+  duration: number;
+  /** Whether the response was successful (2xx) */
+  ok: boolean;
+}
+
+/**
+ * Map of event names to their event types.
+ */
+export type AbbyEventMap = {
+  error: AbbyErrorEvent;
+  response: AbbyResponseEvent;
+};
+
+/**
+ * Event listener function type.
+ */
+export type AbbyEventListener<K extends keyof AbbyEventMap> = (event: AbbyEventMap[K]) => void;
+
 /**
  * Configuration options for the Abby SDK client.
  */
@@ -161,6 +218,14 @@ export class Abby {
   };
   private readonly instanceClient: Client;
 
+  // Event listeners for each event type
+  private readonly eventListeners: {
+    [K in keyof AbbyEventMap]: Set<AbbyEventListener<K>>;
+  } = {
+    error: new Set(),
+    response: new Set(),
+  };
+
   // Cached service proxies
   private _estimate?: ServiceProxy<typeof Estimate>;
   private _invoice?: ServiceProxy<typeof Invoice>;
@@ -251,8 +316,15 @@ export class Abby {
    * Initialize the underlying HTTP client with authentication and configuration.
    */
   private initializeClient(): void {
+    // Track request start times for duration calculation
+    // Using 'object' as key type since Request is the fetch API Request type
+    const requestStartTimes = new WeakMap<object, number>();
+
     // Add authentication header to all requests on this instance's client
     this.instanceClient.interceptors.request.use((request) => {
+      // Record start time for duration calculation
+      requestStartTimes.set(request, Date.now());
+
       request.headers.set('Authorization', `Bearer ${this.apiKey}`);
 
       // Add any custom headers
@@ -267,6 +339,65 @@ export class Abby {
       request.headers.set('X-Abby-Client-Version', this.getVersion());
 
       return request;
+    });
+
+    // Add response interceptor to emit events
+    // The hey-api client passes (response, request, options) to response interceptors
+    this.instanceClient.interceptors.response.use(async (response, request) => {
+      const startTime = request ? requestStartTimes.get(request) : undefined;
+      const duration = startTime ? Date.now() - startTime : 0;
+
+      // Clean up the start time
+      if (request) {
+        requestStartTimes.delete(request);
+      }
+
+      const baseEvent = {
+        status: response.status,
+        url: response.url,
+        method: request?.method || 'GET',
+        duration,
+        ok: response.ok,
+      };
+
+      // Always emit 'response' event
+      this.emit('response', baseEvent);
+
+      // Emit 'error' event for non-2xx responses
+      if (!response.ok) {
+        let message: string | undefined;
+        let body: unknown;
+
+        // Try to extract error message from response body
+        try {
+          const clonedResponse = response.clone();
+          body = await clonedResponse.json();
+          if (body && typeof body === 'object') {
+            const bodyRecord = body as Record<string, unknown>;
+            message =
+              typeof bodyRecord.message === 'string'
+                ? bodyRecord.message
+                : typeof bodyRecord.error === 'string'
+                  ? bodyRecord.error
+                  : undefined;
+          }
+        } catch {
+          // Body is not JSON or couldn't be parsed
+        }
+
+        this.emit('error', {
+          status: response.status,
+          statusText: response.statusText,
+          url: response.url,
+          method: request?.method || 'GET',
+          duration,
+          message,
+          body,
+          requestId: response.headers.get('x-request-id') ?? undefined,
+        });
+      }
+
+      return response;
     });
   }
 
@@ -295,6 +426,71 @@ export class Abby {
    */
   public getClient(): Client {
     return this.instanceClient;
+  }
+
+  // ============================================
+  // Event Emitter Methods
+  // ============================================
+
+  /**
+   * Subscribe to SDK events.
+   *
+   * @param event - The event name to listen for ('error' or 'response')
+   * @param listener - The callback function to invoke when the event occurs
+   * @returns The Abby instance for chaining
+   *
+   * @example
+   * ```typescript
+   * // Listen for all API errors
+   * abby.on('error', (error) => {
+   *   Sentry.captureException(new Error(error.message), {
+   *     extra: { status: error.status, url: error.url }
+   *   });
+   * });
+   *
+   * // Listen for all API responses
+   * abby.on('response', (response) => {
+   *   console.log(`${response.method} ${response.url} - ${response.status} (${response.duration}ms)`);
+   * });
+   * ```
+   */
+  public on<K extends keyof AbbyEventMap>(event: K, listener: AbbyEventListener<K>): this {
+    this.eventListeners[event].add(listener as AbbyEventListener<K>);
+    return this;
+  }
+
+  /**
+   * Unsubscribe from SDK events.
+   *
+   * @param event - The event name to stop listening for
+   * @param listener - The callback function to remove
+   * @returns The Abby instance for chaining
+   *
+   * @example
+   * ```typescript
+   * const errorHandler = (error) => console.error(error);
+   * abby.on('error', errorHandler);
+   * // Later...
+   * abby.off('error', errorHandler);
+   * ```
+   */
+  public off<K extends keyof AbbyEventMap>(event: K, listener: AbbyEventListener<K>): this {
+    this.eventListeners[event].delete(listener as AbbyEventListener<K>);
+    return this;
+  }
+
+  /**
+   * Emit an event to all registered listeners.
+   * @internal
+   */
+  private emit<K extends keyof AbbyEventMap>(event: K, data: AbbyEventMap[K]): void {
+    for (const listener of this.eventListeners[event]) {
+      try {
+        (listener as AbbyEventListener<K>)(data);
+      } catch {
+        // Swallow errors from listeners to prevent breaking the SDK
+      }
+    }
   }
 
   // ============================================

@@ -19,12 +19,14 @@ The official Node.js, Bun, and Deno library for the [Abby API](https://abby.fr).
   - [Configuration](#configuration)
   - [Custom Fetch & Proxy Support](#custom-fetch--proxy-support)
   - [Error Handling](#error-handling)
+  - [Event Listeners](#event-listeners)
   - [Interceptors](#interceptors)
   - [Raw Requests](#raw-requests)
 - [Validation](#validation)
   - [Automatic Validation](#automatic-validation)
   - [Using Zod Schemas Directly](#using-zod-schemas-directly)
 - [TypeScript Support](#typescript-support)
+- [Versioning](#versioning)
 - [Development](#development)
 - [Support](#support)
 - [License](#license)
@@ -221,6 +223,93 @@ try {
 }
 ```
 
+### Event Listeners
+
+The SDK provides an event emitter pattern for global error handling and logging. This is useful for integrating with error tracking services like Sentry or for centralized logging.
+
+#### Listening for Errors
+
+Subscribe to all API errors across your application:
+
+```typescript
+import Abby from '@abby-inc/abby-node';
+
+const abby = new Abby('your_api_key');
+
+// Global error handler - fires on any 4xx/5xx response
+abby.on('error', (error) => {
+  console.error(`API Error: ${error.status} ${error.statusText}`);
+  console.error(`URL: ${error.method} ${error.url}`);
+  console.error(`Message: ${error.message}`);
+  console.error(`Duration: ${error.duration}ms`);
+
+  // Send to error tracking service
+  Sentry.captureException(new Error(error.message), {
+    extra: {
+      status: error.status,
+      url: error.url,
+      requestId: error.requestId,
+      body: error.body,
+    },
+  });
+});
+```
+
+#### Listening for All Responses
+
+Subscribe to all API responses (both successful and failed):
+
+```typescript
+// Log all API calls for debugging/monitoring
+abby.on('response', (response) => {
+  console.log(`${response.method} ${response.url} - ${response.status} (${response.duration}ms)`);
+});
+```
+
+#### Removing Listeners
+
+Use `off()` to remove a listener:
+
+```typescript
+const errorHandler = (error) => console.error(error);
+
+// Add listener
+abby.on('error', errorHandler);
+
+// Remove listener later
+abby.off('error', errorHandler);
+```
+
+#### Event Types
+
+| Event      | Description                | Payload Type        |
+| ---------- | -------------------------- | ------------------- |
+| `error`    | Fires on 4xx/5xx responses | `AbbyErrorEvent`    |
+| `response` | Fires on all responses     | `AbbyResponseEvent` |
+
+**`AbbyErrorEvent` properties:**
+
+| Property     | Type       | Description                                    |
+| ------------ | ---------- | ---------------------------------------------- |
+| `status`     | `number`   | HTTP status code (4xx or 5xx)                  |
+| `statusText` | `string`   | HTTP status text                               |
+| `url`        | `string`   | Request URL                                    |
+| `method`     | `string`   | HTTP method (GET, POST, etc.)                  |
+| `duration`   | `number`   | Request duration in milliseconds               |
+| `message`    | `string?`  | Error message from response body, if available |
+| `body`       | `unknown?` | Response body, if available                    |
+| `requestId`  | `string?`  | X-Request-Id header, if available              |
+
+**`AbbyResponseEvent` properties:**
+
+| Property   | Type      | Description                               |
+| ---------- | --------- | ----------------------------------------- |
+| `status`   | `number`  | HTTP status code                          |
+| `url`      | `string`  | Request URL                               |
+| `method`   | `string`  | HTTP method (GET, POST, etc.)             |
+| `duration` | `number`  | Request duration in milliseconds          |
+| `ok`       | `boolean` | Whether the response was successful (2xx) |
+
 ### Interceptors
 
 Interceptors allow you to hook into the request/response lifecycle:
@@ -361,6 +450,22 @@ import { zReadContactDto } from '@abby-inc/abby-node';
 // Infer the type from the Zod schema
 type Contact = z.infer<typeof zReadContactDto>;
 ```
+
+## Versioning
+
+This SDK uses **independent versioning** from the Abby API:
+
+- **SDK version** (`version` in `package.json`): Follows [semver](https://semver.org/) for SDK changes (bug fixes, new features, breaking changes)
+- **API version** (`apiVersion` in `package.json`): Tracks which Abby API version was used to generate the SDK
+
+```json
+{
+  "version": "1.2.0", // SDK version
+  "apiVersion": "1.5.0" // API spec version used to generate
+}
+```
+
+This allows the SDK to receive bug fixes and improvements independently from API changes.
 
 ## Development
 

@@ -5625,45 +5625,6 @@ export const UpdateEstimateTimelineDtoSchema = {
     ]
 } as const;
 
-export const UpdateInvoiceBankInformationDtoSchema = {
-    type: 'object',
-    properties: {
-        bankInformation: {
-            nullable: true,
-            allOf: [
-                {
-                    $ref: '#/components/schemas/BankInformationDto'
-                }
-            ]
-        }
-    },
-    required: [
-        'bankInformation'
-    ]
-} as const;
-
-export const UpdateInvoiceDeliveryAddressDtoSchema = {
-    type: 'object',
-    properties: {
-        deliveryAddress: {
-            nullable: true,
-            allOf: [
-                {
-                    $ref: '#/components/schemas/UpdateDeliveryAddressDto'
-                }
-            ]
-        },
-        displayDeliveryAddress: {
-            type: 'boolean',
-            description: 'Display delivery address'
-        }
-    },
-    required: [
-        'deliveryAddress',
-        'displayDeliveryAddress'
-    ]
-} as const;
-
 export const UpdateInvoiceFrequencyDtoSchema = {
     type: 'object',
     properties: {

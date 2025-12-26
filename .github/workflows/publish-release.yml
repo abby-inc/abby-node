@@ -51,8 +51,11 @@ jobs:
         id: version
         run: |
           VERSION=$(node -p "require('./package.json').version")
+          API_VERSION=$(node -p "require('./package.json').apiVersion || 'unknown'")
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "Publishing version: $VERSION"
+          echo "api_version=$API_VERSION" >> $GITHUB_OUTPUT
+          echo "SDK version: $VERSION"
+          echo "API version: $API_VERSION"
 
       - name: Check if version already published
         id: check_published
@@ -118,6 +121,11 @@ jobs:
 
             This release is automatically generated from the Abby API.
 
+            | | Version |
+            |---|---|
+            | SDK | `${{ steps.version.outputs.version }}` |
+            | API | `${{ steps.version.outputs.api_version }}` |
+
             ### Installation
             ```bash
             npm install @abby-inc/abby-node@${{ steps.version.outputs.version }}
@@ -134,15 +142,21 @@ jobs:
       - name: Summary
         run: |
           VERSION="${{ steps.version.outputs.version }}"
+          API_VERSION="${{ steps.version.outputs.api_version }}"
           echo "## Publish Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- **Version:** $VERSION" >> $GITHUB_STEP_SUMMARY
+          echo "| Field | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| **SDK Version** | \`$VERSION\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **API Version** | \`$API_VERSION\` |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
 
           if [ "${{ steps.check_published.outputs.already_published }}" = "true" ]; then
-            echo "- **Status:** Already published (skipped)" >> $GITHUB_STEP_SUMMARY
+            echo "**Status:** Already published (skipped)" >> $GITHUB_STEP_SUMMARY
           elif [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
-            echo "- **Status:** Dry run (not published)" >> $GITHUB_STEP_SUMMARY
+            echo "**Status:** Dry run (not published)" >> $GITHUB_STEP_SUMMARY
           else
-            echo "- **Status:** Published to npm ✓" >> $GITHUB_STEP_SUMMARY
+            echo "**Status:** Published to npm ✓" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
             echo "- **npm:** https://www.npmjs.com/package/@abby-inc/abby-node/v/$VERSION" >> $GITHUB_STEP_SUMMARY
           fi
