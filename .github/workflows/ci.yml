@@ -33,7 +33,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Run ESLint
+      - name: Run oxlint
         run: pnpm run lint
 
       - name: Check formatting
@@ -67,7 +67,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: ['18', '20', '22', '24', '26']
+        node-version: ['22', '24', '26']
     steps:
       - name: Checkout
         uses: actions/checkout@v6

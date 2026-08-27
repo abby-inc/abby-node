@@ -35,8 +35,8 @@ This project and everyone participating in it is governed by our [Code of Conduc
 
 ### Prerequisites
 
-- Node.js 18 or higher (CI tests 18, 20, 22, 24, 26)
-- pnpm 9 or higher
+- Node.js 22.13 or higher (pnpm 11; the published SDK still runs on Node 18+)
+- pnpm 11 or higher
 - Git
 
 ### Setup
@@ -67,7 +67,7 @@ This project and everyone participating in it is governed by our [Code of Conduc
 | `pnpm generate`      | Regenerate SDK from OpenAPI spec |
 | `pnpm test`          | Run tests                        |
 | `pnpm test:coverage` | Run tests with coverage          |
-| `pnpm lint`          | Run ESLint                       |
+| `pnpm lint`          | Run oxlint                       |
 | `pnpm format`        | Format code with Prettier        |
 | `pnpm format:check`  | Check code formatting            |
 | `pnpm typecheck`     | Run TypeScript type checking     |

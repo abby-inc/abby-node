@@ -17,6 +17,7 @@
     "verbatimModuleSyntax": true,
     "declarationDir": "dist/types",
     "outDir": "dist/esm",
+    "rootDir": "src",
     "types": ["node"]
   },
   "include": ["src"],

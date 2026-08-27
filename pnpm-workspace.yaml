@@ -1,0 +1,5 @@
+allowBuilds:
+  esbuild: true
+# pnpm 11 default is 1440 (1 day). js-yaml@4.3.2 published 2026-08-26.
+minimumReleaseAgeExclude:
+  - js-yaml@4.3.2

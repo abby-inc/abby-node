@@ -1,8 +1,8 @@
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-import typescript from '@rollup/plugin-typescript';
 import json from '@rollup/plugin-json';
 import replace from '@rollup/plugin-replace';
+import esbuild from 'rollup-plugin-esbuild';
 import { readFileSync } from 'fs';
 
 const pkg = JSON.parse(readFileSync('./package.json', 'utf8'));
@@ -47,16 +47,10 @@ const basePlugins = [
   json(),
 ];
 
-const baseTypeScriptOptions = {
-  target: 'ES2022',
-  module: 'ES2022',
-  moduleResolution: 'bundler',
-  strict: true,
-  allowSyntheticDefaultImports: true,
-  esModuleInterop: true,
-  skipLibCheck: true,
-  forceConsistentCasingInFileNames: true,
-  isolatedModules: true,
+const esbuildOptions = {
+  target: 'es2022',
+  sourceMap: isDev,
+  minify: false,
 };
 
 export default [
@@ -72,17 +66,7 @@ export default [
       ...outputOptions,
     },
     external,
-    plugins: [
-      ...basePlugins,
-      typescript({
-        ...baseTypeScriptOptions,
-        outDir: 'dist/esm',
-        declaration: false,
-        declarationDir: null,
-        declarationMap: false,
-        sourceMap: isDev,
-      }),
-    ],
+    plugins: [...basePlugins, esbuild(esbuildOptions)],
   },
   // CommonJS build with preserved modules
   {
@@ -96,39 +80,6 @@ export default [
       ...outputOptions,
     },
     external,
-    plugins: [
-      ...basePlugins,
-      typescript({
-        ...baseTypeScriptOptions,
-        outDir: 'dist/cjs',
-        declaration: false,
-        declarationDir: null,
-        declarationMap: false,
-        sourceMap: isDev,
-      }),
-    ],
-  },
-  // TypeScript declarations
-  {
-    input: 'src/index.ts',
-    output: {
-      dir: 'dist/types',
-      format: 'es',
-      preserveModules: true,
-      preserveModulesRoot: 'src',
-      sourcemap: true, // Required for declarationMap to work
-    },
-    external,
-    plugins: [
-      ...basePlugins,
-      typescript({
-        ...baseTypeScriptOptions,
-        declaration: true,
-        declarationDir: 'dist/types',
-        declarationMap: true, // Always include for better DX
-        emitDeclarationOnly: true,
-        outDir: 'dist/types',
-      }),
-    ],
+    plugins: [...basePlugins, esbuild(esbuildOptions)],
   },
 ];
