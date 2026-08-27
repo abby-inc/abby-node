@@ -4,7 +4,6 @@ export default defineConfig({
   input: 'public-openapi.json',
   output: {
     path: 'src/client',
-    lint: 'eslint',
   },
   plugins: [
     ...defaultPlugins,
@@ -28,7 +27,9 @@ export default defineConfig({
     {
       name: 'zod',
       // Generate schemas for requests only (response validation disabled due to API/spec mismatches)
-      requests: true,
+      // 0.95+ drops composite z*Data request schemas unless shouldExtract is set
+      // (needed: SDK validator: true + README z{ControllerMethod}Data exports).
+      requests: { shouldExtract: true },
       responses: false,
       definitions: true,
       // Include metadata from OpenAPI spec (descriptions, etc.)
@@ -41,13 +42,14 @@ export default defineConfig({
     {
       asClass: true,
       serviceNameBuilder: '{{name}}',
-      methodNameBuilder: (context: { id: string }) => {
+      methodNameBuilder: (operationId: string) => {
+        // 0.97+ passes the operationId string, not `{ id }`.
         // Transform "companyControllerGetMe" to "getMe"
-        const name = context.id.split('Controller')[1];
+        const name = operationId.split('Controller')[1];
         if (name) {
           return name.charAt(0).toLowerCase() + name.slice(1);
         }
-        return context.id;
+        return operationId;
       },
       name: '@hey-api/sdk',
       transformer: true,
