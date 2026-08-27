@@ -1,8 +1,10 @@
+# https://pnpm.io/supply-chain-security
 allowBuilds:
   esbuild: true
-# pnpm 11 default is 1440 (1 day). js-yaml@4.3.2 published 2026-08-26.
-minimumReleaseAgeExclude:
-  - js-yaml@4.3.2
+blockExoticSubdeps: true
+minimumReleaseAge: 1440
+minimumReleaseAgeStrict: true
+trustPolicy: no-downgrade
 overrides:
   js-yaml: 4.3.2
   vite: ^7.3.6
