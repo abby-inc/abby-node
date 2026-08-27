@@ -48,8 +48,11 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '22'
-          registry-url: 'https://registry.npmjs.org'
           cache: 'pnpm'
+          # Do not set registry-url: setup-node would write
+          # //registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN} with an empty
+          # token, which shadows OIDC trusted publishing and 404s the PUT
+          # (measured 2026-08-27 after configuring the npm Trusted Publisher).
 
       - name: Get version from package.json
         id: version
