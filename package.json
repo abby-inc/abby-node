@@ -62,30 +62,30 @@
     "commitlint": "commitlint"
   },
   "dependencies": {
-    "zod": "^4.2.1"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@commitlint/cli": "^20.2.0",
-    "@commitlint/config-conventional": "^20.2.0",
-    "@eslint/js": "^9.39.2",
+    "@commitlint/cli": "^20.5.3",
+    "@commitlint/config-conventional": "^20.5.3",
+    "@eslint/js": "^9.39.5",
     "@hey-api/openapi-ts": "~0.89.2",
-    "@rollup/plugin-commonjs": "^29.0.0",
+    "@rollup/plugin-commonjs": "^29.0.3",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-replace": "^6.0.3",
     "@rollup/plugin-typescript": "^12.3.0",
-    "@types/node": "^25.0.3",
-    "@typescript-eslint/eslint-plugin": "^8.50.1",
-    "@typescript-eslint/parser": "^8.50.1",
-    "@vitest/coverage-v8": "^4.0.16",
-    "eslint": "^9.39.2",
+    "@types/node": "^25.9.5",
+    "@typescript-eslint/eslint-plugin": "^8.68.0",
+    "@typescript-eslint/parser": "^8.68.0",
+    "@vitest/coverage-v8": "^4.1.11",
+    "eslint": "^9.39.5",
     "husky": "^9.1.7",
-    "lint-staged": "^16.2.7",
-    "prettier": "^3.7.4",
-    "rollup": "^4.54.0",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.9.6",
+    "rollup": "^4.63.0",
     "tslib": "^2.8.1",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.16"
+    "vitest": "^4.1.11"
   },
   "engines": {
     "node": ">=18.0.0",
