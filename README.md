@@ -53,7 +53,7 @@ import Abby from 'npm:@abby-inc/node';
 
 ## Requirements
 
-- Node.js 18.0.0 or higher, Bun 1.0.0 or higher, or Deno 2.0.0 or higher
+- Node.js 18.0.0 or higher (CI: 18, 20, 22, 24, 25, 26), Bun 1.0.0 or higher, or Deno 2.0.0 or higher
 - An Abby account with an API key
 
 ## Usage

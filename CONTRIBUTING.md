@@ -35,7 +35,7 @@ This project and everyone participating in it is governed by our [Code of Conduc
 
 ### Prerequisites
 
-- Node.js 18 or higher
+- Node.js 18 or higher (CI tests 18, 20, 22, 24, 25, 26)
 - pnpm 9 or higher
 - Git
 
