@@ -35,7 +35,7 @@ This project and everyone participating in it is governed by our [Code of Conduc
 
 ### Prerequisites
 
-- Node.js 22.13 or higher (pnpm 11; the published SDK still runs on Node 18+)
+- Node.js 22.13 or higher
 - pnpm 11 or higher
 - Git
 

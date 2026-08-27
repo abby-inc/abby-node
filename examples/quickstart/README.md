@@ -4,7 +4,7 @@ A minimal example demonstrating how to use the Abby Node.js SDK.
 
 ## Prerequisites
 
-- Node.js 18.0.0 or higher
+- Node.js 22.13.0 or higher
 - An Abby account with an API key
 
 ## Getting Your API Key
