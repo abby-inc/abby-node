@@ -105,13 +105,20 @@ jobs:
             git push origin "v$VERSION"
           fi
 
+      # Node 22 ships npm 10; trusted publishing (OIDC) needs npm >= 11.5.1.
+      # pnpm publish delegates to that npm and returns ENEEDAUTH otherwise
+      # (measured 2026-08-27, run 33058794019).
+      - name: Install npm 11 (OIDC trusted publishing)
+        if: steps.check_published.outputs.already_published == 'false'
+        run: npm install -g npm@11
+
       - name: Publish to npm (dry run)
         if: steps.check_published.outputs.already_published == 'false' && github.event.inputs.dry_run == 'true'
-        run: pnpm publish --dry-run --no-git-checks
+        run: npm publish --dry-run --access public --provenance
 
       - name: Publish to npm
         if: steps.check_published.outputs.already_published == 'false' && github.event.inputs.dry_run != 'true'
-        run: pnpm publish --access public --no-git-checks --provenance
+        run: npm publish --access public --provenance
 
       - name: Create GitHub Release
         if: steps.check_published.outputs.already_published == 'false' && github.event.inputs.dry_run != 'true'
