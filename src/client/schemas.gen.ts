@@ -3611,6 +3611,17 @@ export const PersonalServiceActivitySchema = {
     ]
 } as const;
 
+export const PlatformTransferStatusSchema = {
+    type: 'string',
+    enum: [
+        'REQUESTED',
+        'ACCEPTED',
+        'REFUSED',
+        'CLOSED'
+    ],
+    description: 'Agrégat du CaseStatus PA Hub : REQUESTED (demande envoyée / en attente), ACCEPTED (ancienne plateforme a accepté), REFUSED, CLOSED.'
+} as const;
+
 export const PreferencesDtoSchema = {
     type: 'object',
     properties: {
@@ -3717,12 +3728,22 @@ export const PushNotificationPreferencesDtoSchema = {
         urssafReminder: {
             type: 'boolean',
             description: 'Notification push de rappel de déclaration URSSAF'
+        },
+        eInvoicingRegistration: {
+            type: 'boolean',
+            description: 'Notifications push d\'inscription à l\'annuaire de facturation électronique'
+        },
+        eInvoicingPlatformChange: {
+            type: 'boolean',
+            description: 'Notifications push de changement de plateforme de facturation électronique'
         }
     },
     required: [
         'billingPaidOnline',
         'billingSignedOnline',
-        'urssafReminder'
+        'urssafReminder',
+        'eInvoicingRegistration',
+        'eInvoicingPlatformChange'
     ]
 } as const;
 
@@ -7941,7 +7962,7 @@ export const ReadMeDtoSchema = {
             ]
         },
         eInvoicing: {
-            description: 'État e-invoicing de l\'entreprise (ligne d\'annuaire + mandat PDP), lecture base seule. Chaque champ null couvre à la fois "absent" (aucune inscription/mandat) et "indisponible" (échec de lecture ponctuel, dégradé sans faire échouer /me) — ce bloc n\'est pas autoritaire en cas d\'erreur transitoire côté base.',
+            description: 'État e-invoicing de l\'entreprise (ligne d\'annuaire + mandat PDP), lecture base seule. Chaque champ null couvre à la fois "absent" (aucune inscription/mandat) et "indisponible" (échec de lecture ponctuel, dégradé sans faire échouer /me) — ce bloc n\'est pas autoritaire en cas d\'erreur transitoire côté base. `registrationStatus` est le cycle de vie de la saga ; quand il vaut `AWAITING_SIE`, `directoryLineStatus` est `null` (pas de PENDING synthétique).',
             allOf: [
                 {
                     $ref: '#/components/schemas/ReadMeEInvoicingDto'
@@ -7965,6 +7986,14 @@ export const ReadMeEInvoicingDtoSchema = {
             allOf: [
                 {
                     $ref: '#/components/schemas/DirectoryLineStatus'
+                }
+            ]
+        },
+        registrationStatus: {
+            nullable: true,
+            allOf: [
+                {
+                    $ref: '#/components/schemas/RegistrationStatus'
                 }
             ]
         },
@@ -7997,15 +8026,68 @@ export const ReadMeEInvoicingDtoSchema = {
         isLegacyMandate: {
             type: 'boolean',
             description: 'True quand le mandat PDP courant est un mandat legacy (version 1, antérieur à la vérification d\'identité) — le grandfathering d\'affichage v1 (D-9396) branche dessus. Fail-safe : false quand le mandat est absent ou la lecture indisponible. Dérivé de la version du mandat uniquement, jamais de identityVerificationRequired (qui couvre aussi les bypass admin v2).'
+        },
+        platformTransfer: {
+            nullable: true,
+            description: 'Transfert de portabilité sortant en cours (le client rejoint Abby). Non-null uniquement si la ligne d\'annuaire est `SUSPENDED`, le dossier PA Hub est `OUTBOUND` et un `request_id` est persisté. `null` dans tous les autres cas (pas de dossier, dossier entrant, ligne non suspendue, lecture indisponible) — jamais une erreur HTTP.',
+            allOf: [
+                {
+                    $ref: '#/components/schemas/ReadMePlatformTransferDto'
+                }
+            ]
         }
     },
     required: [
         'directoryLineStatus',
+        'registrationStatus',
         'revokedAt',
         'dateFrom',
         'mandatStatus',
         'addressingIdentifier',
-        'isLegacyMandate'
+        'isLegacyMandate',
+        'platformTransfer'
+    ]
+} as const;
+
+export const ReadMePlatformTransferDtoSchema = {
+    type: 'object',
+    properties: {
+        externalRef: {
+            type: 'string',
+            example: '010700000000020260827000042',
+            description: 'request_id PA Hub du dossier de portabilité sortant (le client rejoint Abby).'
+        },
+        status: {
+            description: 'Agrégat du CaseStatus PA Hub : REQUESTED (demande envoyée / en attente), ACCEPTED (ancienne plateforme a accepté), REFUSED, CLOSED.',
+            allOf: [
+                {
+                    $ref: '#/components/schemas/PlatformTransferStatus'
+                }
+            ]
+        },
+        previousPlatformAccepted: {
+            type: 'boolean',
+            description: 'True lorsque l\'ancienne plateforme a accepté (status ACCEPTED ou CLOSED) — pilote l\'étape 2 de la timeline de transfert côté front.'
+        },
+        previousPlatformName: {
+            type: 'string',
+            nullable: true,
+            example: 'Docoon',
+            description: 'Libellé pdpRegistry de la plateforme de départ (matricule de contrepartie). `null` si le matricule est absent ou inconnu du référentiel.'
+        },
+        requestedEffectiveDate: {
+            type: 'string',
+            nullable: true,
+            example: '2026-09-05',
+            description: 'Date d\'effet demandée du dossier PA Hub, au format `YYYY-MM-DD`. `null` si le dossier n\'en porte pas.'
+        }
+    },
+    required: [
+        'externalRef',
+        'status',
+        'previousPlatformAccepted',
+        'previousPlatformName',
+        'requestedEffectiveDate'
     ]
 } as const;
 
@@ -9616,6 +9698,17 @@ export const RegisteredTypeSchema = {
         1,
         2,
         3
+    ]
+} as const;
+
+export const RegistrationStatusSchema = {
+    type: 'string',
+    enum: [
+        'QUEUED',
+        'PROCESSING',
+        'SUBMITTED',
+        'FAILED',
+        'AWAITING_SIE'
     ]
 } as const;
 

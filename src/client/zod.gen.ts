@@ -1347,6 +1347,18 @@ export const zPersonalServiceActivity = z.enum([
     'DIVERS_NON_ELIGIBLE'
 ]);
 
+/**
+ * Agrégat du CaseStatus PA Hub : REQUESTED (demande envoyée / en attente), ACCEPTED (ancienne plateforme a accepté), REFUSED, CLOSED.
+ */
+export const zPlatformTransferStatus = z.enum([
+    'REQUESTED',
+    'ACCEPTED',
+    'REFUSED',
+    'CLOSED'
+]).register(z.globalRegistry, {
+    description: 'Agrégat du CaseStatus PA Hub : REQUESTED (demande envoyée / en attente), ACCEPTED (ancienne plateforme a accepté), REFUSED, CLOSED.'
+});
+
 export const zProductType = z.union([
     z.literal(1),
     z.literal(2),
@@ -1442,6 +1454,12 @@ export const zPushNotificationPreferencesDto = z.object({
     }),
     urssafReminder: z.boolean().register(z.globalRegistry, {
         description: 'Notification push de rappel de déclaration URSSAF'
+    }),
+    eInvoicingRegistration: z.boolean().register(z.globalRegistry, {
+        description: 'Notifications push d\'inscription à l\'annuaire de facturation électronique'
+    }),
+    eInvoicingPlatformChange: z.boolean().register(z.globalRegistry, {
+        description: 'Notifications push de changement de plateforme de facturation électronique'
     })
 });
 
@@ -1873,15 +1891,16 @@ export const zReadMarginsDto = z.object({
     right: z.number()
 });
 
-export const zReadMeEInvoicingDto = z.object({
-    directoryLineStatus: zDirectoryLineStatus.nullable(),
-    revokedAt: z.iso.datetime({ offset: true }).nullable(),
-    dateFrom: z.string().nullable(),
-    mandatStatus: zPdpMandateStatus.nullable(),
-    addressingIdentifier: z.string().nullable(),
-    isLegacyMandate: z.boolean().register(z.globalRegistry, {
-        description: 'True quand le mandat PDP courant est un mandat legacy (version 1, antérieur à la vérification d\'identité) — le grandfathering d\'affichage v1 (D-9396) branche dessus. Fail-safe : false quand le mandat est absent ou la lecture indisponible. Dérivé de la version du mandat uniquement, jamais de identityVerificationRequired (qui couvre aussi les bypass admin v2).'
-    })
+export const zReadMePlatformTransferDto = z.object({
+    externalRef: z.string().register(z.globalRegistry, {
+        description: 'request_id PA Hub du dossier de portabilité sortant (le client rejoint Abby).'
+    }),
+    status: zPlatformTransferStatus,
+    previousPlatformAccepted: z.boolean().register(z.globalRegistry, {
+        description: 'True lorsque l\'ancienne plateforme a accepté (status ACCEPTED ou CLOSED) — pilote l\'étape 2 de la timeline de transfert côté front.'
+    }),
+    previousPlatformName: z.string().nullable(),
+    requestedEffectiveDate: z.string().nullable()
 });
 
 export const zReadOrganizationDto = z.object({
@@ -2260,6 +2279,27 @@ export const zRegisteredType = z.union([
     z.literal(2),
     z.literal(3)
 ]);
+
+export const zRegistrationStatus = z.enum([
+    'QUEUED',
+    'PROCESSING',
+    'SUBMITTED',
+    'FAILED',
+    'AWAITING_SIE'
+]);
+
+export const zReadMeEInvoicingDto = z.object({
+    directoryLineStatus: zDirectoryLineStatus.nullable(),
+    registrationStatus: zRegistrationStatus.nullable(),
+    revokedAt: z.iso.datetime({ offset: true }).nullable(),
+    dateFrom: z.string().nullable(),
+    mandatStatus: zPdpMandateStatus.nullable(),
+    addressingIdentifier: z.string().nullable(),
+    isLegacyMandate: z.boolean().register(z.globalRegistry, {
+        description: 'True quand le mandat PDP courant est un mandat legacy (version 1, antérieur à la vérification d\'identité) — le grandfathering d\'affichage v1 (D-9396) branche dessus. Fail-safe : false quand le mandat est absent ou la lecture indisponible. Dérivé de la version du mandat uniquement, jamais de identityVerificationRequired (qui couvre aussi les bypass admin v2).'
+    }),
+    platformTransfer: zReadMePlatformTransferDto.nullable()
+});
 
 export const zRegulationsDto = z.object({
     commission: z.number().optional(),
@@ -4518,6 +4558,11 @@ export const zOrganizationsControllerRetrieveOrganizationsQuery = z.object({
     archived: z.boolean().optional()
 });
 
+export const zEInvoicingControllerRecordPlatformChoiceFromEmailLinkV2Query = z.object({
+    choice: z.string(),
+    token: z.string()
+});
+
 export const zAccountingBillingControllerReconciliateInvoiceV2Body = zReconciliateInvoiceDto;
 
 export const zAccountingBillingControllerReconciliateInvoiceV2Path = z.object({
@@ -5845,6 +5890,12 @@ export const zOrganizationsControllerRetrieveOrganizationsData = z.object({
     body: z.never().optional(),
     path: z.never().optional(),
     query: zOrganizationsControllerRetrieveOrganizationsQuery
+});
+
+export const zEInvoicingControllerRecordPlatformChoiceFromEmailLinkV2Data = z.object({
+    body: z.never().optional(),
+    path: z.never().optional(),
+    query: zEInvoicingControllerRecordPlatformChoiceFromEmailLinkV2Query
 });
 
 export const zAccountingBillingControllerReconciliateInvoiceV2Data = z.object({
