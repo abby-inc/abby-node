@@ -40,10 +40,25 @@ jobs:
       pull-requests: write
 
     steps:
+      # A PR opened with GITHUB_TOKEN does not trigger `on: pull_request`
+      # workflows — GitHub blocks that to prevent recursion. The sdk-update PR
+      # is the one that leads to an npm publish, and it was getting no CI at
+      # all: no Lint, Codegen, Test, Build, and therefore no `CI Success`, the
+      # single check master's ruleset requires. The PR was unmergeable by
+      # construction (measured on #39). SDK_REPO_PAT restores the triggers.
+      - name: Require SDK_REPO_PAT
+        env:
+          SDK_REPO_PAT: ${{ secrets.SDK_REPO_PAT }}
+        run: |
+          if [ -z "${SDK_REPO_PAT}" ]; then
+            echo "::error::secret SDK_REPO_PAT is missing. Without it the SDK update PR opens as github-actions[bot], no pull_request workflow runs, and 'CI Success' can never appear — the PR is unmergeable. Add a token with repo + workflow scope."
+            exit 1
+          fi
+
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.SDK_REPO_PAT }}
           fetch-depth: 0
 
       - name: Setup pnpm
@@ -176,7 +191,8 @@ jobs:
         id: cpr
         uses: peter-evans/create-pull-request@v8
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          # NOT GITHUB_TOKEN — see the "Require SDK_REPO_PAT" step above.
+          token: ${{ secrets.SDK_REPO_PAT }}
           branch: sdk-update-v${{ steps.version.outputs.sdk_version }}
           base: master
           delete-branch: true
