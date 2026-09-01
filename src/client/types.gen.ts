@@ -1170,6 +1170,11 @@ export type PaymentRequestStatusUrssafTp = 0 | '10' | '20' | '30' | '40' | '50' 
 
 export type PersonalServiceActivity = 'GARDE_ENFANT_HANDICAPE' | 'ACCOMPAGNEMENT_ENFANT_HANDICAPE' | 'AIDE_HUMAINE' | 'CONDUITE_VEHICULE_PERSONNEL' | 'AIDE_AU_DEPLACEMENT' | 'ENTRETIEN_DE_LA_MAISON' | 'JARDINAGE' | 'BRICOLAGE' | 'GARDE_ENFANT_PLUS_DE_6_ANS' | 'SOUTIEN_SCOLAIRE_COURS_A_DOMICILE' | 'SOIN_ESTHETIQUE_A_DOMICILE' | 'PREPARATION_REPAS_A_DOMICILE' | 'LIVRAISON_REPAS_A_DOMICILE' | 'COLLECTE_ET_LIVRAISON_DE_LINGE_REPASSE' | 'LIVRAISON_COURSES_A_DOMICILE' | 'ASSISTANCE_INFORMATIQUE' | 'SOINS_ET_PROMENADES_ANIMAUX_DE_COMPAGNIE_POUR_PERSONNES_DEPENDANTES' | 'MAINTENANCE_ENTRETIEN_ET_VIGILANCE_DE_LA_RESIDENCE_PRINCIPALE' | 'ASSISTANCE_ADMINISTRATIVE' | 'ACCOMPAGNEMENT_ENFANT_PLUS_DE_6_ANS' | 'TELEASSISTANCE' | 'INTERPRETE_LANGUE_DES_SIGNES' | 'CONDUITE_VEHICULE_PERSONNEL_EN_CAS_INVALIDITE_TEMPORAIRE' | 'ACCOMPAGNEMENT_DEPLACEMENTS_EN_DEHORS_DU_DOMICILE' | 'ASSISTANCE_PERSONNES_TEMPORAIREMENT_DEPENDANTES_A_DOMICILE' | 'COORDINATION_ET_GESTION' | 'DIVERS_NON_ELIGIBLE';
 
+/**
+ * Agrégat du CaseStatus PA Hub : REQUESTED (demande envoyée / en attente), ACCEPTED (ancienne plateforme a accepté), REFUSED, CLOSED.
+ */
+export type PlatformTransferStatus = 'REQUESTED' | 'ACCEPTED' | 'REFUSED' | 'CLOSED';
+
 export type PreferencesDto = {
     /**
      * Préférences de rentabilité
@@ -1202,6 +1207,14 @@ export type PushNotificationPreferencesDto = {
      * Notification push de rappel de déclaration URSSAF
      */
     urssafReminder: boolean;
+    /**
+     * Notifications push d'inscription à l'annuaire de facturation électronique
+     */
+    eInvoicingRegistration: boolean;
+    /**
+     * Notifications push de changement de plateforme de facturation électronique
+     */
+    eInvoicingPlatformChange: boolean;
 };
 
 export type RankTaskMode = 'opportunity' | 'date' | 'rank';
@@ -2590,13 +2603,14 @@ export type ReadMeDto = {
      */
     user: UserDto;
     /**
-     * État e-invoicing de l'entreprise (ligne d'annuaire + mandat PDP), lecture base seule. Chaque champ null couvre à la fois "absent" (aucune inscription/mandat) et "indisponible" (échec de lecture ponctuel, dégradé sans faire échouer /me) — ce bloc n'est pas autoritaire en cas d'erreur transitoire côté base.
+     * État e-invoicing de l'entreprise (ligne d'annuaire + mandat PDP), lecture base seule. Chaque champ null couvre à la fois "absent" (aucune inscription/mandat) et "indisponible" (échec de lecture ponctuel, dégradé sans faire échouer /me) — ce bloc n'est pas autoritaire en cas d'erreur transitoire côté base. `registrationStatus` est le cycle de vie de la saga ; quand il vaut `AWAITING_SIE`, `directoryLineStatus` est `null` (pas de PENDING synthétique).
      */
     eInvoicing: ReadMeEInvoicingDto;
 };
 
 export type ReadMeEInvoicingDto = {
     directoryLineStatus: DirectoryLineStatus | null;
+    registrationStatus: RegistrationStatus | null;
     /**
      * Date de demande de révocation de la ligne d'annuaire. C'est ce champ qui distingue un statut "revoked" d'un statut "inactive" ordinaire côté front.
      */
@@ -2617,6 +2631,33 @@ export type ReadMeEInvoicingDto = {
      * True quand le mandat PDP courant est un mandat legacy (version 1, antérieur à la vérification d'identité) — le grandfathering d'affichage v1 (D-9396) branche dessus. Fail-safe : false quand le mandat est absent ou la lecture indisponible. Dérivé de la version du mandat uniquement, jamais de identityVerificationRequired (qui couvre aussi les bypass admin v2).
      */
     isLegacyMandate: boolean;
+    /**
+     * Transfert de portabilité sortant en cours (le client rejoint Abby). Non-null uniquement si la ligne d'annuaire est `SUSPENDED`, le dossier PA Hub est `OUTBOUND` et un `request_id` est persisté. `null` dans tous les autres cas (pas de dossier, dossier entrant, ligne non suspendue, lecture indisponible) — jamais une erreur HTTP.
+     */
+    platformTransfer: ReadMePlatformTransferDto | null;
+};
+
+export type ReadMePlatformTransferDto = {
+    /**
+     * request_id PA Hub du dossier de portabilité sortant (le client rejoint Abby).
+     */
+    externalRef: string;
+    /**
+     * Agrégat du CaseStatus PA Hub : REQUESTED (demande envoyée / en attente), ACCEPTED (ancienne plateforme a accepté), REFUSED, CLOSED.
+     */
+    status: PlatformTransferStatus;
+    /**
+     * True lorsque l'ancienne plateforme a accepté (status ACCEPTED ou CLOSED) — pilote l'étape 2 de la timeline de transfert côté front.
+     */
+    previousPlatformAccepted: boolean;
+    /**
+     * Libellé pdpRegistry de la plateforme de départ (matricule de contrepartie). `null` si le matricule est absent ou inconnu du référentiel.
+     */
+    previousPlatformName: string | null;
+    /**
+     * Date d'effet demandée du dossier PA Hub, au format `YYYY-MM-DD`. `null` si le dossier n'en porte pas.
+     */
+    requestedEffectiveDate: string | null;
 };
 
 export type ReadNoteDto = {
@@ -3286,6 +3327,8 @@ export type Recurrence = 1 | 2 | 3;
 export type RegisterType = 'RCS' | 'RNE' | 'RSAC' | 'RNA';
 
 export type RegisteredType = 1 | 2 | 3;
+
+export type RegistrationStatus = 'QUEUED' | 'PROCESSING' | 'SUBMITTED' | 'FAILED' | 'AWAITING_SIE';
 
 export type RegulationsDto = {
     commission?: number;
@@ -7664,6 +7707,20 @@ export type OrganizationsControllerRetrieveOrganizationsResponses = {
 };
 
 export type OrganizationsControllerRetrieveOrganizationsResponse = OrganizationsControllerRetrieveOrganizationsResponses[keyof OrganizationsControllerRetrieveOrganizationsResponses];
+
+export type EInvoicingControllerRecordPlatformChoiceFromEmailLinkV2Data = {
+    body?: never;
+    path?: never;
+    query: {
+        choice: string;
+        token: string;
+    };
+    url: '/v2/e-invoicing/platform-choice';
+};
+
+export type EInvoicingControllerRecordPlatformChoiceFromEmailLinkV2Responses = {
+    200: unknown;
+};
 
 export type AccountingBillingControllerReconciliateInvoiceV2Data = {
     body: ReconciliateInvoiceDto;
