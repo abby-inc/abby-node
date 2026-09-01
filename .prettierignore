@@ -15,3 +15,6 @@ coverage/
 # Nix
 flake.lock
 
+
+# Git worktrees
+.worktrees/

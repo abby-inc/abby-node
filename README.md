@@ -81,6 +81,7 @@ The SDK provides several services to interact with different parts of the Abby A
 - `abby.opportunity`: CRM and opportunities management.
 - `abby.asset`: Manage business assets.
 - `abby.advance`: Manage advance payments.
+- `abby.customerPortal`: Customer portal payments and billing themes.
 
 ### Basic Example
 
@@ -360,16 +361,15 @@ The client automatically includes your API key and SDK headers in all requests.
 
 ## Validation
 
-The SDK includes built-in [Zod](https://zod.dev) validation for all API requests and responses, ensuring type safety at runtime.
+The SDK includes built-in [Zod](https://zod.dev) validation for API requests, catching malformed payloads before they leave your process.
 
 ### Automatic Validation
 
-All SDK methods automatically validate:
+All SDK methods automatically validate **request data**: parameters, query strings, and request bodies are checked before sending.
 
-- **Request data**: Parameters, query strings, and request bodies are validated before sending
-- **Response data**: API responses are validated to ensure they match the expected schema
+**Responses are not validated.** Response schemas are generated and exported (see below), but the SDK does not run them — a spec/API mismatch would otherwise turn a successful call into a thrown error. Types on responses remain compile-time only; parse with the exported `z*Dto` schemas yourself if you need a runtime guarantee.
 
-If validation fails, a `ZodError` is thrown with detailed information about what went wrong:
+If request validation fails, a `ZodError` is thrown with detailed information about what went wrong:
 
 ```typescript
 import Abby from '@abby-inc/node';

@@ -61,6 +61,40 @@ jobs:
       - name: Run type check
         run: pnpm run typecheck
 
+  # No CI job used to run `pnpm run generate`, so when TypeScript 7 broke the
+  # openapi-ts codegen (2026-08-27) CI stayed green while the Generate SDK
+  # workflow failed 10 dispatches in a row and the published SDK silently froze
+  # at API 1.109.0. This job regenerates from the committed spec and fails on
+  # any drift.
+  codegen:
+    name: Codegen
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Regenerate client from the committed spec
+        run: pnpm run generate
+
+      - name: Fail on generated-client drift
+        run: |
+          if ! git diff --exit-code -- src/client; then
+            echo "::error::src/client is out of sync with public-openapi.json. Run 'pnpm run generate' and commit the result."
+            exit 1
+          fi
+
   test:
     name: Test (Node ${{ matrix.node-version }})
     runs-on: ubuntu-latest
@@ -182,7 +216,7 @@ jobs:
   # Summary job that other jobs can depend on
   ci-success:
     name: CI Success
-    needs: [lint, typecheck, test, test-bun, test-deno, build]
+    needs: [lint, typecheck, codegen, test, test-bun, test-deno, build]
     runs-on: ubuntu-latest
     if: always()
     steps:
@@ -190,6 +224,7 @@ jobs:
         run: |
           if [[ "${{ needs.lint.result }}" != "success" ]] || \
              [[ "${{ needs.typecheck.result }}" != "success" ]] || \
+             [[ "${{ needs.codegen.result }}" != "success" ]] || \
              [[ "${{ needs.test.result }}" != "success" ]] || \
              [[ "${{ needs.test-bun.result }}" != "success" ]] || \
              [[ "${{ needs.test-deno.result }}" != "success" ]] || \
