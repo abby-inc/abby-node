@@ -129,27 +129,45 @@ jobs:
       - name: Bump SDK version and update apiVersion
         id: version
         run: |
-          # Get current SDK version
+          set -euo pipefail
+
           CURRENT_VERSION=$(jq -r '.version' package.json)
           CURRENT_API_VERSION=$(jq -r '.apiVersion // "unknown"' package.json)
           API_VERSION="${{ steps.fetch_spec.outputs.api_version }}"
+          BUMP_TYPE="${{ steps.params.outputs.bump }}"
 
           echo "Current SDK version: $CURRENT_VERSION"
           echo "Current API version: $CURRENT_API_VERSION"
           echo "New API version: $API_VERSION"
 
-          # Bump SDK version
-          BUMP_TYPE="${{ steps.params.outputs.bump }}"
-          NEW_VERSION=$(pnpm version $BUMP_TYPE --no-git-tag-version | tr -d 'v')
+          # Bump with jq rather than `pnpm version`. That command refuses to run
+          # on an unclean working tree (ERR_PNPM_UNCLEAN_WORKING_TREE) and this
+          # step ALWAYS runs on one -- the spec was just fetched and the client
+          # regenerated. Worse, it prints the refusal on stdout, and the old
+          # `NEW_VERSION=$(pnpm version ...)` never checked the exit code, so the
+          # error text became the version string and only surfaced two steps
+          # later as a commitlint failure on a 110-character commit title
+          # (run 33489478570).
+          NEW_VERSION=$(jq -rn --arg v "$CURRENT_VERSION" --arg b "$BUMP_TYPE" '
+            ($v | split(".") | map(tonumber)) as [$maj, $min, $pat]
+            | if   $b == "major" then "\($maj + 1).0.0"
+              elif $b == "minor" then "\($maj).\($min + 1).0"
+              elif $b == "patch" then "\($maj).\($min).\($pat + 1)"
+              else error("unknown bump type: \($b)") end')
+
+          if ! [[ "$NEW_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::computed SDK version is not semver: $NEW_VERSION"
+            exit 1
+          fi
 
           echo "New SDK version: $NEW_VERSION"
           echo "sdk_version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
-          # Update apiVersion field in package.json
-          jq --arg apiVersion "$API_VERSION" '.apiVersion = $apiVersion' package.json > package.json.tmp
+          jq --arg version "$NEW_VERSION" --arg apiVersion "$API_VERSION" \
+             '.version = $version | .apiVersion = $apiVersion' package.json > package.json.tmp
           mv package.json.tmp package.json
 
-          echo "Updated apiVersion to: $API_VERSION"
+          echo "Updated version to $NEW_VERSION and apiVersion to $API_VERSION"
 
       # Stay on master with a dirty tree. Do NOT push a branch first:
       # peter-evans/create-pull-request then force-resets that branch onto
