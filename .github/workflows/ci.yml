@@ -216,7 +216,7 @@ jobs:
   # Summary job that other jobs can depend on
   ci-success:
     name: CI Success
-    needs: [lint, typecheck, test, test-bun, test-deno, build]
+    needs: [lint, typecheck, codegen, test, test-bun, test-deno, build]
     runs-on: ubuntu-latest
     if: always()
     steps:
@@ -224,6 +224,7 @@ jobs:
         run: |
           if [[ "${{ needs.lint.result }}" != "success" ]] || \
              [[ "${{ needs.typecheck.result }}" != "success" ]] || \
+             [[ "${{ needs.codegen.result }}" != "success" ]] || \
              [[ "${{ needs.test.result }}" != "success" ]] || \
              [[ "${{ needs.test-bun.result }}" != "success" ]] || \
              [[ "${{ needs.test-deno.result }}" != "success" ]] || \
