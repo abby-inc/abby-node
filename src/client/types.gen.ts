@@ -4,6 +4,23 @@ export type ClientOptions = {
     baseUrl: 'https://api.abby.fr' | (string & {});
 };
 
+export type AccountingAccountDto = {
+    id: string;
+    name: string;
+    number: number;
+    isVatRelated: boolean;
+    color: string | null;
+    icon: string | null;
+    category: number | null;
+    description: string | null;
+    tags: Array<string> | null;
+    position: number | null;
+    isHidden: boolean;
+    isPersonal: boolean;
+    companyId?: string;
+    parentId: string | null;
+};
+
 export type AccountingBookType = 'income' | 'purchase';
 
 export type AddressDto = {
@@ -60,6 +77,11 @@ export type AnnotateEntryDto = {
     accountingAccountNumber?: number;
     isPersonal: boolean;
     amount: number;
+};
+
+export type AssociatedInvoicesDto = {
+    id: string;
+    number: string;
 };
 
 export type BankInformationDto = {
@@ -784,6 +806,39 @@ export type ElectronicSignatureRequirementDto = {
 
 export type ElectronicSignatureStatus = 'requested' | 'activated' | 'on_going' | 'refused' | 'signed' | 'cancelled';
 
+export type EntryDto = {
+    id: string;
+    valueDate: Date;
+    label: string;
+    /**
+     * Debit amount, in cents
+     */
+    debit: number;
+    /**
+     * Credit amount, in cents
+     */
+    credit: number;
+    parent: boolean;
+    vatCode: VatCode;
+    /**
+     * VAT amount, in cents
+     */
+    vatAmount: number;
+    isPersonal: boolean;
+    operationType: OperationType;
+    companyId: string;
+    accountingAccountId: string;
+    entryId: string;
+    accountingBookId: string;
+    thirdPartyId: string;
+    accountingAccount?: AccountingAccountDto;
+    entries: Array<EntryDto>;
+    /**
+     * Entry amount, in cents
+     */
+    amount: number;
+};
+
 export type EstimateElectronicSignatureDto = {
     id: string;
     canceledAt: number | null;
@@ -1217,6 +1272,29 @@ export type PushNotificationPreferencesDto = {
     eInvoicingPlatformChange: boolean;
 };
 
+export type QueryTransactionDto = {
+    id: string;
+    accountId: string;
+    label: string;
+    fullLabel: string;
+    /**
+     * Transaction amount, in euros
+     */
+    amount: number;
+    valueDate: Date;
+    currencyCode: string;
+    entries: Array<EntryDto>;
+    associatedInvoices: Array<AssociatedInvoicesDto>;
+    paymentMethod: PaymentMethodLegacy | null;
+    otherPaymentMethodUsed: string | null;
+    thirdParty: ReadAccountingThirdPartyDto | null;
+    operationType: OperationType | null;
+    lockedAt: Date | null;
+    lockedBy: string | null;
+    hasAccountingBook: boolean;
+    fileCount: number;
+};
+
 export type RankTaskMode = 'opportunity' | 'date' | 'rank';
 
 export type ReadAccountDto = {
@@ -1299,6 +1377,12 @@ export type ReadAccountingBookDto = {
     companyId: string;
     createdAt: Date;
     updatedAt: Date;
+};
+
+export type ReadAccountingThirdPartyDto = {
+    id: string;
+    name: string | null;
+    commercialName: string | null;
 };
 
 export type ReadActivityDto = {
@@ -7721,6 +7805,35 @@ export type EInvoicingControllerRecordPlatformChoiceFromEmailLinkV2Data = {
 export type EInvoicingControllerRecordPlatformChoiceFromEmailLinkV2Responses = {
     200: unknown;
 };
+
+export type TransactionsControllerRetrieveTransactionByIdV2Data = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/v2/transactions/{id}';
+};
+
+export type TransactionsControllerRetrieveTransactionByIdV2Errors = {
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+    /**
+     * Resource not found
+     */
+    404: unknown;
+};
+
+export type TransactionsControllerRetrieveTransactionByIdV2Responses = {
+    /**
+     * Return a single transaction
+     */
+    200: QueryTransactionDto;
+};
+
+export type TransactionsControllerRetrieveTransactionByIdV2Response = TransactionsControllerRetrieveTransactionByIdV2Responses[keyof TransactionsControllerRetrieveTransactionByIdV2Responses];
 
 export type AccountingBillingControllerReconciliateInvoiceV2Data = {
     body: ReconciliateInvoiceDto;
