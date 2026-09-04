@@ -2,6 +2,23 @@
 
 import * as z from 'zod';
 
+export const zAccountingAccountDto = z.object({
+    id: z.string(),
+    name: z.string(),
+    number: z.number(),
+    isVatRelated: z.boolean(),
+    color: z.string().nullable(),
+    icon: z.string().nullable(),
+    category: z.number().nullable(),
+    description: z.string().nullable(),
+    tags: z.array(z.string()).nullable(),
+    position: z.number().nullable(),
+    isHidden: z.boolean(),
+    isPersonal: z.boolean(),
+    companyId: z.string().optional(),
+    parentId: z.string().nullable()
+});
+
 export const zAccountingBookType = z.enum(['income', 'purchase']);
 
 export const zAddressType = z.union([
@@ -23,6 +40,11 @@ export const zAnnotateEntryDto = z.object({
     accountingAccountNumber: z.number().optional(),
     isPersonal: z.boolean(),
     amount: z.number()
+});
+
+export const zAssociatedInvoicesDto = z.object({
+    id: z.string(),
+    number: z.string()
 });
 
 export const zBankInformationDto = z.object({
@@ -1508,6 +1530,12 @@ export const zReadAccountDto = z.object({
     numberOfTransactionsToAnnotate: z.number().optional(),
     createdAt: z.iso.datetime({ offset: true }).optional(),
     updatedAt: z.iso.datetime({ offset: true }).optional()
+});
+
+export const zReadAccountingThirdPartyDto = z.object({
+    id: z.string(),
+    name: z.string().nullable(),
+    commercialName: z.string().nullable()
 });
 
 export const zReadAdvanceItemLineDto = z.object({
@@ -3183,6 +3211,57 @@ export const zCreateProductDto = z.object({
     }).optional()
 });
 
+export const zEntryDto = z.object({
+    id: z.string(),
+    valueDate: z.iso.datetime({ offset: true }),
+    label: z.string(),
+    debit: z.number().register(z.globalRegistry, {
+        description: 'Debit amount, in cents'
+    }),
+    credit: z.number().register(z.globalRegistry, {
+        description: 'Credit amount, in cents'
+    }),
+    parent: z.boolean(),
+    vatCode: zVatCode,
+    vatAmount: z.number().register(z.globalRegistry, {
+        description: 'VAT amount, in cents'
+    }),
+    isPersonal: z.boolean(),
+    operationType: zOperationType,
+    companyId: z.string(),
+    accountingAccountId: z.string(),
+    entryId: z.string(),
+    accountingBookId: z.string(),
+    thirdPartyId: z.string(),
+    accountingAccount: zAccountingAccountDto.optional(),
+    entries: z.array(z.lazy((): any => zEntryDto)),
+    amount: z.number().register(z.globalRegistry, {
+        description: 'Entry amount, in cents'
+    })
+});
+
+export const zQueryTransactionDto = z.object({
+    id: z.string(),
+    accountId: z.string(),
+    label: z.string(),
+    fullLabel: z.string(),
+    amount: z.number().register(z.globalRegistry, {
+        description: 'Transaction amount, in euros'
+    }),
+    valueDate: z.iso.datetime({ offset: true }),
+    currencyCode: z.string(),
+    entries: z.array(zEntryDto),
+    associatedInvoices: z.array(zAssociatedInvoicesDto),
+    paymentMethod: zPaymentMethodLegacy.nullable(),
+    otherPaymentMethodUsed: z.string().nullable(),
+    thirdParty: zReadAccountingThirdPartyDto.nullable(),
+    operationType: zOperationType.nullable(),
+    lockedAt: z.iso.datetime({ offset: true }).nullable(),
+    lockedBy: z.string().nullable(),
+    hasAccountingBook: z.boolean(),
+    fileCount: z.number()
+});
+
 export const zReadBillingDetailsLineDto = z.object({
     generatedId: z.string().optional(),
     id: z.string().optional(),
@@ -4563,6 +4642,10 @@ export const zEInvoicingControllerRecordPlatformChoiceFromEmailLinkV2Query = z.o
     token: z.string()
 });
 
+export const zTransactionsControllerRetrieveTransactionByIdV2Path = z.object({
+    id: z.string()
+});
+
 export const zAccountingBillingControllerReconciliateInvoiceV2Body = zReconciliateInvoiceDto;
 
 export const zAccountingBillingControllerReconciliateInvoiceV2Path = z.object({
@@ -5896,6 +5979,12 @@ export const zEInvoicingControllerRecordPlatformChoiceFromEmailLinkV2Data = z.ob
     body: z.never().optional(),
     path: z.never().optional(),
     query: zEInvoicingControllerRecordPlatformChoiceFromEmailLinkV2Query
+});
+
+export const zTransactionsControllerRetrieveTransactionByIdV2Data = z.object({
+    body: z.never().optional(),
+    path: zTransactionsControllerRetrieveTransactionByIdV2Path,
+    query: z.never().optional()
 });
 
 export const zAccountingBillingControllerReconciliateInvoiceV2Data = z.object({
