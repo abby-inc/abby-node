@@ -4,6 +4,23 @@ export type ClientOptions = {
     baseUrl: 'https://api.abby.fr' | (string & {});
 };
 
+export type AccountingAccountDto = {
+    id: string;
+    name: string;
+    number: number;
+    isVatRelated: boolean;
+    color: string | null;
+    icon: string | null;
+    category: number | null;
+    description: string | null;
+    tags: Array<string> | null;
+    position: number | null;
+    isHidden: boolean;
+    isPersonal: boolean;
+    companyId?: string;
+    parentId: string | null;
+};
+
 export type AccountingBookType = 'income' | 'purchase';
 
 export type AddressDto = {
@@ -60,6 +77,11 @@ export type AnnotateEntryDto = {
     accountingAccountNumber?: number;
     isPersonal: boolean;
     amount: number;
+};
+
+export type AssociatedInvoicesDto = {
+    id: string;
+    number: string;
 };
 
 export type BankInformationDto = {
@@ -272,6 +294,11 @@ export type CompanyDto = {
     isInTestMode: boolean;
 };
 
+/**
+ * Champs du profil entreprise manquants pour l'inscription annuaire (name, siren, siret, legalStatus, address, zipCode, city — `legalStatus` couvre aussi une forme juridique inconnue de Docoon), calculés **live** à chaque lecture. Tableau vide si le profil est complet ou si la lecture est indisponible (dégradé, cf. la description du bloc `eInvoicing`) — jamais `null`.
+ */
+export type CompanyProfileField = 'name' | 'siren' | 'siret' | 'legalStatus' | 'address' | 'zipCode' | 'city';
+
 export type ContactListOrganizationDto = {
     /**
      * Organization ID
@@ -351,11 +378,6 @@ export type CreateAccountingBookDto = {
     entries: Array<AnnotateEntryDto>;
 };
 
-export type CreateAssetDto = {
-    billingCustomerId?: string;
-    opportunityId?: string;
-};
-
 export type CreateBillingThemeDto = {
     /**
      * Name of the theme
@@ -421,7 +443,7 @@ export type CreateIncomeBookItemDto = {
     priceWithoutTax: number;
     priceTotalTax: number;
     reference?: string;
-    productType: ProductType;
+    productType: LegacyProductType;
     isSap?: boolean;
     isTaxIncluded?: boolean;
     file?: {
@@ -784,6 +806,39 @@ export type ElectronicSignatureRequirementDto = {
 
 export type ElectronicSignatureStatus = 'requested' | 'activated' | 'on_going' | 'refused' | 'signed' | 'cancelled';
 
+export type EntryDto = {
+    id: string;
+    valueDate: Date;
+    label: string;
+    /**
+     * Debit amount, in cents
+     */
+    debit: number;
+    /**
+     * Credit amount, in cents
+     */
+    credit: number;
+    parent: boolean;
+    vatCode: VatCode;
+    /**
+     * VAT amount, in cents
+     */
+    vatAmount: number;
+    isPersonal: boolean;
+    operationType: OperationType;
+    companyId: string;
+    accountingAccountId: string;
+    entryId: string;
+    accountingBookId: string;
+    thirdPartyId: string;
+    accountingAccount?: AccountingAccountDto;
+    entries: Array<EntryDto>;
+    /**
+     * Entry amount, in cents
+     */
+    amount: number;
+};
+
 export type EstimateElectronicSignatureDto = {
     id: string;
     canceledAt: number | null;
@@ -892,6 +947,8 @@ export type LegacyCreateOpportunityDto = {
     categoryId: string;
     dueDate?: Date;
 };
+
+export type LegacyProductType = 1 | 2 | 3 | 4 | 5;
 
 export type LegacyReadContactDto = {
     id: string;
@@ -1186,9 +1243,9 @@ export type PreferencesDto = {
     notification: NotificationPreferencesDto;
 };
 
-export type ProductType = 1 | 2 | 3 | 4 | 5;
+export type ProductType = 'sale_of_goods' | 'service_delivery' | 'commercial_or_craft_services' | 'sale_of_manufactured_goods' | 'disbursement';
 
-export type ProductUnit = 14 | 1 | 2 | 3 | 22 | 23 | 24 | 25 | 26 | 21 | 20 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 15 | 16 | 17 | 18 | 19 | 27 | 28;
+export type ProductUnit = 'unit' | 'gram' | 'hour' | 'day' | 'week' | 'fixed_rate' | 'year' | 'character' | 'line' | 'license' | 'article' | 'month' | 'kilogram' | 'kilometer' | 'liter' | 'batch' | 'meter' | 'square_meter' | 'cubic_meter' | 'linear_meter' | 'person' | 'ton' | 'word' | 'page' | 'leaflet' | 'paragraph' | 'minute' | 'overnight_stay';
 
 export type ProviderSignUp = 'google.com' | 'facebook.com' | 'apple.com' | 'password' | 'custom';
 
@@ -1215,6 +1272,29 @@ export type PushNotificationPreferencesDto = {
      * Notifications push de changement de plateforme de facturation électronique
      */
     eInvoicingPlatformChange: boolean;
+};
+
+export type QueryTransactionDto = {
+    id: string;
+    accountId: string;
+    label: string;
+    fullLabel: string;
+    /**
+     * Transaction amount, in euros
+     */
+    amount: number;
+    valueDate: Date | null;
+    currencyCode: string;
+    entries: Array<EntryDto>;
+    associatedInvoices: Array<AssociatedInvoicesDto>;
+    paymentMethod: PaymentMethodLegacy | null;
+    otherPaymentMethodUsed: string | null;
+    thirdParty: ReadAccountingThirdPartyDto | null;
+    operationType: OperationType | null;
+    lockedAt: Date | null;
+    lockedBy: string | null;
+    hasAccountingBook: boolean;
+    fileCount: number;
 };
 
 export type RankTaskMode = 'opportunity' | 'date' | 'rank';
@@ -1279,6 +1359,45 @@ export type ReadAccountingAccountDto = {
     entries?: Array<string>;
 };
 
+export type ReadAccountingAccountListItemDto = {
+    /**
+     * The id of the accounting account
+     */
+    id: string;
+    /**
+     * The name of the accounting account
+     */
+    name: string;
+    /**
+     * The number of the accounting account
+     */
+    number: number;
+    /**
+     * The description of the accounting account
+     */
+    description?: string | null;
+    /**
+     * The category of the accounting account
+     */
+    category: number;
+    /**
+     * Whether the account is a personal (non-professional) account
+     */
+    isPersonal: boolean;
+    /**
+     * Whether the account is hidden by default
+     */
+    isHidden: boolean;
+    /**
+     * Whether the account is related to VAT
+     */
+    isVatRelated: boolean;
+    /**
+     * The id of the generic account this custom account overrides, if any
+     */
+    parentId?: string | null;
+};
+
 export type ReadAccountingBookDto = {
     id: string;
     valueDate: Date;
@@ -1299,6 +1418,12 @@ export type ReadAccountingBookDto = {
     companyId: string;
     createdAt: Date;
     updatedAt: Date;
+};
+
+export type ReadAccountingThirdPartyDto = {
+    id: string;
+    name: string | null;
+    commercialName: string | null;
 };
 
 export type ReadActivityDto = {
@@ -2435,13 +2560,14 @@ export type ReadIncomeBookItemDto = {
         [key: string]: unknown;
     };
     transactionId?: string;
+    transactionIds?: Array<string>;
     billingObject?: {
         [key: string]: unknown;
     };
     paymentMethodUsed: ReadPaymentMethodUsed;
     priceTotalTax: number;
     priceWithoutTax: number;
-    productType: ProductType;
+    productType: LegacyProductType;
     reference: string;
     vatAmount: number;
     vatId?: number;
@@ -2635,6 +2761,10 @@ export type ReadMeEInvoicingDto = {
      * Transfert de portabilité sortant en cours (le client rejoint Abby). Non-null uniquement si la ligne d'annuaire est `SUSPENDED`, le dossier PA Hub est `OUTBOUND` et un `request_id` est persisté. `null` dans tous les autres cas (pas de dossier, dossier entrant, ligne non suspendue, lecture indisponible) — jamais une erreur HTTP.
      */
     platformTransfer: ReadMePlatformTransferDto | null;
+    /**
+     * Champs du profil entreprise manquants pour l'inscription annuaire (name, siren, siret, legalStatus, address, zipCode, city — `legalStatus` couvre aussi une forme juridique inconnue de Docoon), calculés **live** à chaque lecture. Tableau vide si le profil est complet ou si la lecture est indisponible (dégradé, cf. la description du bloc `eInvoicing`) — jamais `null`.
+     */
+    missingFields: Array<CompanyProfileField>;
 };
 
 export type ReadMePlatformTransferDto = {
@@ -3239,29 +3369,21 @@ export type ReadTransactionDto = {
     isDeleted: boolean;
     isFuture: boolean;
     label: string;
-    paymentMethod: PaymentMethodLegacy;
-    otherPaymentMethodUsed: {
-        [key: string]: unknown;
-    };
+    paymentMethod: PaymentMethodLegacy | null;
+    otherPaymentMethodUsed: string | null;
     showClientSide: boolean;
     hasAccountingBook: boolean;
     fileCount?: number;
-    operationType: OperationType;
-    suggestedAccountingAccount?: ReadSuggestedAccountingAccountDto;
-    thirdPartyId: {
-        [key: string]: unknown;
-    };
-    thirdParty: ReadThirdPartyDto;
-    lockedAt: {
-        [key: string]: unknown;
-    };
-    lockedBy: {
-        [key: string]: unknown;
-    };
+    operationType: OperationType | null;
+    suggestedAccountingAccount: ReadSuggestedAccountingAccountDto | null;
+    thirdPartyId: string | null;
+    thirdParty: ReadThirdPartyDto | null;
+    lockedAt: Date | null;
+    lockedBy: string | null;
     createdAt: Date;
     updatedAt: Date;
     bridgeUpdatedAt: Date;
-    valueDate: Date;
+    valueDate: Date | null;
 };
 
 export type ReadTypographyDto = {
@@ -5544,6 +5666,9 @@ export type BillingsControllerGetBillingsV2Data = {
         countWithoutFilters?: boolean;
         test: boolean;
         archived?: boolean;
+        /**
+         * Inclusive date window `[from, to]` applied to the field named by `rangeType`; use the calendar-day form `YYYY-MM-DD`, each bound being interpreted as a whole day in the API timezone (`Europe/Paris`). A full ISO instant is also accepted transitionally, for older clients, and is snapped to the Paris day it falls on, which can widen the window (a UTC end-of-day instant lands on the next Paris day).
+         */
         range?: Array<string>;
         rangeType?: BillingRangeType;
         onlyReminderActive?: boolean;
@@ -6414,14 +6539,19 @@ export type AssetControllerGetAssetV2Responses = {
 
 export type AssetControllerGetAssetV2Response = AssetControllerGetAssetV2Responses[keyof AssetControllerGetAssetV2Responses];
 
-export type AssetControllerCreateAssetV2Data = {
-    body: CreateAssetDto;
-    path?: never;
+export type AssetControllerCreateAssetByContactOrOrganizationIdV2Data = {
+    body?: never;
+    path: {
+        /**
+         * L'identifiant customerId peut correspondre à un contactId ou à un organizationId.
+         */
+        customerId: string;
+    };
     query?: never;
-    url: '/v2/billing/asset';
+    url: '/v2/billing/asset/{customerId}';
 };
 
-export type AssetControllerCreateAssetV2Errors = {
+export type AssetControllerCreateAssetByContactOrOrganizationIdV2Errors = {
     /**
      * Bad Request
      */
@@ -6432,14 +6562,14 @@ export type AssetControllerCreateAssetV2Errors = {
     401: unknown;
 };
 
-export type AssetControllerCreateAssetV2Responses = {
+export type AssetControllerCreateAssetByContactOrOrganizationIdV2Responses = {
     /**
      * Asset created successfully
      */
     201: ReadAssetDto;
 };
 
-export type AssetControllerCreateAssetV2Response = AssetControllerCreateAssetV2Responses[keyof AssetControllerCreateAssetV2Responses];
+export type AssetControllerCreateAssetByContactOrOrganizationIdV2Response = AssetControllerCreateAssetByContactOrOrganizationIdV2Responses[keyof AssetControllerCreateAssetByContactOrOrganizationIdV2Responses];
 
 export type AssetControllerUpdateGeneralInformationsV2Data = {
     body: UpdateAssetGeneralInformationsDto;
@@ -7722,6 +7852,35 @@ export type EInvoicingControllerRecordPlatformChoiceFromEmailLinkV2Responses = {
     200: unknown;
 };
 
+export type TransactionsControllerRetrieveTransactionByIdV2Data = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/v2/transactions/{id}';
+};
+
+export type TransactionsControllerRetrieveTransactionByIdV2Errors = {
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+    /**
+     * Resource not found
+     */
+    404: unknown;
+};
+
+export type TransactionsControllerRetrieveTransactionByIdV2Responses = {
+    /**
+     * Return a single transaction
+     */
+    200: QueryTransactionDto;
+};
+
+export type TransactionsControllerRetrieveTransactionByIdV2Response = TransactionsControllerRetrieveTransactionByIdV2Responses[keyof TransactionsControllerRetrieveTransactionByIdV2Responses];
+
 export type AccountingBillingControllerReconciliateInvoiceV2Data = {
     body: ReconciliateInvoiceDto;
     path: {
@@ -7823,6 +7982,24 @@ export type AccountingBillingControllerMarkInvoiceAsUnpaidV2Responses = {
      */
     200: unknown;
 };
+
+export type AccountingAccountControllerListV2Data = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Filter accounts by hidden status
+         */
+        isHidden?: boolean;
+    };
+    url: '/v2/accounting-accounts';
+};
+
+export type AccountingAccountControllerListV2Responses = {
+    200: Array<ReadAccountingAccountListItemDto>;
+};
+
+export type AccountingAccountControllerListV2Response = AccountingAccountControllerListV2Responses[keyof AccountingAccountControllerListV2Responses];
 
 export type PurchaseRegisterControllerRemoveV3Data = {
     body?: never;
