@@ -2,6 +2,23 @@
 
 import * as z from 'zod';
 
+export const zAccountingAccountDto = z.object({
+    id: z.string(),
+    name: z.string(),
+    number: z.number(),
+    isVatRelated: z.boolean(),
+    color: z.string().nullable(),
+    icon: z.string().nullable(),
+    category: z.number().nullable(),
+    description: z.string().nullable(),
+    tags: z.array(z.string()).nullable(),
+    position: z.number().nullable(),
+    isHidden: z.boolean(),
+    isPersonal: z.boolean(),
+    companyId: z.string().optional(),
+    parentId: z.string().nullable()
+});
+
 export const zAccountingBookType = z.enum(['income', 'purchase']);
 
 export const zAddressType = z.union([
@@ -23,6 +40,11 @@ export const zAnnotateEntryDto = z.object({
     accountingAccountNumber: z.number().optional(),
     isPersonal: z.boolean(),
     amount: z.number()
+});
+
+export const zAssociatedInvoicesDto = z.object({
+    id: z.string(),
+    number: z.string()
 });
 
 export const zBankInformationDto = z.object({
@@ -128,6 +150,21 @@ export const zColorsDto = z.object({
     text: z.string().register(z.globalRegistry, {
         description: 'Text color in hex format'
     })
+});
+
+/**
+ * Champs du profil entreprise manquants pour l'inscription annuaire (name, siren, siret, legalStatus, address, zipCode, city — `legalStatus` couvre aussi une forme juridique inconnue de Docoon), calculés **live** à chaque lecture. Tableau vide si le profil est complet ou si la lecture est indisponible (dégradé, cf. la description du bloc `eInvoicing`) — jamais `null`.
+ */
+export const zCompanyProfileField = z.enum([
+    'name',
+    'siren',
+    'siret',
+    'legalStatus',
+    'address',
+    'zipCode',
+    'city'
+]).register(z.globalRegistry, {
+    description: 'Champs du profil entreprise manquants pour l\'inscription annuaire (name, siren, siret, legalStatus, address, zipCode, city — `legalStatus` couvre aussi une forme juridique inconnue de Docoon), calculés **live** à chaque lecture. Tableau vide si le profil est complet ou si la lecture est indisponible (dégradé, cf. la description du bloc `eInvoicing`) — jamais `null`.'
 });
 
 export const zContactListOrganizationDto = z.object({
@@ -455,11 +492,6 @@ export const zClientAddressDto = z.object({
         description: 'The state or province of the address'
     }).optional(),
     country: zCountryCode
-});
-
-export const zCreateAssetDto = z.object({
-    billingCustomerId: z.string().optional(),
-    opportunityId: z.string().optional()
 });
 
 export const zCreateBillingThemeDto = z.object({
@@ -890,6 +922,29 @@ export const zLegacyCreateOpportunityDto = z.object({
     description: z.string().optional(),
     categoryId: z.string(),
     dueDate: z.iso.datetime({ offset: true }).optional()
+});
+
+export const zLegacyProductType = z.union([
+    z.literal(1),
+    z.literal(2),
+    z.literal(3),
+    z.literal(4),
+    z.literal(5)
+]);
+
+export const zCreateIncomeBookItemDto = z.object({
+    paidAt: z.iso.datetime({ offset: true }).optional().default('2022-03-01'),
+    paymentMethodUsed: z.record(z.string(), z.unknown()).optional().default({ value: 1 }),
+    vatAmount: z.number().optional(),
+    vatId: z.number().optional(),
+    client: z.string(),
+    priceWithoutTax: z.number(),
+    priceTotalTax: z.number(),
+    reference: z.string().optional(),
+    productType: zLegacyProductType,
+    isSap: z.boolean().optional(),
+    isTaxIncluded: z.boolean().optional(),
+    file: z.record(z.string(), z.unknown()).optional()
 });
 
 export const zLegacyReadContactDto = z.object({
@@ -1359,58 +1414,43 @@ export const zPlatformTransferStatus = z.enum([
     description: 'Agrégat du CaseStatus PA Hub : REQUESTED (demande envoyée / en attente), ACCEPTED (ancienne plateforme a accepté), REFUSED, CLOSED.'
 });
 
-export const zProductType = z.union([
-    z.literal(1),
-    z.literal(2),
-    z.literal(3),
-    z.literal(4),
-    z.literal(5)
+export const zProductType = z.enum([
+    'sale_of_goods',
+    'service_delivery',
+    'commercial_or_craft_services',
+    'sale_of_manufactured_goods',
+    'disbursement'
 ]);
 
-export const zCreateIncomeBookItemDto = z.object({
-    paidAt: z.iso.datetime({ offset: true }).optional().default('2022-03-01'),
-    paymentMethodUsed: z.record(z.string(), z.unknown()).optional().default({ value: 1 }),
-    vatAmount: z.number().optional(),
-    vatId: z.number().optional(),
-    client: z.string(),
-    priceWithoutTax: z.number(),
-    priceTotalTax: z.number(),
-    reference: z.string().optional(),
-    productType: zProductType,
-    isSap: z.boolean().optional(),
-    isTaxIncluded: z.boolean().optional(),
-    file: z.record(z.string(), z.unknown()).optional()
-});
-
-export const zProductUnit = z.union([
-    z.literal(14),
-    z.literal(1),
-    z.literal(2),
-    z.literal(3),
-    z.literal(22),
-    z.literal(23),
-    z.literal(24),
-    z.literal(25),
-    z.literal(26),
-    z.literal(21),
-    z.literal(20),
-    z.literal(4),
-    z.literal(5),
-    z.literal(6),
-    z.literal(7),
-    z.literal(8),
-    z.literal(9),
-    z.literal(10),
-    z.literal(11),
-    z.literal(12),
-    z.literal(13),
-    z.literal(15),
-    z.literal(16),
-    z.literal(17),
-    z.literal(18),
-    z.literal(19),
-    z.literal(27),
-    z.literal(28)
+export const zProductUnit = z.enum([
+    'unit',
+    'gram',
+    'hour',
+    'day',
+    'week',
+    'fixed_rate',
+    'year',
+    'character',
+    'line',
+    'license',
+    'article',
+    'month',
+    'kilogram',
+    'kilometer',
+    'liter',
+    'batch',
+    'meter',
+    'square_meter',
+    'cubic_meter',
+    'linear_meter',
+    'person',
+    'ton',
+    'word',
+    'page',
+    'leaflet',
+    'paragraph',
+    'minute',
+    'overnight_stay'
 ]);
 
 export const zMigrateSapProductLineDto = z.object({
@@ -1508,6 +1548,38 @@ export const zReadAccountDto = z.object({
     numberOfTransactionsToAnnotate: z.number().optional(),
     createdAt: z.iso.datetime({ offset: true }).optional(),
     updatedAt: z.iso.datetime({ offset: true }).optional()
+});
+
+export const zReadAccountingAccountListItemDto = z.object({
+    id: z.string().register(z.globalRegistry, {
+        description: 'The id of the accounting account'
+    }),
+    name: z.string().register(z.globalRegistry, {
+        description: 'The name of the accounting account'
+    }),
+    number: z.number().register(z.globalRegistry, {
+        description: 'The number of the accounting account'
+    }),
+    description: z.string().nullish(),
+    category: z.number().register(z.globalRegistry, {
+        description: 'The category of the accounting account'
+    }),
+    isPersonal: z.boolean().register(z.globalRegistry, {
+        description: 'Whether the account is a personal (non-professional) account'
+    }),
+    isHidden: z.boolean().register(z.globalRegistry, {
+        description: 'Whether the account is hidden by default'
+    }),
+    isVatRelated: z.boolean().register(z.globalRegistry, {
+        description: 'Whether the account is related to VAT'
+    }),
+    parentId: z.string().nullish()
+});
+
+export const zReadAccountingThirdPartyDto = z.object({
+    id: z.string(),
+    name: z.string().nullable(),
+    commercialName: z.string().nullable()
 });
 
 export const zReadAdvanceItemLineDto = z.object({
@@ -2298,7 +2370,10 @@ export const zReadMeEInvoicingDto = z.object({
     isLegacyMandate: z.boolean().register(z.globalRegistry, {
         description: 'True quand le mandat PDP courant est un mandat legacy (version 1, antérieur à la vérification d\'identité) — le grandfathering d\'affichage v1 (D-9396) branche dessus. Fail-safe : false quand le mandat est absent ou la lecture indisponible. Dérivé de la version du mandat uniquement, jamais de identityVerificationRequired (qui couvre aussi les bypass admin v2).'
     }),
-    platformTransfer: zReadMePlatformTransferDto.nullable()
+    platformTransfer: zReadMePlatformTransferDto.nullable(),
+    missingFields: z.array(zCompanyProfileField).register(z.globalRegistry, {
+        description: 'Champs du profil entreprise manquants pour l\'inscription annuaire (name, siren, siret, legalStatus, address, zipCode, city — `legalStatus` couvre aussi une forme juridique inconnue de Docoon), calculés **live** à chaque lecture. Tableau vide si le profil est complet ou si la lecture est indisponible (dégradé, cf. la description du bloc `eInvoicing`) — jamais `null`.'
+    })
 });
 
 export const zRegulationsDto = z.object({
@@ -3183,6 +3258,57 @@ export const zCreateProductDto = z.object({
     }).optional()
 });
 
+export const zEntryDto = z.object({
+    id: z.string(),
+    valueDate: z.iso.datetime({ offset: true }),
+    label: z.string(),
+    debit: z.number().register(z.globalRegistry, {
+        description: 'Debit amount, in cents'
+    }),
+    credit: z.number().register(z.globalRegistry, {
+        description: 'Credit amount, in cents'
+    }),
+    parent: z.boolean(),
+    vatCode: zVatCode,
+    vatAmount: z.number().register(z.globalRegistry, {
+        description: 'VAT amount, in cents'
+    }),
+    isPersonal: z.boolean(),
+    operationType: zOperationType,
+    companyId: z.string(),
+    accountingAccountId: z.string(),
+    entryId: z.string(),
+    accountingBookId: z.string(),
+    thirdPartyId: z.string(),
+    accountingAccount: zAccountingAccountDto.optional(),
+    entries: z.array(z.lazy((): any => zEntryDto)),
+    amount: z.number().register(z.globalRegistry, {
+        description: 'Entry amount, in cents'
+    })
+});
+
+export const zQueryTransactionDto = z.object({
+    id: z.string(),
+    accountId: z.string(),
+    label: z.string(),
+    fullLabel: z.string(),
+    amount: z.number().register(z.globalRegistry, {
+        description: 'Transaction amount, in euros'
+    }),
+    valueDate: z.iso.datetime({ offset: true }).nullable(),
+    currencyCode: z.string(),
+    entries: z.array(zEntryDto),
+    associatedInvoices: z.array(zAssociatedInvoicesDto),
+    paymentMethod: zPaymentMethodLegacy.nullable(),
+    otherPaymentMethodUsed: z.string().nullable(),
+    thirdParty: zReadAccountingThirdPartyDto.nullable(),
+    operationType: zOperationType.nullable(),
+    lockedAt: z.iso.datetime({ offset: true }).nullable(),
+    lockedBy: z.string().nullable(),
+    hasAccountingBook: z.boolean(),
+    fileCount: z.number()
+});
+
 export const zReadBillingDetailsLineDto = z.object({
     generatedId: z.string().optional(),
     id: z.string().optional(),
@@ -3480,11 +3606,12 @@ export const zReadIncomeBookItemDto = z.object({
     _id: z.string(),
     billing: z.record(z.string(), z.unknown()).optional(),
     transactionId: z.string().optional(),
+    transactionIds: z.array(z.string()).optional(),
     billingObject: z.record(z.string(), z.unknown()).optional(),
     paymentMethodUsed: zReadPaymentMethodUsed,
     priceTotalTax: z.number(),
     priceWithoutTax: z.number(),
-    productType: zProductType,
+    productType: zLegacyProductType,
     reference: z.string(),
     vatAmount: z.number(),
     vatId: z.number().optional(),
@@ -4142,21 +4269,21 @@ export const zReadTransactionDto = z.object({
     isDeleted: z.boolean(),
     isFuture: z.boolean(),
     label: z.string(),
-    paymentMethod: zPaymentMethodLegacy,
-    otherPaymentMethodUsed: z.record(z.string(), z.unknown()),
+    paymentMethod: zPaymentMethodLegacy.nullable(),
+    otherPaymentMethodUsed: z.string().nullable(),
     showClientSide: z.boolean(),
     hasAccountingBook: z.boolean(),
     fileCount: z.number().optional(),
-    operationType: zOperationType,
-    suggestedAccountingAccount: zReadSuggestedAccountingAccountDto.optional(),
-    thirdPartyId: z.record(z.string(), z.unknown()),
-    thirdParty: zReadThirdPartyDto,
-    lockedAt: z.record(z.string(), z.unknown()),
-    lockedBy: z.record(z.string(), z.unknown()),
+    operationType: zOperationType.nullable(),
+    suggestedAccountingAccount: zReadSuggestedAccountingAccountDto.nullable(),
+    thirdPartyId: z.string().nullable(),
+    thirdParty: zReadThirdPartyDto.nullable(),
+    lockedAt: z.iso.datetime({ offset: true }).nullable(),
+    lockedBy: z.string().nullable(),
     createdAt: z.iso.datetime({ offset: true }),
     updatedAt: z.iso.datetime({ offset: true }),
     bridgeUpdatedAt: z.iso.datetime({ offset: true }),
-    valueDate: z.iso.datetime({ offset: true })
+    valueDate: z.iso.datetime({ offset: true }).nullable()
 });
 
 export const zReadUserDto = z.object({
@@ -4264,7 +4391,9 @@ export const zBillingsControllerGetBillingsV2Query = z.object({
     countWithoutFilters: z.boolean().optional(),
     test: z.boolean(),
     archived: z.boolean().optional(),
-    range: z.array(z.string()).optional(),
+    range: z.array(z.string()).register(z.globalRegistry, {
+        description: 'Inclusive date window `[from, to]` applied to the field named by `rangeType`; use the calendar-day form `YYYY-MM-DD`, each bound being interpreted as a whole day in the API timezone (`Europe/Paris`). A full ISO instant is also accepted transitionally, for older clients, and is snapped to the Paris day it falls on, which can widen the window (a UTC end-of-day instant lands on the next Paris day).'
+    }).optional(),
     rangeType: zBillingRangeType.optional(),
     onlyReminderActive: z.boolean().optional(),
     onlyOnlineSignature: z.boolean().optional(),
@@ -4563,6 +4692,10 @@ export const zEInvoicingControllerRecordPlatformChoiceFromEmailLinkV2Query = z.o
     token: z.string()
 });
 
+export const zTransactionsControllerRetrieveTransactionByIdV2Path = z.object({
+    id: z.string()
+});
+
 export const zAccountingBillingControllerReconciliateInvoiceV2Body = zReconciliateInvoiceDto;
 
 export const zAccountingBillingControllerReconciliateInvoiceV2Path = z.object({
@@ -4583,6 +4716,12 @@ export const zAccountingBillingControllerMarkInvoiceAsUnpaidV2Path = z.object({
     invoiceId: z.string().register(z.globalRegistry, {
         description: 'ID of the invoice to mark as unpaid'
     })
+});
+
+export const zAccountingAccountControllerListV2Query = z.object({
+    isHidden: z.boolean().register(z.globalRegistry, {
+        description: 'Filter accounts by hidden status'
+    }).optional()
 });
 
 export const zPurchaseRegisterControllerRemoveV3Path = z.object({
@@ -4995,7 +5134,11 @@ export const zAssetControllerGetAssetV2Path = z.object({
     })
 });
 
-export const zAssetControllerCreateAssetV2Body = zCreateAssetDto;
+export const zAssetControllerCreateAssetByContactOrOrganizationIdV2Path = z.object({
+    customerId: z.string().register(z.globalRegistry, {
+        description: 'L\'identifiant customerId peut correspondre à un contactId ou à un organizationId.'
+    })
+});
 
 export const zAssetControllerUpdateGeneralInformationsV2Body = zUpdateAssetGeneralInformationsDto;
 
@@ -5598,9 +5741,9 @@ export const zAssetControllerGetAssetV2Data = z.object({
     query: z.never().optional()
 });
 
-export const zAssetControllerCreateAssetV2Data = z.object({
-    body: zAssetControllerCreateAssetV2Body,
-    path: z.never().optional(),
+export const zAssetControllerCreateAssetByContactOrOrganizationIdV2Data = z.object({
+    body: z.never().optional(),
+    path: zAssetControllerCreateAssetByContactOrOrganizationIdV2Path,
     query: z.never().optional()
 });
 
@@ -5898,6 +6041,12 @@ export const zEInvoicingControllerRecordPlatformChoiceFromEmailLinkV2Data = z.ob
     query: zEInvoicingControllerRecordPlatformChoiceFromEmailLinkV2Query
 });
 
+export const zTransactionsControllerRetrieveTransactionByIdV2Data = z.object({
+    body: z.never().optional(),
+    path: zTransactionsControllerRetrieveTransactionByIdV2Path,
+    query: z.never().optional()
+});
+
 export const zAccountingBillingControllerReconciliateInvoiceV2Data = z.object({
     body: zAccountingBillingControllerReconciliateInvoiceV2Body,
     path: zAccountingBillingControllerReconciliateInvoiceV2Path,
@@ -5914,6 +6063,12 @@ export const zAccountingBillingControllerMarkInvoiceAsUnpaidV2Data = z.object({
     body: z.never().optional(),
     path: zAccountingBillingControllerMarkInvoiceAsUnpaidV2Path,
     query: z.never().optional()
+});
+
+export const zAccountingAccountControllerListV2Data = z.object({
+    body: z.never().optional(),
+    path: z.never().optional(),
+    query: zAccountingAccountControllerListV2Query.optional()
 });
 
 export const zLogsControllerRetrieveLogsByCompanyData = z.object({
