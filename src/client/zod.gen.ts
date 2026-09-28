@@ -89,28 +89,28 @@ export const zBillingLocale = z.enum([
 ]);
 
 export const zBillingRangeType = z.enum([
+    'emittedAt',
     'paidAt',
     'signedAt',
-    'refusedAt',
-    'date',
-    'validityDate',
-    'dueDate'
+    'expiredAt',
+    'dueAt',
+    'refusedAt'
 ]);
 
-export const zBillingState = z.union([
-    z.literal(1),
-    z.literal(2),
-    z.literal(3),
-    z.literal(4),
-    z.literal(5)
+export const zBillingState = z.enum([
+    'draft',
+    'finalized',
+    'signed',
+    'refused',
+    'paid'
 ]);
 
-export const zBillingType = z.union([
-    z.literal(1),
-    z.literal(2),
-    z.literal(3),
-    z.literal(4),
-    z.literal(5)
+export const zBillingType = z.enum([
+    'estimate',
+    'invoice',
+    'asset',
+    'advance',
+    'purchase_order'
 ]);
 
 export const zBillingWarningDto = z.object({
@@ -125,8 +125,6 @@ export const zCancelBillingDto = z.object({
 });
 
 export const zCatalogOrderBy = z.enum(['createdAt', 'designation']);
-
-export const zCivility = z.union([z.literal(1), z.literal(2)]);
 
 /**
  * Current client state
@@ -697,7 +695,12 @@ export const zBillingDiscountAdvancePaymentDto = z.object({
     }).optional()
 });
 
-export const zDiscountMode = z.union([z.literal(1), z.literal(2)]);
+/**
+ * Mode de la réduction en pourcentage ou en euros
+ */
+export const zDiscountMode = z.enum(['PERCENTAGE', 'AMOUNT']).register(z.globalRegistry, {
+    description: 'Mode de la réduction en pourcentage ou en euros'
+});
 
 export const zDiscountDto = z.object({
     mode: zDiscountMode,
@@ -711,6 +714,19 @@ export const zDiscountLineDto = z.object({
         description: 'Montant de la remise, 1000 pour 10% ou 10€'
     }),
     mode: zDiscountMode
+});
+
+export const zDismissStateDto = z.object({
+    dismissedAt: z.string().register(z.globalRegistry, {
+        description: 'Horodatage ISO du dismiss. Toujours présent, y compris pour un dismiss permanent.'
+    }),
+    snoozeUntil: z.string().nullable()
+});
+
+export const zDismissPreferencesDto = z.object({
+    PRO_ACCOUNT_BANK_DETAILS: zDismissStateDto.optional(),
+    PRO_ACCOUNT_PAYMENT_SETTINGS: zDismissStateDto.optional(),
+    PRO_ACCOUNT_BILLING_DOCUMENT: zDismissStateDto.optional()
 });
 
 export const zDisplayBillingSettingsDto = z.object({
@@ -881,6 +897,8 @@ export const zLatePenaltyDto = z.object({
     }).optional()
 });
 
+export const zLegacyCivility = z.union([z.literal(1), z.literal(2)]);
+
 export const zLegacyCreateContactDto = z.object({
     email: z.string().optional(),
     firstname: z.string().optional(),
@@ -922,6 +940,45 @@ export const zLegacyCreateOpportunityDto = z.object({
     description: z.string().optional(),
     categoryId: z.string(),
     dueDate: z.iso.datetime({ offset: true }).optional()
+});
+
+export const zLegacyLegalStatus = z.union([
+    z.literal(1),
+    z.literal(2),
+    z.literal(3),
+    z.literal(4),
+    z.literal(5),
+    z.literal(6),
+    z.literal(7),
+    z.literal(8),
+    z.literal(9),
+    z.literal(10),
+    z.literal(11),
+    z.literal(12),
+    z.literal(13),
+    z.literal(14)
+]);
+
+export const zCompanyDto = z.object({
+    id: z.string().register(z.globalRegistry, {
+        description: 'Identifiant unique de l\'entreprise'
+    }),
+    commercialName: z.string().register(z.globalRegistry, {
+        description: 'Nom commercial de l\'entreprise'
+    }),
+    siret: z.string().register(z.globalRegistry, {
+        description: 'Numéro SIRET de l\'entreprise'
+    }),
+    legalStatut: zLegacyLegalStatus,
+    address: z.string().register(z.globalRegistry, {
+        description: 'Adresse de l\'entreprise'
+    }),
+    city: z.string().register(z.globalRegistry, {
+        description: 'Ville de l\'entreprise'
+    }),
+    isInTestMode: z.boolean().register(z.globalRegistry, {
+        description: 'Indique si l\'entreprise est en mode test'
+    })
 });
 
 export const zLegacyProductType = z.union([
@@ -971,44 +1028,22 @@ export const zLegacyUpdateOpportunityDto = z.object({
     dueDate: z.iso.datetime({ offset: true }).optional()
 });
 
-export const zLegalStatus = z.union([
-    z.literal(1),
-    z.literal(2),
-    z.literal(3),
-    z.literal(4),
-    z.literal(5),
-    z.literal(6),
-    z.literal(7),
-    z.literal(8),
-    z.literal(9),
-    z.literal(10),
-    z.literal(11),
-    z.literal(12),
-    z.literal(13),
-    z.literal(14)
+export const zLegalStatus = z.enum([
+    'micro_enterprise',
+    'sas',
+    'sarl',
+    'sasu',
+    'ei',
+    'eurl',
+    'eirl',
+    'sa',
+    'snc',
+    'other',
+    'sasu_sas',
+    'eurl_sarl',
+    'sci',
+    'association'
 ]);
-
-export const zCompanyDto = z.object({
-    id: z.string().register(z.globalRegistry, {
-        description: 'Identifiant unique de l\'entreprise'
-    }),
-    commercialName: z.string().register(z.globalRegistry, {
-        description: 'Nom commercial de l\'entreprise'
-    }),
-    siret: z.string().register(z.globalRegistry, {
-        description: 'Numéro SIRET de l\'entreprise'
-    }),
-    legalStatut: zLegalStatus,
-    address: z.string().register(z.globalRegistry, {
-        description: 'Adresse de l\'entreprise'
-    }),
-    city: z.string().register(z.globalRegistry, {
-        description: 'Ville de l\'entreprise'
-    }),
-    isInTestMode: z.boolean().register(z.globalRegistry, {
-        description: 'Indique si l\'entreprise est en mode test'
-    })
-});
 
 export const zLiberalType = z.union([
     z.literal(1),
@@ -1029,6 +1064,13 @@ export const zLogStatus = z.enum([
     'INFO'
 ]);
 
+export const zLogStatusFilter = z.enum([
+    'ERROR',
+    'SUCCESS',
+    'INFO',
+    'ALL'
+]);
+
 export const zLogoDto = z.object({
     id: z.string().register(z.globalRegistry, {
         description: 'Theme asset ID (upload)'
@@ -1041,7 +1083,7 @@ export const zLogoDto = z.object({
     })
 });
 
-export const zLumpSumCompensation = z.union([z.literal(1), z.literal(2)]);
+export const zLumpSumCompensation = z.enum(['forty_euros', 'other']);
 
 export const zBillingLumpSumCompensationDto = z.object({
     value: zLumpSumCompensation,
@@ -1941,6 +1983,7 @@ export const zReadLogDto = z.object({
     response: z.string().optional(),
     httpStatus: z.number().optional(),
     url: z.string().nullish(),
+    method: z.string().nullish(),
     createdAt: z.iso.datetime({ offset: true })
 });
 
@@ -2373,6 +2416,9 @@ export const zReadMeEInvoicingDto = z.object({
     platformTransfer: zReadMePlatformTransferDto.nullable(),
     missingFields: z.array(zCompanyProfileField).register(z.globalRegistry, {
         description: 'Champs du profil entreprise manquants pour l\'inscription annuaire (name, siren, siret, legalStatus, address, zipCode, city — `legalStatus` couvre aussi une forme juridique inconnue de Docoon), calculés **live** à chaque lecture. Tableau vide si le profil est complet ou si la lecture est indisponible (dégradé, cf. la description du bloc `eInvoicing`) — jamais `null`.'
+    }),
+    hasDirectoryLine: z.boolean().register(z.globalRegistry, {
+        description: 'Indique si une ligne d\'annuaire existe déjà chez Docoon (`docoonDirectoryLineId` persisté). Toujours un booléen, jamais omis : `false` s\'il n\'y a pas de row, si la lecture est dégradée, ou si la saga n\'a pas encore créé la ligne. L\'UUID Docoon n\'est pas exposé. Sert à borner la card « Inscription en pause » aux inscriptions sans ligne (D-12315).'
     })
 });
 
@@ -2444,7 +2490,8 @@ export const zRentabilityPreferencesDto = z.object({
 
 export const zPreferencesDto = z.object({
     rentability: zRentabilityPreferencesDto,
-    notification: zNotificationPreferencesDto
+    notification: zNotificationPreferencesDto,
+    dismiss: zDismissPreferencesDto
 });
 
 export const zRetrieveCustomerPortalPaymentsDto = z.object({
@@ -3566,28 +3613,28 @@ export const zTotalDto = z.object({
     convertedAmounts: zConvertedAmountsDto.optional()
 });
 
-export const zVatMention = z.union([
-    z.literal(1),
-    z.literal(2),
-    z.literal(3),
-    z.literal(4),
-    z.literal(5),
-    z.literal(6),
-    z.literal(13),
-    z.literal(7),
-    z.literal(8),
-    z.literal(9),
-    z.literal(10),
-    z.literal(11),
-    z.literal(12),
-    z.literal(14),
-    z.literal(15),
-    z.literal(16),
-    z.literal(17),
-    z.literal(18),
-    z.literal(19),
-    z.literal(20),
-    z.literal(21)
+export const zVatMention = z.enum([
+    'not_subject',
+    'second_hand_good',
+    'art_object',
+    'collection_antique',
+    'travel_agency',
+    'vat_not_applicable',
+    'vat_not_applicable_2',
+    'vat_exemption',
+    'vat_exemption_eu_sale',
+    'vat_exemption_eu_service',
+    'vat_construction',
+    'vat_psychologist',
+    'vat_psychologist_2',
+    'vat_reverse_charge',
+    'vat_reverse_charge_2',
+    'vat_reverse_charge_3',
+    'vat_reverse_charge_4',
+    'vat_reduced_rate',
+    'vat_reduced_rate_2',
+    'vat_article_261c_cgi',
+    'vat_exemption_294_cgi'
 ]);
 
 export const zBillingLegalsDto = z.object({
@@ -3940,7 +3987,7 @@ export const zReadCompanyDto = z.object({
     hasAcre: z.boolean().optional(),
     impositionType: zImpositionType.optional(),
     inseeImmatriculationDate: z.iso.datetime({ offset: true }).optional(),
-    legalStatus: zLegalStatus.optional(),
+    legalStatus: zLegacyLegalStatus.optional(),
     taxSystem: zTaxSystem.optional(),
     nafCode: z.string().optional(),
     name: z.string().optional(),
@@ -4303,7 +4350,7 @@ export const zReadUserDto = z.object({
     zipCode: z.string().optional(),
     socialSecurityNumber: z.string().optional(),
     companies: z.array(zReadCompanyDto).optional(),
-    civility: zCivility.optional(),
+    civility: zLegacyCivility.optional(),
     provider: zProviderSignUp.optional(),
     onboardingAt: z.iso.datetime({ offset: true }).optional(),
     onboardingId: z.string().optional(),
@@ -4758,7 +4805,11 @@ export const zLogsControllerRetrieveLogsByCompanyQuery = z.object({
     }),
     offset: z.number().register(z.globalRegistry, {
         description: 'Offset for pagination'
-    })
+    }),
+    status: zLogStatusFilter.optional(),
+    context: z.string().register(z.globalRegistry, {
+        description: 'Filter by context. Exact match, or a wildcard "prefix.*" matched as a prefix.'
+    }).optional()
 });
 
 export const zLogsControllerRetrieveLastLogOfAResourcePath = z.object({
