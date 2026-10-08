@@ -151,7 +151,7 @@ export type BillingLumpSumCompensationDto = {
     otherValue?: string;
 };
 
-export type BillingRangeType = 'paidAt' | 'signedAt' | 'refusedAt' | 'date' | 'validityDate' | 'dueDate';
+export type BillingRangeType = 'emittedAt' | 'paidAt' | 'signedAt' | 'expiredAt' | 'dueAt' | 'refusedAt';
 
 export type BillingReminderDto = {
     /**
@@ -176,9 +176,9 @@ export type BillingReminderDto = {
     recipients?: Array<string>;
 };
 
-export type BillingState = 1 | 2 | 3 | 4 | 5;
+export type BillingState = 'draft' | 'finalized' | 'signed' | 'refused' | 'paid';
 
-export type BillingType = 1 | 2 | 3 | 4 | 5;
+export type BillingType = 'estimate' | 'invoice' | 'asset' | 'advance' | 'purchase_order';
 
 export type BillingWarningDto = {
     title: string;
@@ -193,8 +193,6 @@ export type CancelBillingDto = {
 };
 
 export type CatalogOrderBy = 'createdAt' | 'designation';
-
-export type Civility = 1 | 2;
 
 export type ClientAddressDto = {
     /**
@@ -279,7 +277,7 @@ export type CompanyDto = {
     /**
      * Statut juridique de l'entreprise
      */
-    legalStatut: LegalStatus;
+    legalStatut: LegacyLegalStatus;
     /**
      * Adresse de l'entreprise
      */
@@ -376,6 +374,21 @@ export type CreateAccountingBookDto = {
     reference?: string;
     files?: Array<string>;
     entries: Array<AnnotateEntryDto>;
+};
+
+export type CreateAdvanceDto = {
+    /**
+     * Advance mode, same shape as PATCH /v2/billing/advance/{advanceId}/amount. AMOUNT requires amount, PERCENTAGE requires percentage. Lowercase "amount" / "percentage" are accepted. When omitted, the advance is 30% of the estimate (50% of the remaining amount from the fourth advance).
+     */
+    mode?: AdvanceMode;
+    /**
+     * Advance amount in cents HT (100 = 1.00 € HT), integer. Required when mode is AMOUNT, forbidden otherwise. Must not exceed the remaining amount of the estimate.
+     */
+    amount?: number;
+    /**
+     * Advance percentage of the estimate (30 = 30%), greater than 0 and at most 100. Required when mode is PERCENTAGE, forbidden otherwise.
+     */
+    percentage?: number;
 };
 
 export type CreateBillingThemeDto = {
@@ -754,7 +767,27 @@ export type DiscountLineDto = {
     mode: DiscountMode;
 };
 
-export type DiscountMode = 1 | 2;
+/**
+ * Mode de la réduction en pourcentage ou en euros
+ */
+export type DiscountMode = 'PERCENTAGE' | 'AMOUNT';
+
+export type DismissPreferencesDto = {
+    PRO_ACCOUNT_BANK_DETAILS?: DismissStateDto;
+    PRO_ACCOUNT_PAYMENT_SETTINGS?: DismissStateDto;
+    PRO_ACCOUNT_BILLING_DOCUMENT?: DismissStateDto;
+};
+
+export type DismissStateDto = {
+    /**
+     * Horodatage ISO du dismiss. Toujours présent, y compris pour un dismiss permanent.
+     */
+    dismissedAt: string;
+    /**
+     * Horodatage ISO jusqu'auquel la bannière reste snoozée, ou null si le dismiss est permanent.
+     */
+    snoozeUntil: string | null;
+};
 
 export type DisplayBillingSettingsDto = {
     displayFullName: boolean;
@@ -872,9 +905,15 @@ export type FileInputDto = {
 };
 
 export type FinalizeRequirementDto = {
-    name: string;
+    name: FinalizeRequirementName;
     message: string;
+    /**
+     * Only present on the `hasNoUrssafRoundingDrift` requirement.
+     */
+    metadata?: UrssafRoundingDriftMetadataDto;
 };
+
+export type FinalizeRequirementName = 'hasValidLines' | 'hasLineDesignation' | 'hasQuantityGreaterThanOrEqualToZero' | 'hasValidLineType' | 'hasValidPersonalServiceActivityLines' | 'advancesAreAllFinalized' | 'HasValidLineDiscountAmount' | 'HasValidLineDiscountPercentage' | 'HasValidGlobalDiscountAmount' | 'HasValidGlobalDiscountPercentage' | 'hasValidProductQuantityUnitForPersonalServiceActivity' | 'hasConsistentVatRateForEuMention' | 'isNotAlreadyFinalized' | 'hasValidElectronicSignature' | 'validateEmittedDate' | 'hasValidAmount' | 'hasPositiveAmount' | 'hasValidReminder' | 'hasValidPaymentRequestAdvanceAmount' | 'hasNoUrssafRoundingDrift';
 
 export type FontDto = {
     name: ThemeGoogleFont;
@@ -925,6 +964,8 @@ export type LatePenaltyDto = {
     otherValue?: string;
 };
 
+export type LegacyCivility = 1 | 2;
+
 export type LegacyCreateContactDto = {
     email?: string;
     firstname?: string;
@@ -947,6 +988,8 @@ export type LegacyCreateOpportunityDto = {
     categoryId: string;
     dueDate?: Date;
 };
+
+export type LegacyLegalStatus = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14;
 
 export type LegacyProductType = 1 | 2 | 3 | 4 | 5;
 
@@ -1012,7 +1055,7 @@ export type LegacyUpdateOpportunityDto = {
     dueDate?: Date;
 };
 
-export type LegalStatus = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14;
+export type LegalStatus = 'micro_enterprise' | 'sas' | 'sarl' | 'sasu' | 'ei' | 'eurl' | 'eirl' | 'sa' | 'snc' | 'other' | 'sasu_sas' | 'eurl_sarl' | 'sci' | 'association';
 
 export type LiberalType = 1 | 2 | 3;
 
@@ -1038,6 +1081,8 @@ export type LinksDto = {
 
 export type LogStatus = 'SUCCESS' | 'ERROR' | 'INFO';
 
+export type LogStatusFilter = 'ERROR' | 'SUCCESS' | 'INFO' | 'ALL';
+
 export type LogoDto = {
     /**
      * Theme asset ID (upload)
@@ -1053,7 +1098,7 @@ export type LogoDto = {
     size: number;
 };
 
-export type LumpSumCompensation = 1 | 2;
+export type LumpSumCompensation = 'forty_euros' | 'other';
 
 export type LumpSumCompensationDto = {
     value: LumpSumCompensation;
@@ -1241,6 +1286,10 @@ export type PreferencesDto = {
      * Préférences de notification
      */
     notification: NotificationPreferencesDto;
+    /**
+     * Registre de dismiss des bannières, filtré : n'apparaît que les clés actuellement snoozées ou permanentes.
+     */
+    dismiss: DismissPreferencesDto;
 };
 
 export type ProductType = 'sale_of_goods' | 'service_delivery' | 'commercial_or_craft_services' | 'sale_of_manufactured_goods' | 'disbursement';
@@ -2022,7 +2071,7 @@ export type ReadCompanyDto = {
     hasAcre?: boolean;
     impositionType?: ImpositionType;
     inseeImmatriculationDate?: Date;
-    legalStatus?: LegalStatus;
+    legalStatus?: LegacyLegalStatus;
     taxSystem?: TaxSystem;
     nafCode?: string;
     name?: string;
@@ -2693,6 +2742,7 @@ export type ReadLogDto = {
     response?: string;
     httpStatus?: number;
     url?: string | null;
+    method?: string | null;
     createdAt: Date;
 };
 
@@ -2765,6 +2815,10 @@ export type ReadMeEInvoicingDto = {
      * Champs du profil entreprise manquants pour l'inscription annuaire (name, siren, siret, legalStatus, address, zipCode, city — `legalStatus` couvre aussi une forme juridique inconnue de Docoon), calculés **live** à chaque lecture. Tableau vide si le profil est complet ou si la lecture est indisponible (dégradé, cf. la description du bloc `eInvoicing`) — jamais `null`.
      */
     missingFields: Array<CompanyProfileField>;
+    /**
+     * Indique si une ligne d'annuaire existe déjà chez Docoon (`docoonDirectoryLineId` persisté). Toujours un booléen, jamais omis : `false` s'il n'y a pas de row, si la lecture est dégradée, ou si la saga n'a pas encore créé la ligne. L'UUID Docoon n'est pas exposé. Sert à borner la card « Inscription en pause » aux inscriptions sans ligne (D-12315).
+     */
+    hasDirectoryLine: boolean;
 };
 
 export type ReadMePlatformTransferDto = {
@@ -3423,7 +3477,7 @@ export type ReadUserDto = {
     zipCode?: string;
     socialSecurityNumber?: string;
     companies?: Array<ReadCompanyDto>;
-    civility?: Civility;
+    civility?: LegacyCivility;
     provider?: ProviderSignUp;
     onboardingAt?: Date;
     onboardingId?: string;
@@ -4277,6 +4331,41 @@ export type UploadThemeAssetDto = {
     category: ThemeAssetCategory;
 };
 
+export type UrssafRoundingDriftLineDto = {
+    /**
+     * Id of the invoice line whose transmitted amounts do not add up.
+     */
+    lineId: string;
+    /**
+     * Difference in cents between the transmitted line total excl. tax and the stored one.
+     */
+    driftHtCents: number;
+    /**
+     * Difference in cents between the transmitted line total incl. tax and the stored one.
+     */
+    driftTtcCents: number;
+    /**
+     * Quantity-1 unit amount, in cents, that clears the drift for the whole invoice. Null when no amount was found.
+     */
+    suggestedUnitAmountCents: number | null;
+    /**
+     * Whether the suggested amount is expressed tax-included.
+     */
+    suggestedIsTaxIncluded: boolean;
+};
+
+export type UrssafRoundingDriftMetadataDto = {
+    lines: Array<UrssafRoundingDriftLineDto>;
+    /**
+     * Difference in cents between the sum of transmitted line totals excl. tax and the invoice total.
+     */
+    totalDriftHtCents: number;
+    /**
+     * Difference in cents between the sum of transmitted line totals incl. tax and the invoice total.
+     */
+    totalDriftTtcCents: number;
+};
+
 export type UserDto = {
     /**
      * Identifiant unique de l'utilisateur
@@ -4316,7 +4405,7 @@ export type VatDetailDto = {
     vatRate: number;
 };
 
-export type VatMention = 1 | 2 | 3 | 4 | 5 | 6 | 13 | 7 | 8 | 9 | 10 | 11 | 12 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21;
+export type VatMention = 'not_subject' | 'second_hand_good' | 'art_object' | 'collection_antique' | 'travel_agency' | 'vat_not_applicable' | 'vat_not_applicable_2' | 'vat_exemption' | 'vat_exemption_eu_sale' | 'vat_exemption_eu_service' | 'vat_construction' | 'vat_psychologist' | 'vat_psychologist_2' | 'vat_reverse_charge' | 'vat_reverse_charge_2' | 'vat_reverse_charge_3' | 'vat_reverse_charge_4' | 'vat_reduced_rate' | 'vat_reduced_rate_2' | 'vat_article_261c_cgi' | 'vat_exemption_294_cgi';
 
 export type IncomeBookControllerPostIncomeBookItemData = {
     body: CreateIncomeBookItemDto;
@@ -4901,7 +4990,7 @@ export type EstimateControllerCreateFinalInvoiceV2Responses = {
 export type EstimateControllerCreateFinalInvoiceV2Response = EstimateControllerCreateFinalInvoiceV2Responses[keyof EstimateControllerCreateFinalInvoiceV2Responses];
 
 export type EstimateControllerCreateAdvanceV2Data = {
-    body?: never;
+    body?: CreateAdvanceDto;
     path: {
         /**
          * ID of the signed estimate
@@ -4913,6 +5002,10 @@ export type EstimateControllerCreateAdvanceV2Data = {
 };
 
 export type EstimateControllerCreateAdvanceV2Errors = {
+    /**
+     * Payload is invalid, or the requested amount exceeds the remaining amount of the estimate
+     */
+    400: unknown;
     /**
      * Unauthorized
      */
@@ -4928,6 +5021,10 @@ export type EstimateControllerCreateAdvanceV2Responses = {
      * Invoice advance created successfully
      */
     200: ReadAdvanceDto;
+    /**
+     * Invoice advance created successfully
+     */
+    201: ReadAdvanceDto;
 };
 
 export type EstimateControllerCreateAdvanceV2Response = EstimateControllerCreateAdvanceV2Responses[keyof EstimateControllerCreateAdvanceV2Responses];
@@ -8272,6 +8369,14 @@ export type LogsControllerRetrieveLogsByCompanyData = {
          * Offset for pagination
          */
         offset: number;
+        /**
+         * Filter by status. Defaults to ERROR when omitted.
+         */
+        status?: LogStatusFilter;
+        /**
+         * Filter by context. Exact match, or a wildcard "prefix.*" matched as a prefix.
+         */
+        context?: string;
     };
     url: '/logs/company/{companyId}';
 };
@@ -8313,6 +8418,10 @@ export type LogsControllerRetrieveLastLogOfAResourceErrors = {
      * Unauthorized
      */
     401: unknown;
+    /**
+     * Forbidden — staff role required
+     */
+    403: unknown;
     /**
      * Log not found
      */

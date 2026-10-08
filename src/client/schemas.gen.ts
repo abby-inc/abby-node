@@ -418,12 +418,12 @@ export const BillingLumpSumCompensationDtoSchema = {
 export const BillingRangeTypeSchema = {
     type: 'string',
     enum: [
+        'emittedAt',
         'paidAt',
         'signedAt',
-        'refusedAt',
-        'date',
-        'validityDate',
-        'dueDate'
+        'expiredAt',
+        'dueAt',
+        'refusedAt'
     ]
 } as const;
 
@@ -476,22 +476,22 @@ export const BillingReminderDtoSchema = {
 export const BillingStateSchema = {
     type: 'string',
     enum: [
-        1,
-        2,
-        3,
-        4,
-        5
+        'draft',
+        'finalized',
+        'signed',
+        'refused',
+        'paid'
     ]
 } as const;
 
 export const BillingTypeSchema = {
-    type: 'number',
+    type: 'string',
     enum: [
-        1,
-        2,
-        3,
-        4,
-        5
+        'estimate',
+        'invoice',
+        'asset',
+        'advance',
+        'purchase_order'
     ]
 } as const;
 
@@ -532,14 +532,6 @@ export const CatalogOrderBySchema = {
     enum: [
         'createdAt',
         'designation'
-    ]
-} as const;
-
-export const CivilitySchema = {
-    type: 'number',
-    enum: [
-        1,
-        2
     ]
 } as const;
 
@@ -710,7 +702,7 @@ export const CompanyDtoSchema = {
             example: 3,
             allOf: [
                 {
-                    $ref: '#/components/schemas/LegalStatus'
+                    $ref: '#/components/schemas/LegacyLegalStatus'
                 }
             ]
         },
@@ -1244,6 +1236,31 @@ export const CreateAccountingBookDtoSchema = {
         'label',
         'entries'
     ]
+} as const;
+
+export const CreateAdvanceDtoSchema = {
+    type: 'object',
+    properties: {
+        mode: {
+            description: 'Advance mode, same shape as PATCH /v2/billing/advance/{advanceId}/amount. AMOUNT requires amount, PERCENTAGE requires percentage. Lowercase "amount" / "percentage" are accepted. When omitted, the advance is 30% of the estimate (50% of the remaining amount from the fourth advance).',
+            example: 'AMOUNT',
+            allOf: [
+                {
+                    $ref: '#/components/schemas/AdvanceMode'
+                }
+            ]
+        },
+        amount: {
+            type: 'number',
+            description: 'Advance amount in cents HT (100 = 1.00 € HT), integer. Required when mode is AMOUNT, forbidden otherwise. Must not exceed the remaining amount of the estimate.',
+            example: 100
+        },
+        percentage: {
+            type: 'number',
+            description: 'Advance percentage of the estimate (30 = 30%), greater than 0 and at most 100. Required when mode is PERCENTAGE, forbidden otherwise.',
+            example: 30
+        }
+    }
 } as const;
 
 export const CreateBillingThemeDtoSchema = {
@@ -2256,10 +2273,47 @@ export const DiscountLineDtoSchema = {
 } as const;
 
 export const DiscountModeSchema = {
-    type: 'number',
+    type: 'string',
     enum: [
-        1,
-        2
+        'PERCENTAGE',
+        'AMOUNT'
+    ],
+    description: 'Mode de la réduction en pourcentage ou en euros'
+} as const;
+
+export const DismissPreferencesDtoSchema = {
+    type: 'object',
+    properties: {
+        PRO_ACCOUNT_BANK_DETAILS: {
+            $ref: '#/components/schemas/DismissStateDto'
+        },
+        PRO_ACCOUNT_PAYMENT_SETTINGS: {
+            $ref: '#/components/schemas/DismissStateDto'
+        },
+        PRO_ACCOUNT_BILLING_DOCUMENT: {
+            $ref: '#/components/schemas/DismissStateDto'
+        }
+    }
+} as const;
+
+export const DismissStateDtoSchema = {
+    type: 'object',
+    properties: {
+        dismissedAt: {
+            type: 'string',
+            description: 'Horodatage ISO du dismiss. Toujours présent, y compris pour un dismiss permanent.',
+            example: '2026-09-24T12:00:00.000Z'
+        },
+        snoozeUntil: {
+            type: 'string',
+            nullable: true,
+            description: 'Horodatage ISO jusqu\'auquel la bannière reste snoozée, ou null si le dismiss est permanent.',
+            example: '2026-10-24T12:00:00.000Z'
+        }
+    },
+    required: [
+        'dismissedAt',
+        'snoozeUntil'
     ]
 } as const;
 
@@ -2714,17 +2768,55 @@ export const FinalizeRequirementDtoSchema = {
     type: 'object',
     properties: {
         name: {
-            type: 'string',
-            example: 'hasValidAmount'
+            example: 'hasValidAmount',
+            allOf: [
+                {
+                    $ref: '#/components/schemas/FinalizeRequirementName'
+                }
+            ]
         },
         message: {
             type: 'string',
             example: 'Le montant de la somme des avoirs ne peut pas être supérieur au montant total de la facture.'
+        },
+        metadata: {
+            description: 'Only present on the `hasNoUrssafRoundingDrift` requirement.',
+            allOf: [
+                {
+                    $ref: '#/components/schemas/UrssafRoundingDriftMetadataDto'
+                }
+            ]
         }
     },
     required: [
         'name',
         'message'
+    ]
+} as const;
+
+export const FinalizeRequirementNameSchema = {
+    type: 'string',
+    enum: [
+        'hasValidLines',
+        'hasLineDesignation',
+        'hasQuantityGreaterThanOrEqualToZero',
+        'hasValidLineType',
+        'hasValidPersonalServiceActivityLines',
+        'advancesAreAllFinalized',
+        'HasValidLineDiscountAmount',
+        'HasValidLineDiscountPercentage',
+        'HasValidGlobalDiscountAmount',
+        'HasValidGlobalDiscountPercentage',
+        'hasValidProductQuantityUnitForPersonalServiceActivity',
+        'hasConsistentVatRateForEuMention',
+        'isNotAlreadyFinalized',
+        'hasValidElectronicSignature',
+        'validateEmittedDate',
+        'hasValidAmount',
+        'hasPositiveAmount',
+        'hasValidReminder',
+        'hasValidPaymentRequestAdvanceAmount',
+        'hasNoUrssafRoundingDrift'
     ]
 } as const;
 
@@ -2885,6 +2977,14 @@ export const LatePenaltyDtoSchema = {
     ]
 } as const;
 
+export const LegacyCivilitySchema = {
+    type: 'number',
+    enum: [
+        1,
+        2
+    ]
+} as const;
+
 export const LegacyCreateContactDtoSchema = {
     type: 'object',
     properties: {
@@ -2951,6 +3051,26 @@ export const LegacyCreateOpportunityDtoSchema = {
         'name',
         'customerId',
         'categoryId'
+    ]
+} as const;
+
+export const LegacyLegalStatusSchema = {
+    type: 'number',
+    enum: [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
     ]
 } as const;
 
@@ -3147,22 +3267,22 @@ export const LegacyUpdateOpportunityDtoSchema = {
 } as const;
 
 export const LegalStatusSchema = {
-    type: 'number',
+    type: 'string',
     enum: [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14
+        'micro_enterprise',
+        'sas',
+        'sarl',
+        'sasu',
+        'ei',
+        'eurl',
+        'eirl',
+        'sa',
+        'snc',
+        'other',
+        'sasu_sas',
+        'eurl_sarl',
+        'sci',
+        'association'
     ]
 } as const;
 
@@ -3234,6 +3354,16 @@ export const LogStatusSchema = {
     ]
 } as const;
 
+export const LogStatusFilterSchema = {
+    type: 'string',
+    enum: [
+        'ERROR',
+        'SUCCESS',
+        'INFO',
+        'ALL'
+    ]
+} as const;
+
 export const LogoDtoSchema = {
     type: 'object',
     properties: {
@@ -3259,10 +3389,10 @@ export const LogoDtoSchema = {
 } as const;
 
 export const LumpSumCompensationSchema = {
-    type: 'number',
+    type: 'string',
     enum: [
-        1,
-        2
+        'forty_euros',
+        'other'
     ]
 } as const;
 
@@ -3837,11 +3967,20 @@ export const PreferencesDtoSchema = {
                     $ref: '#/components/schemas/NotificationPreferencesDto'
                 }
             ]
+        },
+        dismiss: {
+            description: 'Registre de dismiss des bannières, filtré : n\'apparaît que les clés actuellement snoozées ou permanentes.',
+            allOf: [
+                {
+                    $ref: '#/components/schemas/DismissPreferencesDto'
+                }
+            ]
         }
     },
     required: [
         'rentability',
-        'notification'
+        'notification',
+        'dismiss'
     ]
 } as const;
 
@@ -6271,7 +6410,7 @@ export const ReadCompanyDtoSchema = {
         legalStatus: {
             allOf: [
                 {
-                    $ref: '#/components/schemas/LegalStatus'
+                    $ref: '#/components/schemas/LegacyLegalStatus'
                 }
             ]
         },
@@ -8236,6 +8375,11 @@ export const ReadLogDtoSchema = {
             nullable: true,
             example: 'https://api.urssaf.fr/tiersdecl/v1/ae/sepa/mandats'
         },
+        method: {
+            type: 'string',
+            nullable: true,
+            example: 'POST'
+        },
         createdAt: {
             format: 'date-time',
             type: 'string',
@@ -8424,6 +8568,10 @@ export const ReadMeEInvoicingDtoSchema = {
             items: {
                 $ref: '#/components/schemas/CompanyProfileField'
             }
+        },
+        hasDirectoryLine: {
+            type: 'boolean',
+            description: 'Indique si une ligne d\'annuaire existe déjà chez Docoon (`docoonDirectoryLineId` persisté). Toujours un booléen, jamais omis : `false` s\'il n\'y a pas de row, si la lecture est dégradée, ou si la saga n\'a pas encore créé la ligne. L\'UUID Docoon n\'est pas exposé. Sert à borner la card « Inscription en pause » aux inscriptions sans ligne (D-12315).'
         }
     },
     required: [
@@ -8435,7 +8583,8 @@ export const ReadMeEInvoicingDtoSchema = {
         'addressingIdentifier',
         'isLegacyMandate',
         'platformTransfer',
-        'missingFields'
+        'missingFields',
+        'hasDirectoryLine'
     ]
 } as const;
 
@@ -10001,7 +10150,7 @@ export const ReadUserDtoSchema = {
         civility: {
             allOf: [
                 {
-                    $ref: '#/components/schemas/Civility'
+                    $ref: '#/components/schemas/LegacyCivility'
                 }
             ]
         },
@@ -12185,6 +12334,72 @@ export const UploadThemeAssetDtoSchema = {
     ]
 } as const;
 
+export const UrssafRoundingDriftLineDtoSchema = {
+    type: 'object',
+    properties: {
+        lineId: {
+            type: 'string',
+            example: '66e7fb6afcc1f7272c627fcd',
+            description: 'Id of the invoice line whose transmitted amounts do not add up.'
+        },
+        driftHtCents: {
+            type: 'number',
+            example: 3,
+            description: 'Difference in cents between the transmitted line total excl. tax and the stored one.'
+        },
+        driftTtcCents: {
+            type: 'number',
+            example: 7,
+            description: 'Difference in cents between the transmitted line total incl. tax and the stored one.'
+        },
+        suggestedUnitAmountCents: {
+            type: 'number',
+            nullable: true,
+            example: 209479,
+            description: 'Quantity-1 unit amount, in cents, that clears the drift for the whole invoice. Null when no amount was found.'
+        },
+        suggestedIsTaxIncluded: {
+            type: 'boolean',
+            example: false,
+            description: 'Whether the suggested amount is expressed tax-included.'
+        }
+    },
+    required: [
+        'lineId',
+        'driftHtCents',
+        'driftTtcCents',
+        'suggestedUnitAmountCents',
+        'suggestedIsTaxIncluded'
+    ]
+} as const;
+
+export const UrssafRoundingDriftMetadataDtoSchema = {
+    type: 'object',
+    properties: {
+        lines: {
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/UrssafRoundingDriftLineDto'
+            }
+        },
+        totalDriftHtCents: {
+            type: 'number',
+            example: 3,
+            description: 'Difference in cents between the sum of transmitted line totals excl. tax and the invoice total.'
+        },
+        totalDriftTtcCents: {
+            type: 'number',
+            example: 7,
+            description: 'Difference in cents between the sum of transmitted line totals incl. tax and the invoice total.'
+        }
+    },
+    required: [
+        'lines',
+        'totalDriftHtCents',
+        'totalDriftTtcCents'
+    ]
+} as const;
+
 export const UserDtoSchema = {
     type: 'object',
     properties: {
@@ -12277,28 +12492,28 @@ export const VatDetailDtoSchema = {
 } as const;
 
 export const VatMentionSchema = {
-    type: 'number',
+    type: 'string',
     enum: [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        13,
-        7,
-        8,
-        9,
-        10,
-        11,
-        12,
-        14,
-        15,
-        16,
-        17,
-        18,
-        19,
-        20,
-        21
+        'not_subject',
+        'second_hand_good',
+        'art_object',
+        'collection_antique',
+        'travel_agency',
+        'vat_not_applicable',
+        'vat_not_applicable_2',
+        'vat_exemption',
+        'vat_exemption_eu_sale',
+        'vat_exemption_eu_service',
+        'vat_construction',
+        'vat_psychologist',
+        'vat_psychologist_2',
+        'vat_reverse_charge',
+        'vat_reverse_charge_2',
+        'vat_reverse_charge_3',
+        'vat_reverse_charge_4',
+        'vat_reduced_rate',
+        'vat_reduced_rate_2',
+        'vat_article_261c_cgi',
+        'vat_exemption_294_cgi'
     ]
 } as const;
