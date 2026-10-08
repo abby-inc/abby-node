@@ -89,28 +89,28 @@ export const zBillingLocale = z.enum([
 ]);
 
 export const zBillingRangeType = z.enum([
+    'emittedAt',
     'paidAt',
     'signedAt',
-    'refusedAt',
-    'date',
-    'validityDate',
-    'dueDate'
+    'expiredAt',
+    'dueAt',
+    'refusedAt'
 ]);
 
-export const zBillingState = z.union([
-    z.literal(1),
-    z.literal(2),
-    z.literal(3),
-    z.literal(4),
-    z.literal(5)
+export const zBillingState = z.enum([
+    'draft',
+    'finalized',
+    'signed',
+    'refused',
+    'paid'
 ]);
 
-export const zBillingType = z.union([
-    z.literal(1),
-    z.literal(2),
-    z.literal(3),
-    z.literal(4),
-    z.literal(5)
+export const zBillingType = z.enum([
+    'estimate',
+    'invoice',
+    'asset',
+    'advance',
+    'purchase_order'
 ]);
 
 export const zBillingWarningDto = z.object({
@@ -125,8 +125,6 @@ export const zCancelBillingDto = z.object({
 });
 
 export const zCatalogOrderBy = z.enum(['createdAt', 'designation']);
-
-export const zCivility = z.union([z.literal(1), z.literal(2)]);
 
 /**
  * Current client state
@@ -494,6 +492,16 @@ export const zClientAddressDto = z.object({
     country: zCountryCode
 });
 
+export const zCreateAdvanceDto = z.object({
+    mode: zAdvanceMode.optional(),
+    amount: z.number().register(z.globalRegistry, {
+        description: 'Advance amount in cents HT (100 = 1.00 € HT), integer. Required when mode is AMOUNT, forbidden otherwise. Must not exceed the remaining amount of the estimate.'
+    }).optional(),
+    percentage: z.number().register(z.globalRegistry, {
+        description: 'Advance percentage of the estimate (30 = 30%), greater than 0 and at most 100. Required when mode is PERCENTAGE, forbidden otherwise.'
+    }).optional()
+});
+
 export const zCreateBillingThemeDto = z.object({
     name: z.string().register(z.globalRegistry, {
         description: 'Name of the theme'
@@ -697,7 +705,12 @@ export const zBillingDiscountAdvancePaymentDto = z.object({
     }).optional()
 });
 
-export const zDiscountMode = z.union([z.literal(1), z.literal(2)]);
+/**
+ * Mode de la réduction en pourcentage ou en euros
+ */
+export const zDiscountMode = z.enum(['PERCENTAGE', 'AMOUNT']).register(z.globalRegistry, {
+    description: 'Mode de la réduction en pourcentage ou en euros'
+});
 
 export const zDiscountDto = z.object({
     mode: zDiscountMode,
@@ -711,6 +724,19 @@ export const zDiscountLineDto = z.object({
         description: 'Montant de la remise, 1000 pour 10% ou 10€'
     }),
     mode: zDiscountMode
+});
+
+export const zDismissStateDto = z.object({
+    dismissedAt: z.string().register(z.globalRegistry, {
+        description: 'Horodatage ISO du dismiss. Toujours présent, y compris pour un dismiss permanent.'
+    }),
+    snoozeUntil: z.string().nullable()
+});
+
+export const zDismissPreferencesDto = z.object({
+    PRO_ACCOUNT_BANK_DETAILS: zDismissStateDto.optional(),
+    PRO_ACCOUNT_PAYMENT_SETTINGS: zDismissStateDto.optional(),
+    PRO_ACCOUNT_BILLING_DOCUMENT: zDismissStateDto.optional()
 });
 
 export const zDisplayBillingSettingsDto = z.object({
@@ -810,10 +836,28 @@ export const zFileInputDto = z.object({
     id: z.string()
 });
 
-export const zFinalizeRequirementDto = z.object({
-    name: z.string(),
-    message: z.string()
-});
+export const zFinalizeRequirementName = z.enum([
+    'hasValidLines',
+    'hasLineDesignation',
+    'hasQuantityGreaterThanOrEqualToZero',
+    'hasValidLineType',
+    'hasValidPersonalServiceActivityLines',
+    'advancesAreAllFinalized',
+    'HasValidLineDiscountAmount',
+    'HasValidLineDiscountPercentage',
+    'HasValidGlobalDiscountAmount',
+    'HasValidGlobalDiscountPercentage',
+    'hasValidProductQuantityUnitForPersonalServiceActivity',
+    'hasConsistentVatRateForEuMention',
+    'isNotAlreadyFinalized',
+    'hasValidElectronicSignature',
+    'validateEmittedDate',
+    'hasValidAmount',
+    'hasPositiveAmount',
+    'hasValidReminder',
+    'hasValidPaymentRequestAdvanceAmount',
+    'hasNoUrssafRoundingDrift'
+]);
 
 export const zFooterLogoDto = z.object({
     id: z.string().register(z.globalRegistry, {
@@ -881,6 +925,8 @@ export const zLatePenaltyDto = z.object({
     }).optional()
 });
 
+export const zLegacyCivility = z.union([z.literal(1), z.literal(2)]);
+
 export const zLegacyCreateContactDto = z.object({
     email: z.string().optional(),
     firstname: z.string().optional(),
@@ -922,6 +968,45 @@ export const zLegacyCreateOpportunityDto = z.object({
     description: z.string().optional(),
     categoryId: z.string(),
     dueDate: z.iso.datetime({ offset: true }).optional()
+});
+
+export const zLegacyLegalStatus = z.union([
+    z.literal(1),
+    z.literal(2),
+    z.literal(3),
+    z.literal(4),
+    z.literal(5),
+    z.literal(6),
+    z.literal(7),
+    z.literal(8),
+    z.literal(9),
+    z.literal(10),
+    z.literal(11),
+    z.literal(12),
+    z.literal(13),
+    z.literal(14)
+]);
+
+export const zCompanyDto = z.object({
+    id: z.string().register(z.globalRegistry, {
+        description: 'Identifiant unique de l\'entreprise'
+    }),
+    commercialName: z.string().register(z.globalRegistry, {
+        description: 'Nom commercial de l\'entreprise'
+    }),
+    siret: z.string().register(z.globalRegistry, {
+        description: 'Numéro SIRET de l\'entreprise'
+    }),
+    legalStatut: zLegacyLegalStatus,
+    address: z.string().register(z.globalRegistry, {
+        description: 'Adresse de l\'entreprise'
+    }),
+    city: z.string().register(z.globalRegistry, {
+        description: 'Ville de l\'entreprise'
+    }),
+    isInTestMode: z.boolean().register(z.globalRegistry, {
+        description: 'Indique si l\'entreprise est en mode test'
+    })
 });
 
 export const zLegacyProductType = z.union([
@@ -971,44 +1056,22 @@ export const zLegacyUpdateOpportunityDto = z.object({
     dueDate: z.iso.datetime({ offset: true }).optional()
 });
 
-export const zLegalStatus = z.union([
-    z.literal(1),
-    z.literal(2),
-    z.literal(3),
-    z.literal(4),
-    z.literal(5),
-    z.literal(6),
-    z.literal(7),
-    z.literal(8),
-    z.literal(9),
-    z.literal(10),
-    z.literal(11),
-    z.literal(12),
-    z.literal(13),
-    z.literal(14)
+export const zLegalStatus = z.enum([
+    'micro_enterprise',
+    'sas',
+    'sarl',
+    'sasu',
+    'ei',
+    'eurl',
+    'eirl',
+    'sa',
+    'snc',
+    'other',
+    'sasu_sas',
+    'eurl_sarl',
+    'sci',
+    'association'
 ]);
-
-export const zCompanyDto = z.object({
-    id: z.string().register(z.globalRegistry, {
-        description: 'Identifiant unique de l\'entreprise'
-    }),
-    commercialName: z.string().register(z.globalRegistry, {
-        description: 'Nom commercial de l\'entreprise'
-    }),
-    siret: z.string().register(z.globalRegistry, {
-        description: 'Numéro SIRET de l\'entreprise'
-    }),
-    legalStatut: zLegalStatus,
-    address: z.string().register(z.globalRegistry, {
-        description: 'Adresse de l\'entreprise'
-    }),
-    city: z.string().register(z.globalRegistry, {
-        description: 'Ville de l\'entreprise'
-    }),
-    isInTestMode: z.boolean().register(z.globalRegistry, {
-        description: 'Indique si l\'entreprise est en mode test'
-    })
-});
 
 export const zLiberalType = z.union([
     z.literal(1),
@@ -1029,6 +1092,13 @@ export const zLogStatus = z.enum([
     'INFO'
 ]);
 
+export const zLogStatusFilter = z.enum([
+    'ERROR',
+    'SUCCESS',
+    'INFO',
+    'ALL'
+]);
+
 export const zLogoDto = z.object({
     id: z.string().register(z.globalRegistry, {
         description: 'Theme asset ID (upload)'
@@ -1041,7 +1111,7 @@ export const zLogoDto = z.object({
     })
 });
 
-export const zLumpSumCompensation = z.union([z.literal(1), z.literal(2)]);
+export const zLumpSumCompensation = z.enum(['forty_euros', 'other']);
 
 export const zBillingLumpSumCompensationDto = z.object({
     value: zLumpSumCompensation,
@@ -1941,6 +2011,7 @@ export const zReadLogDto = z.object({
     response: z.string().optional(),
     httpStatus: z.number().optional(),
     url: z.string().nullish(),
+    method: z.string().nullish(),
     createdAt: z.iso.datetime({ offset: true })
 });
 
@@ -2206,81 +2277,6 @@ export const zReadCustomerDto = z.object({
     }).optional()
 });
 
-export const zReadBillingCollectionItemDto = z.object({
-    id: z.string(),
-    number: z.string().optional(),
-    title: z.string().optional(),
-    type: zBillingType,
-    state: zBillingState,
-    emittedAt: z.number(),
-    dueAt: z.number().optional(),
-    customer: zReadCustomerDto,
-    paidAt: z.number().optional(),
-    refundAt: z.number().optional(),
-    signedAt: z.number().optional(),
-    refusedAt: z.number().optional(),
-    expiredAt: z.number().optional(),
-    archivedAt: z.number().optional(),
-    nextBillingAt: z.number().optional(),
-    lastSendByEmailAt: z.number().optional(),
-    totalAmountWithoutTaxAfterDiscount: z.number(),
-    totalAmountWithTaxAfterDiscount: z.number(),
-    remainingAmountWithoutTax: z.number().optional(),
-    remainingAmountWithTax: z.number().optional(),
-    billedAmountWithoutTax: z.number().optional(),
-    paymentMethodUsed: z.array(zPaymentMethodUsedDto).optional(),
-    billedAmountWithTax: z.number().optional(),
-    cancelledAmountWithoutTax: z.number().optional(),
-    cancelledAmountWithTax: z.number().optional(),
-    lastReminderSentAt: z.number().optional(),
-    locale: zBillingLocale.optional(),
-    isReminderActivated: z.boolean().optional(),
-    isOnlinePaymentActivated: z.boolean().optional(),
-    lastDownloadAt: z.number().optional(),
-    opportunity: zOpportunityDto.optional(),
-    parent: zParentBillingDto.optional(),
-    createdFromInvoice: z.string().optional(),
-    hasFinalInvoice: z.boolean().optional(),
-    isFinalInvoiceCanceled: z.boolean().register(z.globalRegistry, {
-        description: 'Whether the final invoice associated with this advance is fully canceled'
-    }).optional(),
-    finalInvoiceNumber: z.string().register(z.globalRegistry, {
-        description: 'Number of the final invoice associated with this advance'
-    }).optional(),
-    hasAdvances: z.boolean().optional(),
-    isDeletable: z.boolean(),
-    finalizable: z.boolean(),
-    isEditable: z.boolean().optional(),
-    withElectronicSignature: z.boolean().optional(),
-    electronicSignature: zElectronicSignatureDto.optional(),
-    electronicSignatureRequirements: z.array(zElectronicSignatureRequirementDto).optional(),
-    paymentRequest: zPaymentRequestDto.optional(),
-    tiersPrestationIsActivatedForThisBilling: z.boolean().optional(),
-    currencyCode: zCurrencyCode,
-    convertedAmounts: zConvertedAmountsCollectionItemDto.optional(),
-    remainingReconciliateAmount: z.number().optional(),
-    hasAssociatedTransaction: z.boolean().optional(),
-    compatibilityVersion: zBillingCompatibilityVersion,
-    createdAt: z.number(),
-    updatedAt: z.number(),
-    canceledAt: z.number().optional(),
-    finalizeRequirements: z.array(zFinalizeRequirementDto).optional(),
-    warnings: z.array(zBillingWarningDto).optional()
-});
-
-export const zReadBillingCollectionDto = z.object({
-    countWithoutFilters: z.number(),
-    totalDocs: z.number(),
-    limit: z.number(),
-    totalPages: z.number(),
-    hasNextPage: z.boolean(),
-    hasPrevPage: z.boolean(),
-    nextPage: z.number(),
-    page: z.number(),
-    prevPage: z.number(),
-    docs: z.array(zReadBillingCollectionItemDto)
-});
-
 export const zReadOpportunityDto = z.object({
     id: z.string().register(z.globalRegistry, {
         description: 'The opportunity ID'
@@ -2373,6 +2369,9 @@ export const zReadMeEInvoicingDto = z.object({
     platformTransfer: zReadMePlatformTransferDto.nullable(),
     missingFields: z.array(zCompanyProfileField).register(z.globalRegistry, {
         description: 'Champs du profil entreprise manquants pour l\'inscription annuaire (name, siren, siret, legalStatus, address, zipCode, city — `legalStatus` couvre aussi une forme juridique inconnue de Docoon), calculés **live** à chaque lecture. Tableau vide si le profil est complet ou si la lecture est indisponible (dégradé, cf. la description du bloc `eInvoicing`) — jamais `null`.'
+    }),
+    hasDirectoryLine: z.boolean().register(z.globalRegistry, {
+        description: 'Indique si une ligne d\'annuaire existe déjà chez Docoon (`docoonDirectoryLineId` persisté). Toujours un booléen, jamais omis : `false` s\'il n\'y a pas de row, si la lecture est dégradée, ou si la saga n\'a pas encore créé la ligne. L\'UUID Docoon n\'est pas exposé. Sert à borner la card « Inscription en pause » aux inscriptions sans ligne (D-12315).'
     })
 });
 
@@ -2444,7 +2443,8 @@ export const zRentabilityPreferencesDto = z.object({
 
 export const zPreferencesDto = z.object({
     rentability: zRentabilityPreferencesDto,
-    notification: zNotificationPreferencesDto
+    notification: zNotificationPreferencesDto,
+    dismiss: zDismissPreferencesDto
 });
 
 export const zRetrieveCustomerPortalPaymentsDto = z.object({
@@ -3182,6 +3182,113 @@ export const zUploadThemeAssetDto = z.object({
     category: zThemeAssetCategory
 });
 
+export const zUrssafRoundingDriftLineDto = z.object({
+    lineId: z.string().register(z.globalRegistry, {
+        description: 'Id of the invoice line whose transmitted amounts do not add up.'
+    }),
+    driftHtCents: z.number().register(z.globalRegistry, {
+        description: 'Difference in cents between the transmitted line total excl. tax and the stored one.'
+    }),
+    driftTtcCents: z.number().register(z.globalRegistry, {
+        description: 'Difference in cents between the transmitted line total incl. tax and the stored one.'
+    }),
+    suggestedUnitAmountCents: z.number().nullable(),
+    suggestedIsTaxIncluded: z.boolean().register(z.globalRegistry, {
+        description: 'Whether the suggested amount is expressed tax-included.'
+    })
+});
+
+export const zUrssafRoundingDriftMetadataDto = z.object({
+    lines: z.array(zUrssafRoundingDriftLineDto),
+    totalDriftHtCents: z.number().register(z.globalRegistry, {
+        description: 'Difference in cents between the sum of transmitted line totals excl. tax and the invoice total.'
+    }),
+    totalDriftTtcCents: z.number().register(z.globalRegistry, {
+        description: 'Difference in cents between the sum of transmitted line totals incl. tax and the invoice total.'
+    })
+});
+
+export const zFinalizeRequirementDto = z.object({
+    name: zFinalizeRequirementName,
+    message: z.string(),
+    metadata: zUrssafRoundingDriftMetadataDto.optional()
+});
+
+export const zReadBillingCollectionItemDto = z.object({
+    id: z.string(),
+    number: z.string().optional(),
+    title: z.string().optional(),
+    type: zBillingType,
+    state: zBillingState,
+    emittedAt: z.number(),
+    dueAt: z.number().optional(),
+    customer: zReadCustomerDto,
+    paidAt: z.number().optional(),
+    refundAt: z.number().optional(),
+    signedAt: z.number().optional(),
+    refusedAt: z.number().optional(),
+    expiredAt: z.number().optional(),
+    archivedAt: z.number().optional(),
+    nextBillingAt: z.number().optional(),
+    lastSendByEmailAt: z.number().optional(),
+    totalAmountWithoutTaxAfterDiscount: z.number(),
+    totalAmountWithTaxAfterDiscount: z.number(),
+    remainingAmountWithoutTax: z.number().optional(),
+    remainingAmountWithTax: z.number().optional(),
+    billedAmountWithoutTax: z.number().optional(),
+    paymentMethodUsed: z.array(zPaymentMethodUsedDto).optional(),
+    billedAmountWithTax: z.number().optional(),
+    cancelledAmountWithoutTax: z.number().optional(),
+    cancelledAmountWithTax: z.number().optional(),
+    lastReminderSentAt: z.number().optional(),
+    locale: zBillingLocale.optional(),
+    isReminderActivated: z.boolean().optional(),
+    isOnlinePaymentActivated: z.boolean().optional(),
+    lastDownloadAt: z.number().optional(),
+    opportunity: zOpportunityDto.optional(),
+    parent: zParentBillingDto.optional(),
+    createdFromInvoice: z.string().optional(),
+    hasFinalInvoice: z.boolean().optional(),
+    isFinalInvoiceCanceled: z.boolean().register(z.globalRegistry, {
+        description: 'Whether the final invoice associated with this advance is fully canceled'
+    }).optional(),
+    finalInvoiceNumber: z.string().register(z.globalRegistry, {
+        description: 'Number of the final invoice associated with this advance'
+    }).optional(),
+    hasAdvances: z.boolean().optional(),
+    isDeletable: z.boolean(),
+    finalizable: z.boolean(),
+    isEditable: z.boolean().optional(),
+    withElectronicSignature: z.boolean().optional(),
+    electronicSignature: zElectronicSignatureDto.optional(),
+    electronicSignatureRequirements: z.array(zElectronicSignatureRequirementDto).optional(),
+    paymentRequest: zPaymentRequestDto.optional(),
+    tiersPrestationIsActivatedForThisBilling: z.boolean().optional(),
+    currencyCode: zCurrencyCode,
+    convertedAmounts: zConvertedAmountsCollectionItemDto.optional(),
+    remainingReconciliateAmount: z.number().optional(),
+    hasAssociatedTransaction: z.boolean().optional(),
+    compatibilityVersion: zBillingCompatibilityVersion,
+    createdAt: z.number(),
+    updatedAt: z.number(),
+    canceledAt: z.number().optional(),
+    finalizeRequirements: z.array(zFinalizeRequirementDto).optional(),
+    warnings: z.array(zBillingWarningDto).optional()
+});
+
+export const zReadBillingCollectionDto = z.object({
+    countWithoutFilters: z.number(),
+    totalDocs: z.number(),
+    limit: z.number(),
+    totalPages: z.number(),
+    hasNextPage: z.boolean(),
+    hasPrevPage: z.boolean(),
+    nextPage: z.number(),
+    page: z.number(),
+    prevPage: z.number(),
+    docs: z.array(zReadBillingCollectionItemDto)
+});
+
 export const zUserDto = z.object({
     id: z.string().register(z.globalRegistry, {
         description: 'Identifiant unique de l\'utilisateur'
@@ -3566,28 +3673,28 @@ export const zTotalDto = z.object({
     convertedAmounts: zConvertedAmountsDto.optional()
 });
 
-export const zVatMention = z.union([
-    z.literal(1),
-    z.literal(2),
-    z.literal(3),
-    z.literal(4),
-    z.literal(5),
-    z.literal(6),
-    z.literal(13),
-    z.literal(7),
-    z.literal(8),
-    z.literal(9),
-    z.literal(10),
-    z.literal(11),
-    z.literal(12),
-    z.literal(14),
-    z.literal(15),
-    z.literal(16),
-    z.literal(17),
-    z.literal(18),
-    z.literal(19),
-    z.literal(20),
-    z.literal(21)
+export const zVatMention = z.enum([
+    'not_subject',
+    'second_hand_good',
+    'art_object',
+    'collection_antique',
+    'travel_agency',
+    'vat_not_applicable',
+    'vat_not_applicable_2',
+    'vat_exemption',
+    'vat_exemption_eu_sale',
+    'vat_exemption_eu_service',
+    'vat_construction',
+    'vat_psychologist',
+    'vat_psychologist_2',
+    'vat_reverse_charge',
+    'vat_reverse_charge_2',
+    'vat_reverse_charge_3',
+    'vat_reverse_charge_4',
+    'vat_reduced_rate',
+    'vat_reduced_rate_2',
+    'vat_article_261c_cgi',
+    'vat_exemption_294_cgi'
 ]);
 
 export const zBillingLegalsDto = z.object({
@@ -3940,7 +4047,7 @@ export const zReadCompanyDto = z.object({
     hasAcre: z.boolean().optional(),
     impositionType: zImpositionType.optional(),
     inseeImmatriculationDate: z.iso.datetime({ offset: true }).optional(),
-    legalStatus: zLegalStatus.optional(),
+    legalStatus: zLegacyLegalStatus.optional(),
     taxSystem: zTaxSystem.optional(),
     nafCode: z.string().optional(),
     name: z.string().optional(),
@@ -4303,7 +4410,7 @@ export const zReadUserDto = z.object({
     zipCode: z.string().optional(),
     socialSecurityNumber: z.string().optional(),
     companies: z.array(zReadCompanyDto).optional(),
-    civility: zCivility.optional(),
+    civility: zLegacyCivility.optional(),
     provider: zProviderSignUp.optional(),
     onboardingAt: z.iso.datetime({ offset: true }).optional(),
     onboardingId: z.string().optional(),
@@ -4758,7 +4865,11 @@ export const zLogsControllerRetrieveLogsByCompanyQuery = z.object({
     }),
     offset: z.number().register(z.globalRegistry, {
         description: 'Offset for pagination'
-    })
+    }),
+    status: zLogStatusFilter.optional(),
+    context: z.string().register(z.globalRegistry, {
+        description: 'Filter by context. Exact match, or a wildcard "prefix.*" matched as a prefix.'
+    }).optional()
 });
 
 export const zLogsControllerRetrieveLastLogOfAResourcePath = z.object({
@@ -4824,6 +4935,8 @@ export const zEstimateControllerCreateFinalInvoiceV2Path = z.object({
         description: 'ID of the signed estimate'
     })
 });
+
+export const zEstimateControllerCreateAdvanceV2Body = zCreateAdvanceDto;
 
 export const zEstimateControllerCreateAdvanceV2Path = z.object({
     id: z.string().register(z.globalRegistry, {
@@ -5442,7 +5555,7 @@ export const zEstimateControllerCreateFinalInvoiceV2Data = z.object({
 });
 
 export const zEstimateControllerCreateAdvanceV2Data = z.object({
-    body: z.never().optional(),
+    body: zEstimateControllerCreateAdvanceV2Body.optional(),
     path: zEstimateControllerCreateAdvanceV2Path,
     query: z.never().optional()
 });
