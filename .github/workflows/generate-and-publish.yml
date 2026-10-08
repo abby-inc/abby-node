@@ -1,6 +1,7 @@
 # This workflow is triggered by the monorepo when the API spec changes.
 # It fetches the public OpenAPI spec from the live API, generates the SDK, and creates a PR.
 # Publishing happens separately via publish-release.yml after the PR is merged.
+# On repository_dispatch the PR is auto-merged once `CI Success` is green.
 #
 # SDK versioning is independent from API versioning:
 # - SDK version: follows semver for the SDK itself (bug fixes, features, breaking changes)
@@ -231,6 +232,18 @@ jobs:
             sdk-update
           draft: false
 
+      # SDK_REPO_PAT, not GITHUB_TOKEN: a merge done with GITHUB_TOKEN does not
+      # fire publish-release.yml (on: pull_request: closed), same trap as #40.
+      # repository_dispatch only: a manual run (possibly a major bump) stays human-merged.
+      - name: Enable auto-merge
+        if: steps.cpr.outputs.pull-request-number != '' && github.event_name == 'repository_dispatch'
+        env:
+          GH_TOKEN: ${{ secrets.SDK_REPO_PAT }}
+          PR_NUMBER: ${{ steps.cpr.outputs.pull-request-number }}
+        run: |
+          set -euo pipefail
+          gh pr merge "$PR_NUMBER" --auto --squash --repo "$GITHUB_REPOSITORY"
+
       - name: No changes detected
         if: steps.cpr.outputs.pull-request-number == ''
         run: |
@@ -238,6 +251,8 @@ jobs:
           echo "The API spec may not have changed since the last update"
 
       - name: Summary
+        env:
+          EVENT_NAME: ${{ github.event_name }}
         run: |
           echo "## SDK Generation Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -252,7 +267,11 @@ jobs:
             echo "### Status: PR Created ✓" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "- PR: ${{ steps.cpr.outputs.pull-request-url }}" >> $GITHUB_STEP_SUMMARY
-            echo "- Next: Merge PR to trigger publish" >> $GITHUB_STEP_SUMMARY
+            if [ "$EVENT_NAME" = "repository_dispatch" ]; then
+              echo "- Next: Auto-merge enabled, publish runs once CI Success is green" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "- Next: Merge PR manually to trigger publish" >> $GITHUB_STEP_SUMMARY
+            fi
           else
             echo "### Status: No Changes Detected" >> $GITHUB_STEP_SUMMARY
           fi

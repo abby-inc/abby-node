@@ -467,6 +467,8 @@ This SDK uses **independent versioning** from the Abby API:
 
 This allows the SDK to receive bug fixes and improvements independently from API changes.
 
+SDK update PRs opened automatically by an API spec change are auto-merged and published once CI passes. Manual runs of the Generate SDK workflow need a human merge.
+
 ## Development
 
 Contributions are welcome! Please see our [Contributing Guidelines](CONTRIBUTING.md) for more information.
