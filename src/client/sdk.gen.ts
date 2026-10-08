@@ -588,7 +588,7 @@ export class Estimate {
     /**
      * Create invoice advance
      *
-     * Creates a draft advance from a signed estimate. No body. The default amount is 30% of the estimate (or 50% of the remaining amount after the third advance). This does not read advanceEstimateLines. To set a custom amount or percentage, call PATCH /v2/billing/advance/{advanceId}/amount on the returned id before finalize.
+     * Creates a draft advance from a signed estimate. Optional JSON body, same shape as PATCH /v2/billing/advance/{advanceId}/amount: { mode: "AMOUNT", amount } with an integer amount in cents HT, or { mode: "PERCENTAGE", percentage } with 0 < percentage <= 100 (lowercase mode accepted). The resulting amount must not exceed the remaining amount of the estimate. Without body, the default is 30% of the estimate (or 50% of the remaining amount after the third advance). When sending no body, omit the Content-Type header or send {}: an empty body with Content-Type application/json is rejected. This does not read advanceEstimateLines.
      */
     public static createAdvanceV2<ThrowOnError extends boolean = true>(options: Options<EstimateControllerCreateAdvanceV2Data, ThrowOnError>) {
         return (options.client ?? client).post<EstimateControllerCreateAdvanceV2Responses, EstimateControllerCreateAdvanceV2Errors, ThrowOnError>({
@@ -596,7 +596,11 @@ export class Estimate {
             responseTransformer: estimateControllerCreateAdvanceV2ResponseTransformer,
             security: [{ scheme: 'bearer', type: 'http' }],
             url: '/v2/billing/estimate/{id}/advance',
-            ...options
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
         });
     }
     
@@ -1305,7 +1309,7 @@ export class Advance {
     /**
      * Update advance amount and mode
      *
-     * Sets the amount of a draft advance. Use mode AMOUNT with amount in cents, or mode PERCENTAGE with percentage. POST /v2/billing/estimate/{id}/advance always creates a 30% draft; call this endpoint before finalize to apply a custom amount. Cannot be used once the advance is finalized.
+     * Sets the amount of a draft advance. Use mode AMOUNT with amount in cents, or mode PERCENTAGE with percentage. POST /v2/billing/estimate/{id}/advance accepts the same mode/amount/percentage body at creation (30% draft by default); call this endpoint to change the amount of a draft before finalize. Cannot be used once the advance is finalized.
      */
     public static updateAmountV2<ThrowOnError extends boolean = true>(options: Options<AdvanceControllerUpdateAmountV2Data, ThrowOnError>) {
         return (options.client ?? client).patch<AdvanceControllerUpdateAmountV2Responses, AdvanceControllerUpdateAmountV2Errors, ThrowOnError>({
