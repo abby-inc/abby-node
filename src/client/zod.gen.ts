@@ -1001,8 +1001,18 @@ export const zCompanyDto = z.object({
     address: z.string().register(z.globalRegistry, {
         description: 'Adresse de l\'entreprise'
     }),
+    additionalAddress: z.string().nullable(),
+    zipCode: z.string().register(z.globalRegistry, {
+        description: 'Code postal de l\'entreprise'
+    }),
     city: z.string().register(z.globalRegistry, {
         description: 'Ville de l\'entreprise'
+    }),
+    country: z.string().register(z.globalRegistry, {
+        description: 'Pays de l\'entreprise (toujours la France : l\'entreprise n\'a pas de pays en base)'
+    }),
+    countryCode: z.string().register(z.globalRegistry, {
+        description: 'Code pays ISO 3166-1 alpha-2 de l\'entreprise (toujours FR)'
     }),
     isInTestMode: z.boolean().register(z.globalRegistry, {
         description: 'Indique si l\'entreprise est en mode test'

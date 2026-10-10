@@ -283,9 +283,25 @@ export type CompanyDto = {
      */
     address: string;
     /**
+     * Complément d'adresse de l'entreprise
+     */
+    additionalAddress: string | null;
+    /**
+     * Code postal de l'entreprise
+     */
+    zipCode: string;
+    /**
      * Ville de l'entreprise
      */
     city: string;
+    /**
+     * Pays de l'entreprise (toujours la France : l'entreprise n'a pas de pays en base)
+     */
+    country: string;
+    /**
+     * Code pays ISO 3166-1 alpha-2 de l'entreprise (toujours FR)
+     */
+    countryCode: string;
     /**
      * Indique si l'entreprise est en mode test
      */

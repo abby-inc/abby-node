@@ -711,10 +711,31 @@ export const CompanyDtoSchema = {
             description: 'Adresse de l\'entreprise',
             example: '123 rue du Commerce'
         },
+        additionalAddress: {
+            type: 'string',
+            description: 'Complément d\'adresse de l\'entreprise',
+            nullable: true,
+            example: 'Bâtiment B'
+        },
+        zipCode: {
+            type: 'string',
+            description: 'Code postal de l\'entreprise',
+            example: '75001'
+        },
         city: {
             type: 'string',
             description: 'Ville de l\'entreprise',
             example: 'Paris'
+        },
+        country: {
+            type: 'string',
+            description: 'Pays de l\'entreprise (toujours la France : l\'entreprise n\'a pas de pays en base)',
+            example: 'France'
+        },
+        countryCode: {
+            type: 'string',
+            description: 'Code pays ISO 3166-1 alpha-2 de l\'entreprise (toujours FR)',
+            example: 'FR'
         },
         isInTestMode: {
             type: 'boolean',
@@ -728,7 +749,11 @@ export const CompanyDtoSchema = {
         'siret',
         'legalStatut',
         'address',
+        'additionalAddress',
+        'zipCode',
         'city',
+        'country',
+        'countryCode',
         'isInTestMode'
     ]
 } as const;
