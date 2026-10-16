@@ -4275,6 +4275,9 @@ export const zReadInvoiceDto = z.object({
     displaySettings: zDisplayBillingSettingsDto,
     paymentRequest: zPaymentRequestDto.nullish(),
     parent: zReadEstimateDto.optional(),
+    advanceNumbers: z.array(z.string()).register(z.globalRegistry, {
+        description: 'Numbers of the advances associated with this invoice'
+    }).optional(),
     frequency: zFrequencyDto.optional(),
     hasAssociatedTransaction: z.boolean().register(z.globalRegistry, {
         description: 'Indicates if the customer has an associated transaction'
