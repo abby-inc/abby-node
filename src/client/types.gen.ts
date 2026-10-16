@@ -1337,6 +1337,10 @@ export type PushNotificationPreferencesDto = {
      * Notifications push de changement de plateforme de facturation électronique
      */
     eInvoicingPlatformChange: boolean;
+    /**
+     * Notification push de création de la carte Abby
+     */
+    proAccountCardCreated: boolean;
 };
 
 export type QueryTransactionDto = {

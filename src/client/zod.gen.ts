@@ -1580,6 +1580,9 @@ export const zPushNotificationPreferencesDto = z.object({
     }),
     eInvoicingPlatformChange: z.boolean().register(z.globalRegistry, {
         description: 'Notifications push de changement de plateforme de facturation électronique'
+    }),
+    proAccountCardCreated: z.boolean().register(z.globalRegistry, {
+        description: 'Notification push de création de la carte Abby'
     })
 });
 
