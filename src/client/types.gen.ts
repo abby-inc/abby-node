@@ -2696,6 +2696,10 @@ export type ReadInvoiceDto = {
     displaySettings: DisplayBillingSettingsDto;
     paymentRequest?: PaymentRequestDto | null;
     parent?: ReadEstimateDto;
+    /**
+     * Numbers of the advances associated with this invoice
+     */
+    advanceNumbers?: Array<string>;
     frequency?: FrequencyDto;
     /**
      * Indicates if the customer has an associated transaction

@@ -8128,6 +8128,13 @@ export const ReadInvoiceDtoSchema = {
         parent: {
             $ref: '#/components/schemas/ReadEstimateDto'
         },
+        advanceNumbers: {
+            description: 'Numbers of the advances associated with this invoice',
+            type: 'array',
+            items: {
+                type: 'string'
+            }
+        },
         frequency: {
             $ref: '#/components/schemas/FrequencyDto'
         },
