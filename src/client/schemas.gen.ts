@@ -4097,6 +4097,10 @@ export const PushNotificationPreferencesDtoSchema = {
         eInvoicingPlatformChange: {
             type: 'boolean',
             description: 'Notifications push de changement de plateforme de facturation électronique'
+        },
+        proAccountCardCreated: {
+            type: 'boolean',
+            description: 'Notification push de création de la carte Abby'
         }
     },
     required: [
@@ -4104,7 +4108,8 @@ export const PushNotificationPreferencesDtoSchema = {
         'billingSignedOnline',
         'urssafReminder',
         'eInvoicingRegistration',
-        'eInvoicingPlatformChange'
+        'eInvoicingPlatformChange',
+        'proAccountCardCreated'
     ]
 } as const;
 
