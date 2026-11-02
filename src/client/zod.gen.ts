@@ -852,6 +852,7 @@ export const zFinalizeRequirementName = z.enum([
     'isNotAlreadyFinalized',
     'hasValidElectronicSignature',
     'validateEmittedDate',
+    'hasValidEmittedAt',
     'hasValidAmount',
     'hasPositiveAmount',
     'hasValidReminder',
@@ -1359,14 +1360,14 @@ export const zPaymentRequestPayloadDto = z.object({
     advanceAlreadyPaid: z.number().register(z.globalRegistry, {
         description: 'Amount in cents of the advance already paid. This amount must not exceed 50% of the total including or excluding tax of the invoice.'
     }),
-    advancePaymentDate: z.number().register(z.globalRegistry, {
-        description: 'Date the advance was paid (unix timestamp). Required when advanceAlreadyPaid > 0.'
+    advancePaymentDate: z.number().gte(0).lte(4102444800).register(z.globalRegistry, {
+        description: 'Date the advance was paid (unix timestamp, seconds). Required when advanceAlreadyPaid > 0.'
     }).optional(),
-    dateDebutEmploi: z.number().register(z.globalRegistry, {
-        description: 'Date of the beginning of the employment period.'
+    dateDebutEmploi: z.number().gte(0).lte(4102444800).register(z.globalRegistry, {
+        description: 'Date of the beginning of the employment period (unix timestamp, seconds).'
     }),
-    dateFinEmploi: z.number().register(z.globalRegistry, {
-        description: 'Date of the end of the employment period.'
+    dateFinEmploi: z.number().gte(0).lte(4102444800).register(z.globalRegistry, {
+        description: 'Date of the end of the employment period (unix timestamp, seconds).'
     })
 });
 
@@ -2890,14 +2891,14 @@ export const zUpdateAdvanceAmountDto = z.object({
 });
 
 export const zUpdateAssetTimelineDto = z.object({
-    emittedAt: z.number().register(z.globalRegistry, {
-        description: 'The timestamp when the invoice was emitted'
+    emittedAt: z.number().gte(0).lte(4102444800).register(z.globalRegistry, {
+        description: 'The timestamp when the invoice was emitted, in seconds'
     }),
     paymentDelay: zPaymentDelay,
-    customDueDate: z.number().register(z.globalRegistry, {
-        description: 'Custom due date for the invoice when payment delay is OTHER'
+    customDueDate: z.number().gte(0).lte(4102444800).register(z.globalRegistry, {
+        description: 'Custom due date for the invoice when payment delay is OTHER, in seconds'
     }).optional(),
-    deliveryDate: z.number().nullish()
+    deliveryDate: z.number().gte(0).lte(4102444800).nullish()
 });
 
 export const zUpdateBillingBankInformationDto = z.object({
@@ -3042,16 +3043,16 @@ export const zUpdateEstimateAdvanceLinesDto = z.object({
 });
 
 export const zUpdateEstimateTimelineDto = z.object({
-    emittedAt: z.number().register(z.globalRegistry, {
-        description: 'The timestamp when the invoice was emitted'
+    emittedAt: z.number().gte(0).lte(4102444800).register(z.globalRegistry, {
+        description: 'The timestamp when the invoice was emitted, in seconds'
     }),
     paymentDelay: zPaymentDelay,
-    customDueDate: z.number().register(z.globalRegistry, {
-        description: 'Custom due date for the invoice when payment delay is OTHER'
+    customDueDate: z.number().gte(0).lte(4102444800).register(z.globalRegistry, {
+        description: 'Custom due date for the invoice when payment delay is OTHER, in seconds'
     }).optional(),
-    deliveryDate: z.number().nullish(),
-    expiredAt: z.number().register(z.globalRegistry, {
-        description: 'The timestamp when the estimate expired'
+    deliveryDate: z.number().gte(0).lte(4102444800).nullish(),
+    expiredAt: z.number().gte(0).lte(4102444800).register(z.globalRegistry, {
+        description: 'The timestamp when the estimate expired, in seconds'
     })
 });
 
@@ -3081,14 +3082,14 @@ export const zUpdateInvoicePaymentRequestDto = z.object({
 });
 
 export const zUpdateInvoiceTimelineDto = z.object({
-    emittedAt: z.number().register(z.globalRegistry, {
-        description: 'The timestamp when the invoice was emitted'
+    emittedAt: z.number().gte(0).lte(4102444800).register(z.globalRegistry, {
+        description: 'The timestamp when the invoice was emitted, in seconds'
     }),
     paymentDelay: zPaymentDelay,
-    customDueDate: z.number().register(z.globalRegistry, {
-        description: 'Custom due date for the invoice when payment delay is OTHER'
+    customDueDate: z.number().gte(0).lte(4102444800).register(z.globalRegistry, {
+        description: 'Custom due date for the invoice when payment delay is OTHER, in seconds'
     }).optional(),
-    deliveryDate: z.number().nullish()
+    deliveryDate: z.number().gte(0).lte(4102444800).nullish()
 });
 
 export const zUpdateOpportunityDto = z.object({
