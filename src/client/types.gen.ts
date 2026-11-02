@@ -929,7 +929,7 @@ export type FinalizeRequirementDto = {
     metadata?: UrssafRoundingDriftMetadataDto;
 };
 
-export type FinalizeRequirementName = 'hasValidLines' | 'hasLineDesignation' | 'hasQuantityGreaterThanOrEqualToZero' | 'hasValidLineType' | 'hasValidPersonalServiceActivityLines' | 'advancesAreAllFinalized' | 'HasValidLineDiscountAmount' | 'HasValidLineDiscountPercentage' | 'HasValidGlobalDiscountAmount' | 'HasValidGlobalDiscountPercentage' | 'hasValidProductQuantityUnitForPersonalServiceActivity' | 'hasConsistentVatRateForEuMention' | 'isNotAlreadyFinalized' | 'hasValidElectronicSignature' | 'validateEmittedDate' | 'hasValidAmount' | 'hasPositiveAmount' | 'hasValidReminder' | 'hasValidPaymentRequestAdvanceAmount' | 'hasNoUrssafRoundingDrift';
+export type FinalizeRequirementName = 'hasValidLines' | 'hasLineDesignation' | 'hasQuantityGreaterThanOrEqualToZero' | 'hasValidLineType' | 'hasValidPersonalServiceActivityLines' | 'advancesAreAllFinalized' | 'HasValidLineDiscountAmount' | 'HasValidLineDiscountPercentage' | 'HasValidGlobalDiscountAmount' | 'HasValidGlobalDiscountPercentage' | 'hasValidProductQuantityUnitForPersonalServiceActivity' | 'hasConsistentVatRateForEuMention' | 'isNotAlreadyFinalized' | 'hasValidElectronicSignature' | 'validateEmittedDate' | 'hasValidEmittedAt' | 'hasValidAmount' | 'hasPositiveAmount' | 'hasValidReminder' | 'hasValidPaymentRequestAdvanceAmount' | 'hasNoUrssafRoundingDrift';
 
 export type FontDto = {
     name: ThemeGoogleFont;
@@ -1271,15 +1271,15 @@ export type PaymentRequestPayloadDto = {
      */
     advanceAlreadyPaid: number;
     /**
-     * Date the advance was paid (unix timestamp). Required when advanceAlreadyPaid > 0.
+     * Date the advance was paid (unix timestamp, seconds). Required when advanceAlreadyPaid > 0.
      */
     advancePaymentDate?: number;
     /**
-     * Date of the beginning of the employment period.
+     * Date of the beginning of the employment period (unix timestamp, seconds).
      */
     dateDebutEmploi: number;
     /**
-     * Date of the end of the employment period.
+     * Date of the end of the employment period (unix timestamp, seconds).
      */
     dateFinEmploi: number;
 };
@@ -3800,7 +3800,7 @@ export type UpdateAssetGeneralInformationsDto = {
 
 export type UpdateAssetTimelineDto = {
     /**
-     * The timestamp when the invoice was emitted
+     * The timestamp when the invoice was emitted, in seconds
      */
     emittedAt: number;
     /**
@@ -3808,11 +3808,11 @@ export type UpdateAssetTimelineDto = {
      */
     paymentDelay: PaymentDelay;
     /**
-     * Custom due date for the invoice when payment delay is OTHER
+     * Custom due date for the invoice when payment delay is OTHER, in seconds
      */
     customDueDate?: number;
     /**
-     * The timestamp for delivery date
+     * The timestamp for delivery date, in seconds
      */
     deliveryDate?: number | null;
 };
@@ -4036,7 +4036,7 @@ export type UpdateEstimateGeneralInformationsDto = {
 
 export type UpdateEstimateTimelineDto = {
     /**
-     * The timestamp when the invoice was emitted
+     * The timestamp when the invoice was emitted, in seconds
      */
     emittedAt: number;
     /**
@@ -4044,15 +4044,15 @@ export type UpdateEstimateTimelineDto = {
      */
     paymentDelay: PaymentDelay;
     /**
-     * Custom due date for the invoice when payment delay is OTHER
+     * Custom due date for the invoice when payment delay is OTHER, in seconds
      */
     customDueDate?: number;
     /**
-     * The timestamp for delivery date
+     * The timestamp for delivery date, in seconds
      */
     deliveryDate?: number | null;
     /**
-     * The timestamp when the estimate expired
+     * The timestamp when the estimate expired, in seconds
      */
     expiredAt: number;
 };
@@ -4130,7 +4130,7 @@ export type UpdateInvoicePaymentRequestDto = {
 
 export type UpdateInvoiceTimelineDto = {
     /**
-     * The timestamp when the invoice was emitted
+     * The timestamp when the invoice was emitted, in seconds
      */
     emittedAt: number;
     /**
@@ -4138,11 +4138,11 @@ export type UpdateInvoiceTimelineDto = {
      */
     paymentDelay: PaymentDelay;
     /**
-     * Custom due date for the invoice when payment delay is OTHER
+     * Custom due date for the invoice when payment delay is OTHER, in seconds
      */
     customDueDate?: number;
     /**
-     * The timestamp for delivery date
+     * The timestamp for delivery date, in seconds
      */
     deliveryDate?: number | null;
 };

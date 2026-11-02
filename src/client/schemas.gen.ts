@@ -2837,6 +2837,7 @@ export const FinalizeRequirementNameSchema = {
         'isNotAlreadyFinalized',
         'hasValidElectronicSignature',
         'validateEmittedDate',
+        'hasValidEmittedAt',
         'hasValidAmount',
         'hasPositiveAmount',
         'hasValidReminder',
@@ -3842,18 +3843,24 @@ export const PaymentRequestPayloadDtoSchema = {
         },
         advancePaymentDate: {
             type: 'number',
-            description: 'Date the advance was paid (unix timestamp). Required when advanceAlreadyPaid > 0.',
-            example: 1739364926
+            description: 'Date the advance was paid (unix timestamp, seconds). Required when advanceAlreadyPaid > 0.',
+            example: 1739364926,
+            minimum: 0,
+            maximum: 4102444800
         },
         dateDebutEmploi: {
             type: 'number',
-            description: 'Date of the beginning of the employment period.',
-            example: 1739364926
+            description: 'Date of the beginning of the employment period (unix timestamp, seconds).',
+            example: 1739364926,
+            minimum: 0,
+            maximum: 4102444800
         },
         dateFinEmploi: {
             type: 'number',
-            description: 'Date of the end of the employment period.',
-            example: 1739364926
+            description: 'Date of the end of the employment period (unix timestamp, seconds).',
+            example: 1739364926,
+            minimum: 0,
+            maximum: 4102444800
         }
     },
     required: [
@@ -11040,8 +11047,10 @@ export const UpdateAssetTimelineDtoSchema = {
     properties: {
         emittedAt: {
             type: 'number',
-            description: 'The timestamp when the invoice was emitted',
-            example: 1617187200
+            description: 'The timestamp when the invoice was emitted, in seconds',
+            example: 1617187200,
+            minimum: 0,
+            maximum: 4102444800
         },
         paymentDelay: {
             description: 'The payment delay for the invoice',
@@ -11054,14 +11063,18 @@ export const UpdateAssetTimelineDtoSchema = {
         },
         customDueDate: {
             type: 'number',
-            description: 'Custom due date for the invoice when payment delay is OTHER',
-            example: 1619865600
+            description: 'Custom due date for the invoice when payment delay is OTHER, in seconds',
+            example: 1619865600,
+            minimum: 0,
+            maximum: 4102444800
         },
         deliveryDate: {
             type: 'number',
-            description: 'The timestamp for delivery date',
+            description: 'The timestamp for delivery date, in seconds',
             example: 1617187200,
-            nullable: true
+            nullable: true,
+            minimum: 0,
+            maximum: 4102444800
         }
     },
     required: [
@@ -11606,8 +11619,10 @@ export const UpdateEstimateTimelineDtoSchema = {
     properties: {
         emittedAt: {
             type: 'number',
-            description: 'The timestamp when the invoice was emitted',
-            example: 1617187200
+            description: 'The timestamp when the invoice was emitted, in seconds',
+            example: 1617187200,
+            minimum: 0,
+            maximum: 4102444800
         },
         paymentDelay: {
             description: 'The payment delay for the invoice',
@@ -11620,19 +11635,25 @@ export const UpdateEstimateTimelineDtoSchema = {
         },
         customDueDate: {
             type: 'number',
-            description: 'Custom due date for the invoice when payment delay is OTHER',
-            example: 1619865600
+            description: 'Custom due date for the invoice when payment delay is OTHER, in seconds',
+            example: 1619865600,
+            minimum: 0,
+            maximum: 4102444800
         },
         deliveryDate: {
             type: 'number',
-            description: 'The timestamp for delivery date',
+            description: 'The timestamp for delivery date, in seconds',
             example: 1617187200,
-            nullable: true
+            nullable: true,
+            minimum: 0,
+            maximum: 4102444800
         },
         expiredAt: {
             type: 'number',
-            description: 'The timestamp when the estimate expired',
-            example: 1617187200
+            description: 'The timestamp when the estimate expired, in seconds',
+            example: 1617187200,
+            minimum: 0,
+            maximum: 4102444800
         }
     },
     required: [
@@ -11842,8 +11863,10 @@ export const UpdateInvoiceTimelineDtoSchema = {
     properties: {
         emittedAt: {
             type: 'number',
-            description: 'The timestamp when the invoice was emitted',
-            example: 1617187200
+            description: 'The timestamp when the invoice was emitted, in seconds',
+            example: 1617187200,
+            minimum: 0,
+            maximum: 4102444800
         },
         paymentDelay: {
             description: 'The payment delay for the invoice',
@@ -11856,14 +11879,18 @@ export const UpdateInvoiceTimelineDtoSchema = {
         },
         customDueDate: {
             type: 'number',
-            description: 'Custom due date for the invoice when payment delay is OTHER',
-            example: 1619865600
+            description: 'Custom due date for the invoice when payment delay is OTHER, in seconds',
+            example: 1619865600,
+            minimum: 0,
+            maximum: 4102444800
         },
         deliveryDate: {
             type: 'number',
-            description: 'The timestamp for delivery date',
+            description: 'The timestamp for delivery date, in seconds',
             example: 1617187200,
-            nullable: true
+            nullable: true,
+            minimum: 0,
+            maximum: 4102444800
         }
     },
     required: [

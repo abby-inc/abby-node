@@ -1,7 +1,7 @@
 {
   "name": "@abby-inc/node",
-  "version": "2.7.0",
-  "apiVersion": "1.130.0+b9aa049a3bef",
+  "version": "2.8.0",
+  "apiVersion": "1.130.0+d0c5e135de81",
   "type": "module",
   "description": "Node.js, Bun, and Deno library for the Abby API",
   "author": "Abby <contact@abby.fr>",
