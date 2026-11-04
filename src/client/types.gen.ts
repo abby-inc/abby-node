@@ -792,6 +792,7 @@ export type DismissPreferencesDto = {
     PRO_ACCOUNT_BANK_DETAILS?: DismissStateDto;
     PRO_ACCOUNT_PAYMENT_SETTINGS?: DismissStateDto;
     PRO_ACCOUNT_BILLING_DOCUMENT?: DismissStateDto;
+    PRO_ACCOUNT_CARD_WALLET_TUTORIAL?: DismissStateDto;
 };
 
 export type DismissStateDto = {
