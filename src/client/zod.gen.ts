@@ -736,7 +736,8 @@ export const zDismissStateDto = z.object({
 export const zDismissPreferencesDto = z.object({
     PRO_ACCOUNT_BANK_DETAILS: zDismissStateDto.optional(),
     PRO_ACCOUNT_PAYMENT_SETTINGS: zDismissStateDto.optional(),
-    PRO_ACCOUNT_BILLING_DOCUMENT: zDismissStateDto.optional()
+    PRO_ACCOUNT_BILLING_DOCUMENT: zDismissStateDto.optional(),
+    PRO_ACCOUNT_CARD_WALLET_TUTORIAL: zDismissStateDto.optional()
 });
 
 export const zDisplayBillingSettingsDto = z.object({

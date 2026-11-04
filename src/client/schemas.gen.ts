@@ -2317,6 +2317,9 @@ export const DismissPreferencesDtoSchema = {
         },
         PRO_ACCOUNT_BILLING_DOCUMENT: {
             $ref: '#/components/schemas/DismissStateDto'
+        },
+        PRO_ACCOUNT_CARD_WALLET_TUTORIAL: {
+            $ref: '#/components/schemas/DismissStateDto'
         }
     }
 } as const;
