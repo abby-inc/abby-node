@@ -1784,44 +1784,6 @@ export const CreatePurchaseRegisterDtoSchema = {
     ]
 } as const;
 
-export const CreatePurchaseRegisterItemLegacyDtoSchema = {
-    type: 'object',
-    properties: {
-        boughtAt: {
-            format: 'date-time',
-            type: 'string'
-        },
-        paymentMethodUsed: {
-            type: 'object',
-            default: {
-                value: 1
-            }
-        },
-        amount: {
-            type: 'number'
-        },
-        provider: {
-            type: 'string'
-        },
-        reference: {
-            type: 'string'
-        },
-        nature: {
-            type: 'string'
-        },
-        file: {
-            type: 'object'
-        }
-    },
-    required: [
-        'boughtAt',
-        'paymentMethodUsed',
-        'amount',
-        'provider',
-        'nature'
-    ]
-} as const;
-
 export const CreateTaskDtoSchema = {
     type: 'object',
     properties: {
@@ -3663,7 +3625,8 @@ export const PaymentConditionSchema = {
         'SIGNATURE',
         'ORDER',
         'OTHER'
-    ]
+    ],
+    description: 'Payment condition for the advance'
 } as const;
 
 export const PaymentDelaySchema = {
@@ -9440,47 +9403,6 @@ export const ReadPurchaseRegisterItemDtoSchema = {
         'fileCount',
         'createdAt',
         'updatedAt'
-    ]
-} as const;
-
-export const ReadPurchaseRegisterItemLegacyDtoSchema = {
-    type: 'object',
-    properties: {
-        _id: {
-            type: 'string'
-        },
-        paymentMethodUsed: {
-            type: 'object'
-        },
-        amount: {
-            type: 'number'
-        },
-        reference: {
-            type: 'string'
-        },
-        boughtAt: {
-            format: 'date-time',
-            type: 'string'
-        },
-        provider: {
-            type: 'string'
-        },
-        nature: {
-            type: 'string'
-        },
-        file: {
-            type: 'object'
-        }
-    },
-    required: [
-        '_id',
-        'paymentMethodUsed',
-        'amount',
-        'reference',
-        'boughtAt',
-        'provider',
-        'nature',
-        'file'
     ]
 } as const;
 
