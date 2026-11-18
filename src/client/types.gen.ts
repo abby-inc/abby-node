@@ -6982,6 +6982,10 @@ export type BillingThemeControllerUpdateThemeV2Errors = {
      */
     400: unknown;
     /**
+     * Advanced customization not allowed by the plan
+     */
+    403: unknown;
+    /**
      * Theme not found
      */
     404: unknown;
@@ -7045,6 +7049,10 @@ export type BillingThemeControllerUpdateThemeStructureV2Errors = {
      * Invalid input data
      */
     400: unknown;
+    /**
+     * Advanced customization not allowed by the plan
+     */
+    403: unknown;
     /**
      * Theme not found
      */
@@ -7142,6 +7150,10 @@ export type BillingThemeControllerUpdateThemeTypographyV2Errors = {
      */
     400: unknown;
     /**
+     * Advanced customization not allowed by the plan
+     */
+    403: unknown;
+    /**
      * Theme not found
      */
     404: unknown;
@@ -7173,6 +7185,10 @@ export type BillingThemeControllerUpdateThemeTableV2Errors = {
      * Invalid input data
      */
     400: unknown;
+    /**
+     * Advanced customization not allowed by the plan
+     */
+    403: unknown;
     /**
      * Theme not found
      */
@@ -7206,6 +7222,10 @@ export type BillingThemeControllerUpdateThemeDecorationV2Errors = {
      */
     400: unknown;
     /**
+     * Advanced customization not allowed by the plan
+     */
+    403: unknown;
+    /**
      * Theme not found
      */
     404: unknown;
@@ -7237,6 +7257,10 @@ export type BillingThemeControllerUpdateThemeFooterV2Errors = {
      * Invalid input data
      */
     400: unknown;
+    /**
+     * Advanced customization not allowed by the plan
+     */
+    403: unknown;
     /**
      * Theme not found
      */
@@ -7301,6 +7325,10 @@ export type BillingThemeControllerUpdateThemeLinksV2Errors = {
      * Invalid input data
      */
     400: unknown;
+    /**
+     * Advanced customization not allowed by the plan
+     */
+    403: unknown;
     /**
      * Theme not found
      */
