@@ -549,6 +549,23 @@ export const assetControllerUpdateCurrencyV2ResponseTransformer = async (data: a
     return data;
 };
 
+const readMeEInvoicingDtoSchemaResponseTransformer = (data: any) => {
+    if (data.revokedAt) {
+        data.revokedAt = new Date(data.revokedAt);
+    }
+    return data;
+};
+
+const readMeDtoSchemaResponseTransformer = (data: any) => {
+    data.eInvoicing = readMeEInvoicingDtoSchemaResponseTransformer(data.eInvoicing);
+    return data;
+};
+
+export const companyControllerGetMeV2ResponseTransformer = async (data: any): Promise<CompanyControllerGetMeV2Response> => {
+    data = readMeDtoSchemaResponseTransformer(data);
+    return data;
+};
+
 const entryDtoSchemaResponseTransformer = (data: any) => {
     data.valueDate = new Date(data.valueDate);
     data.entries = data.entries.map((item: any) => entryDtoSchemaResponseTransformer(item));
@@ -604,23 +621,6 @@ export const purchaseRegisterControllerPaginateV3ResponseTransformer = async (da
 
 export const purchaseRegisterControllerCreateV3ResponseTransformer = async (data: any): Promise<PurchaseRegisterControllerCreateV3Response> => {
     data = readPurchaseRegisterItemDtoSchemaResponseTransformer(data);
-    return data;
-};
-
-const readMeEInvoicingDtoSchemaResponseTransformer = (data: any) => {
-    if (data.revokedAt) {
-        data.revokedAt = new Date(data.revokedAt);
-    }
-    return data;
-};
-
-const readMeDtoSchemaResponseTransformer = (data: any) => {
-    data.eInvoicing = readMeEInvoicingDtoSchemaResponseTransformer(data.eInvoicing);
-    return data;
-};
-
-export const companyControllerGetMeV2ResponseTransformer = async (data: any): Promise<CompanyControllerGetMeV2Response> => {
-    data = readMeDtoSchemaResponseTransformer(data);
     return data;
 };
 

@@ -779,6 +779,8 @@ export type DismissPreferencesDto = {
     PRO_ACCOUNT_PAYMENT_SETTINGS?: DismissStateDto;
     PRO_ACCOUNT_BILLING_DOCUMENT?: DismissStateDto;
     PRO_ACCOUNT_CARD_WALLET_TUTORIAL?: DismissStateDto;
+    PRO_ACCOUNT_INTERNATIONAL_WIRES?: DismissStateDto;
+    PRO_ACCOUNT_GROUPED_WIRES?: DismissStateDto;
 };
 
 export type DismissStateDto = {
@@ -7509,340 +7511,6 @@ export type BillingThemeAssetControllerDeleteV2Responses = {
 
 export type BillingThemeAssetControllerDeleteV2Response = BillingThemeAssetControllerDeleteV2Responses[keyof BillingThemeAssetControllerDeleteV2Responses];
 
-export type TransactionsControllerRetrieveTransactionByIdV2Data = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/v2/transactions/{id}';
-};
-
-export type TransactionsControllerRetrieveTransactionByIdV2Errors = {
-    /**
-     * Unauthorized
-     */
-    401: unknown;
-    /**
-     * Resource not found
-     */
-    404: unknown;
-};
-
-export type TransactionsControllerRetrieveTransactionByIdV2Responses = {
-    /**
-     * Return a single transaction
-     */
-    200: QueryTransactionDto;
-};
-
-export type TransactionsControllerRetrieveTransactionByIdV2Response = TransactionsControllerRetrieveTransactionByIdV2Responses[keyof TransactionsControllerRetrieveTransactionByIdV2Responses];
-
-export type AccountingBillingControllerReconciliateInvoiceV2Data = {
-    body: ReconciliateInvoiceDto;
-    path: {
-        /**
-         * ID of the invoice to mark as paid
-         */
-        invoiceId: string;
-    };
-    query?: never;
-    url: '/v2/accounting-billing/invoice/{invoiceId}/reconciliate';
-};
-
-export type AccountingBillingControllerReconciliateInvoiceV2Errors = {
-    /**
-     * Invalid payment amount or invoice not finalized
-     */
-    400: unknown;
-    /**
-     * Unauthorized
-     */
-    401: unknown;
-    /**
-     * Invoice not found
-     */
-    404: unknown;
-};
-
-export type AccountingBillingControllerReconciliateInvoiceV2Responses = {
-    /**
-     * Invoice marked as paid successfully
-     */
-    200: unknown;
-};
-
-export type AccountingBillingControllerReconciliateAdvanceV2Data = {
-    body: ReconciliateInvoiceDto;
-    path: {
-        /**
-         * ID of the advance to mark as paid
-         */
-        advanceId: string;
-    };
-    query?: never;
-    url: '/v2/accounting-billing/advance/{advanceId}/reconciliate';
-};
-
-export type AccountingBillingControllerReconciliateAdvanceV2Errors = {
-    /**
-     * Invalid payment amount or advance not finalized
-     */
-    400: unknown;
-    /**
-     * Unauthorized
-     */
-    401: unknown;
-    /**
-     * Advance not found
-     */
-    404: unknown;
-};
-
-export type AccountingBillingControllerReconciliateAdvanceV2Responses = {
-    /**
-     * Advance marked as paid successfully
-     */
-    200: unknown;
-};
-
-export type AccountingBillingControllerMarkInvoiceAsUnpaidV2Data = {
-    body?: never;
-    path: {
-        /**
-         * ID of the invoice to mark as unpaid
-         */
-        invoiceId: string;
-    };
-    query?: never;
-    url: '/v2/accounting-billing/invoice/{invoiceId}/mark-as-unpaid';
-};
-
-export type AccountingBillingControllerMarkInvoiceAsUnpaidV2Errors = {
-    /**
-     * Invoice is not paid
-     */
-    400: unknown;
-    /**
-     * Unauthorized
-     */
-    401: unknown;
-    /**
-     * Invoice not found
-     */
-    404: unknown;
-};
-
-export type AccountingBillingControllerMarkInvoiceAsUnpaidV2Responses = {
-    /**
-     * Invoice marked as unpaid successfully
-     */
-    200: unknown;
-};
-
-export type AccountingAccountControllerListV2Data = {
-    body?: never;
-    path?: never;
-    query?: {
-        /**
-         * Filter accounts by hidden status
-         */
-        isHidden?: boolean;
-    };
-    url: '/v2/accounting-accounts';
-};
-
-export type AccountingAccountControllerListV2Responses = {
-    200: Array<ReadAccountingAccountListItemDto>;
-};
-
-export type AccountingAccountControllerListV2Response = AccountingAccountControllerListV2Responses[keyof AccountingAccountControllerListV2Responses];
-
-export type PurchaseRegisterControllerRemoveV3Data = {
-    body?: never;
-    path: {
-        /**
-         * ID of the purchase register entry to delete
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/v3/purchaseRegister/{id}';
-};
-
-export type PurchaseRegisterControllerRemoveV3Errors = {
-    /**
-     * Unauthorized
-     */
-    401: unknown;
-    /**
-     * Purchase register entry not found
-     */
-    404: unknown;
-};
-
-export type PurchaseRegisterControllerRemoveV3Responses = {
-    /**
-     * Purchase register entry deleted
-     */
-    204: void;
-};
-
-export type PurchaseRegisterControllerRemoveV3Response = PurchaseRegisterControllerRemoveV3Responses[keyof PurchaseRegisterControllerRemoveV3Responses];
-
-export type PurchaseRegisterControllerRetrieveV3Data = {
-    body?: never;
-    path: {
-        /**
-         * ID of the purchase register entry
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/v3/purchaseRegister/{id}';
-};
-
-export type PurchaseRegisterControllerRetrieveV3Errors = {
-    /**
-     * Unauthorized
-     */
-    401: unknown;
-    /**
-     * Purchase register entry not found
-     */
-    404: unknown;
-};
-
-export type PurchaseRegisterControllerRetrieveV3Responses = {
-    /**
-     * Purchase register entry retrieved successfully
-     */
-    200: ReadPurchaseRegisterItemDto;
-};
-
-export type PurchaseRegisterControllerRetrieveV3Response = PurchaseRegisterControllerRetrieveV3Responses[keyof PurchaseRegisterControllerRetrieveV3Responses];
-
-export type PurchaseRegisterControllerUpdateV3Data = {
-    body: UpdatePurchaseRegisterDto;
-    path: {
-        /**
-         * ID of the purchase register entry to update
-         */
-        id: string;
-    };
-    query?: never;
-    url: '/v3/purchaseRegister/{id}';
-};
-
-export type PurchaseRegisterControllerUpdateV3Errors = {
-    /**
-     * Invalid payload
-     */
-    400: unknown;
-    /**
-     * Unauthorized
-     */
-    401: unknown;
-    /**
-     * Purchase register entry not found
-     */
-    404: unknown;
-};
-
-export type PurchaseRegisterControllerUpdateV3Responses = {
-    /**
-     * Purchase register entry updated successfully
-     */
-    200: ReadPurchaseRegisterItemDto;
-};
-
-export type PurchaseRegisterControllerUpdateV3Response = PurchaseRegisterControllerUpdateV3Responses[keyof PurchaseRegisterControllerUpdateV3Responses];
-
-export type PurchaseRegisterControllerPaginateV3Data = {
-    body?: never;
-    path?: never;
-    query: {
-        page: number;
-        limit: number;
-        /**
-         * Search term
-         */
-        search?: string;
-        /**
-         * Date range as two ISO-8601 bounds [from, to]
-         */
-        range?: Array<string>;
-        /**
-         * Filter by attachments
-         */
-        attachments?: boolean;
-        /**
-         * Minimum amount
-         */
-        min?: number;
-        /**
-         * Maximum amount
-         */
-        max?: number;
-        /**
-         * Filter by provider ID
-         */
-        provider?: string;
-        /**
-         * Sort by fields
-         */
-        orderBy?: PurchaseRegisterOrderBy;
-        /**
-         * Sort direction (true for descending)
-         */
-        orderDirection?: OrderDirection;
-    };
-    url: '/v3/purchaseRegister/list';
-};
-
-export type PurchaseRegisterControllerPaginateV3Errors = {
-    /**
-     * Unauthorized
-     */
-    401: unknown;
-};
-
-export type PurchaseRegisterControllerPaginateV3Responses = {
-    /**
-     * Purchase register entries retrieved successfully
-     */
-    200: ReadPurchaseRegisterCollectionDto;
-};
-
-export type PurchaseRegisterControllerPaginateV3Response = PurchaseRegisterControllerPaginateV3Responses[keyof PurchaseRegisterControllerPaginateV3Responses];
-
-export type PurchaseRegisterControllerCreateV3Data = {
-    body: CreatePurchaseRegisterDto;
-    path?: never;
-    query?: never;
-    url: '/v3/purchaseRegister';
-};
-
-export type PurchaseRegisterControllerCreateV3Errors = {
-    /**
-     * Invalid payload (e.g. entries do not balance amount, or thirdPartyId is not a provider)
-     */
-    400: unknown;
-    /**
-     * Unauthorized
-     */
-    401: unknown;
-};
-
-export type PurchaseRegisterControllerCreateV3Responses = {
-    /**
-     * Purchase register entry created successfully
-     */
-    201: ReadPurchaseRegisterItemDto;
-};
-
-export type PurchaseRegisterControllerCreateV3Response = PurchaseRegisterControllerCreateV3Responses[keyof PurchaseRegisterControllerCreateV3Responses];
-
 export type CompanyControllerGetMeV2Data = {
     body?: never;
     path?: never;
@@ -8268,6 +7936,340 @@ export type EInvoicingControllerRecordPlatformChoiceFromEmailLinkV2Data = {
 export type EInvoicingControllerRecordPlatformChoiceFromEmailLinkV2Responses = {
     200: unknown;
 };
+
+export type TransactionsControllerRetrieveTransactionByIdV2Data = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/v2/transactions/{id}';
+};
+
+export type TransactionsControllerRetrieveTransactionByIdV2Errors = {
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+    /**
+     * Resource not found
+     */
+    404: unknown;
+};
+
+export type TransactionsControllerRetrieveTransactionByIdV2Responses = {
+    /**
+     * Return a single transaction
+     */
+    200: QueryTransactionDto;
+};
+
+export type TransactionsControllerRetrieveTransactionByIdV2Response = TransactionsControllerRetrieveTransactionByIdV2Responses[keyof TransactionsControllerRetrieveTransactionByIdV2Responses];
+
+export type AccountingBillingControllerReconciliateInvoiceV2Data = {
+    body: ReconciliateInvoiceDto;
+    path: {
+        /**
+         * ID of the invoice to mark as paid
+         */
+        invoiceId: string;
+    };
+    query?: never;
+    url: '/v2/accounting-billing/invoice/{invoiceId}/reconciliate';
+};
+
+export type AccountingBillingControllerReconciliateInvoiceV2Errors = {
+    /**
+     * Invalid payment amount or invoice not finalized
+     */
+    400: unknown;
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+    /**
+     * Invoice not found
+     */
+    404: unknown;
+};
+
+export type AccountingBillingControllerReconciliateInvoiceV2Responses = {
+    /**
+     * Invoice marked as paid successfully
+     */
+    200: unknown;
+};
+
+export type AccountingBillingControllerReconciliateAdvanceV2Data = {
+    body: ReconciliateInvoiceDto;
+    path: {
+        /**
+         * ID of the advance to mark as paid
+         */
+        advanceId: string;
+    };
+    query?: never;
+    url: '/v2/accounting-billing/advance/{advanceId}/reconciliate';
+};
+
+export type AccountingBillingControllerReconciliateAdvanceV2Errors = {
+    /**
+     * Invalid payment amount or advance not finalized
+     */
+    400: unknown;
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+    /**
+     * Advance not found
+     */
+    404: unknown;
+};
+
+export type AccountingBillingControllerReconciliateAdvanceV2Responses = {
+    /**
+     * Advance marked as paid successfully
+     */
+    200: unknown;
+};
+
+export type AccountingBillingControllerMarkInvoiceAsUnpaidV2Data = {
+    body?: never;
+    path: {
+        /**
+         * ID of the invoice to mark as unpaid
+         */
+        invoiceId: string;
+    };
+    query?: never;
+    url: '/v2/accounting-billing/invoice/{invoiceId}/mark-as-unpaid';
+};
+
+export type AccountingBillingControllerMarkInvoiceAsUnpaidV2Errors = {
+    /**
+     * Invoice is not paid
+     */
+    400: unknown;
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+    /**
+     * Invoice not found
+     */
+    404: unknown;
+};
+
+export type AccountingBillingControllerMarkInvoiceAsUnpaidV2Responses = {
+    /**
+     * Invoice marked as unpaid successfully
+     */
+    200: unknown;
+};
+
+export type AccountingAccountControllerListV2Data = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Filter accounts by hidden status
+         */
+        isHidden?: boolean;
+    };
+    url: '/v2/accounting-accounts';
+};
+
+export type AccountingAccountControllerListV2Responses = {
+    200: Array<ReadAccountingAccountListItemDto>;
+};
+
+export type AccountingAccountControllerListV2Response = AccountingAccountControllerListV2Responses[keyof AccountingAccountControllerListV2Responses];
+
+export type PurchaseRegisterControllerRemoveV3Data = {
+    body?: never;
+    path: {
+        /**
+         * ID of the purchase register entry to delete
+         */
+        id: string;
+    };
+    query?: never;
+    url: '/v3/purchaseRegister/{id}';
+};
+
+export type PurchaseRegisterControllerRemoveV3Errors = {
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+    /**
+     * Purchase register entry not found
+     */
+    404: unknown;
+};
+
+export type PurchaseRegisterControllerRemoveV3Responses = {
+    /**
+     * Purchase register entry deleted
+     */
+    204: void;
+};
+
+export type PurchaseRegisterControllerRemoveV3Response = PurchaseRegisterControllerRemoveV3Responses[keyof PurchaseRegisterControllerRemoveV3Responses];
+
+export type PurchaseRegisterControllerRetrieveV3Data = {
+    body?: never;
+    path: {
+        /**
+         * ID of the purchase register entry
+         */
+        id: string;
+    };
+    query?: never;
+    url: '/v3/purchaseRegister/{id}';
+};
+
+export type PurchaseRegisterControllerRetrieveV3Errors = {
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+    /**
+     * Purchase register entry not found
+     */
+    404: unknown;
+};
+
+export type PurchaseRegisterControllerRetrieveV3Responses = {
+    /**
+     * Purchase register entry retrieved successfully
+     */
+    200: ReadPurchaseRegisterItemDto;
+};
+
+export type PurchaseRegisterControllerRetrieveV3Response = PurchaseRegisterControllerRetrieveV3Responses[keyof PurchaseRegisterControllerRetrieveV3Responses];
+
+export type PurchaseRegisterControllerUpdateV3Data = {
+    body: UpdatePurchaseRegisterDto;
+    path: {
+        /**
+         * ID of the purchase register entry to update
+         */
+        id: string;
+    };
+    query?: never;
+    url: '/v3/purchaseRegister/{id}';
+};
+
+export type PurchaseRegisterControllerUpdateV3Errors = {
+    /**
+     * Invalid payload
+     */
+    400: unknown;
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+    /**
+     * Purchase register entry not found
+     */
+    404: unknown;
+};
+
+export type PurchaseRegisterControllerUpdateV3Responses = {
+    /**
+     * Purchase register entry updated successfully
+     */
+    200: ReadPurchaseRegisterItemDto;
+};
+
+export type PurchaseRegisterControllerUpdateV3Response = PurchaseRegisterControllerUpdateV3Responses[keyof PurchaseRegisterControllerUpdateV3Responses];
+
+export type PurchaseRegisterControllerPaginateV3Data = {
+    body?: never;
+    path?: never;
+    query: {
+        page: number;
+        limit: number;
+        /**
+         * Search term
+         */
+        search?: string;
+        /**
+         * Date range as two ISO-8601 bounds [from, to]
+         */
+        range?: Array<string>;
+        /**
+         * Filter by attachments
+         */
+        attachments?: boolean;
+        /**
+         * Minimum amount
+         */
+        min?: number;
+        /**
+         * Maximum amount
+         */
+        max?: number;
+        /**
+         * Filter by provider ID
+         */
+        provider?: string;
+        /**
+         * Sort by fields
+         */
+        orderBy?: PurchaseRegisterOrderBy;
+        /**
+         * Sort direction (true for descending)
+         */
+        orderDirection?: OrderDirection;
+    };
+    url: '/v3/purchaseRegister/list';
+};
+
+export type PurchaseRegisterControllerPaginateV3Errors = {
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+};
+
+export type PurchaseRegisterControllerPaginateV3Responses = {
+    /**
+     * Purchase register entries retrieved successfully
+     */
+    200: ReadPurchaseRegisterCollectionDto;
+};
+
+export type PurchaseRegisterControllerPaginateV3Response = PurchaseRegisterControllerPaginateV3Responses[keyof PurchaseRegisterControllerPaginateV3Responses];
+
+export type PurchaseRegisterControllerCreateV3Data = {
+    body: CreatePurchaseRegisterDto;
+    path?: never;
+    query?: never;
+    url: '/v3/purchaseRegister';
+};
+
+export type PurchaseRegisterControllerCreateV3Errors = {
+    /**
+     * Invalid payload (e.g. entries do not balance amount, or thirdPartyId is not a provider)
+     */
+    400: unknown;
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+};
+
+export type PurchaseRegisterControllerCreateV3Responses = {
+    /**
+     * Purchase register entry created successfully
+     */
+    201: ReadPurchaseRegisterItemDto;
+};
+
+export type PurchaseRegisterControllerCreateV3Response = PurchaseRegisterControllerCreateV3Responses[keyof PurchaseRegisterControllerCreateV3Responses];
 
 export type OpportunityControllerRetrieveCategoriesV2Data = {
     body?: never;

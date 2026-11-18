@@ -727,7 +727,9 @@ export const zDismissPreferencesDto = z.object({
     PRO_ACCOUNT_BANK_DETAILS: zDismissStateDto.optional(),
     PRO_ACCOUNT_PAYMENT_SETTINGS: zDismissStateDto.optional(),
     PRO_ACCOUNT_BILLING_DOCUMENT: zDismissStateDto.optional(),
-    PRO_ACCOUNT_CARD_WALLET_TUTORIAL: zDismissStateDto.optional()
+    PRO_ACCOUNT_CARD_WALLET_TUTORIAL: zDismissStateDto.optional(),
+    PRO_ACCOUNT_INTERNATIONAL_WIRES: zDismissStateDto.optional(),
+    PRO_ACCOUNT_GROUPED_WIRES: zDismissStateDto.optional()
 });
 
 export const zDisplayBillingSettingsDto = z.object({
@@ -4688,44 +4690,6 @@ export const zBillingThemeAssetControllerDeleteV2Path = z.object({
     })
 });
 
-export const zTransactionsControllerRetrieveTransactionByIdV2Path = z.object({
-    id: z.string()
-});
-
-export const zAccountingBillingControllerReconciliateInvoiceV2Body = zReconciliateInvoiceDto;
-
-export const zAccountingBillingControllerReconciliateInvoiceV2Path = z.object({
-    invoiceId: z.string().register(z.globalRegistry, {
-        description: 'ID of the invoice to mark as paid'
-    })
-});
-
-export const zAccountingBillingControllerReconciliateAdvanceV2Body = zReconciliateInvoiceDto;
-
-export const zAccountingBillingControllerReconciliateAdvanceV2Path = z.object({
-    advanceId: z.string().register(z.globalRegistry, {
-        description: 'ID of the advance to mark as paid'
-    })
-});
-
-export const zAccountingBillingControllerMarkInvoiceAsUnpaidV2Path = z.object({
-    invoiceId: z.string().register(z.globalRegistry, {
-        description: 'ID of the invoice to mark as unpaid'
-    })
-});
-
-export const zAccountingAccountControllerListV2Query = z.object({
-    isHidden: z.boolean().register(z.globalRegistry, {
-        description: 'Filter accounts by hidden status'
-    }).optional()
-});
-
-export const zPurchaseRegisterControllerRemoveV3Path = z.object({
-    id: z.string().register(z.globalRegistry, {
-        description: 'ID of the purchase register entry to delete'
-    })
-});
-
 export const zCatalogControllerPaginateV2Query = z.object({
     page: z.number().gte(1).register(z.globalRegistry, {
         description: 'The page number to retrieve'
@@ -4835,6 +4799,44 @@ export const zOrganizationsControllerRetrieveOrganizationsQuery = z.object({
 export const zEInvoicingControllerRecordPlatformChoiceFromEmailLinkV2Query = z.object({
     choice: z.string(),
     token: z.string()
+});
+
+export const zTransactionsControllerRetrieveTransactionByIdV2Path = z.object({
+    id: z.string()
+});
+
+export const zAccountingBillingControllerReconciliateInvoiceV2Body = zReconciliateInvoiceDto;
+
+export const zAccountingBillingControllerReconciliateInvoiceV2Path = z.object({
+    invoiceId: z.string().register(z.globalRegistry, {
+        description: 'ID of the invoice to mark as paid'
+    })
+});
+
+export const zAccountingBillingControllerReconciliateAdvanceV2Body = zReconciliateInvoiceDto;
+
+export const zAccountingBillingControllerReconciliateAdvanceV2Path = z.object({
+    advanceId: z.string().register(z.globalRegistry, {
+        description: 'ID of the advance to mark as paid'
+    })
+});
+
+export const zAccountingBillingControllerMarkInvoiceAsUnpaidV2Path = z.object({
+    invoiceId: z.string().register(z.globalRegistry, {
+        description: 'ID of the invoice to mark as unpaid'
+    })
+});
+
+export const zAccountingAccountControllerListV2Query = z.object({
+    isHidden: z.boolean().register(z.globalRegistry, {
+        description: 'Filter accounts by hidden status'
+    }).optional()
+});
+
+export const zPurchaseRegisterControllerRemoveV3Path = z.object({
+    id: z.string().register(z.globalRegistry, {
+        description: 'ID of the purchase register entry to delete'
+    })
 });
 
 export const zOpportunityControllerDeleteOpportunityV2Path = z.object({
@@ -6022,36 +6024,6 @@ export const zBillingThemeAssetControllerDeleteV2Data = z.object({
     query: z.never().optional()
 });
 
-export const zTransactionsControllerRetrieveTransactionByIdV2Data = z.object({
-    body: z.never().optional(),
-    path: zTransactionsControllerRetrieveTransactionByIdV2Path,
-    query: z.never().optional()
-});
-
-export const zAccountingBillingControllerReconciliateInvoiceV2Data = z.object({
-    body: zAccountingBillingControllerReconciliateInvoiceV2Body,
-    path: zAccountingBillingControllerReconciliateInvoiceV2Path,
-    query: z.never().optional()
-});
-
-export const zAccountingBillingControllerReconciliateAdvanceV2Data = z.object({
-    body: zAccountingBillingControllerReconciliateAdvanceV2Body,
-    path: zAccountingBillingControllerReconciliateAdvanceV2Path,
-    query: z.never().optional()
-});
-
-export const zAccountingBillingControllerMarkInvoiceAsUnpaidV2Data = z.object({
-    body: z.never().optional(),
-    path: zAccountingBillingControllerMarkInvoiceAsUnpaidV2Path,
-    query: z.never().optional()
-});
-
-export const zAccountingAccountControllerListV2Data = z.object({
-    body: z.never().optional(),
-    path: z.never().optional(),
-    query: zAccountingAccountControllerListV2Query.optional()
-});
-
 export const zCompanyControllerGetMeV2Data = z.object({
     body: z.never().optional(),
     path: z.never().optional(),
@@ -6176,6 +6148,36 @@ export const zEInvoicingControllerRecordPlatformChoiceFromEmailLinkV2Data = z.ob
     body: z.never().optional(),
     path: z.never().optional(),
     query: zEInvoicingControllerRecordPlatformChoiceFromEmailLinkV2Query
+});
+
+export const zTransactionsControllerRetrieveTransactionByIdV2Data = z.object({
+    body: z.never().optional(),
+    path: zTransactionsControllerRetrieveTransactionByIdV2Path,
+    query: z.never().optional()
+});
+
+export const zAccountingBillingControllerReconciliateInvoiceV2Data = z.object({
+    body: zAccountingBillingControllerReconciliateInvoiceV2Body,
+    path: zAccountingBillingControllerReconciliateInvoiceV2Path,
+    query: z.never().optional()
+});
+
+export const zAccountingBillingControllerReconciliateAdvanceV2Data = z.object({
+    body: zAccountingBillingControllerReconciliateAdvanceV2Body,
+    path: zAccountingBillingControllerReconciliateAdvanceV2Path,
+    query: z.never().optional()
+});
+
+export const zAccountingBillingControllerMarkInvoiceAsUnpaidV2Data = z.object({
+    body: z.never().optional(),
+    path: zAccountingBillingControllerMarkInvoiceAsUnpaidV2Path,
+    query: z.never().optional()
+});
+
+export const zAccountingAccountControllerListV2Data = z.object({
+    body: z.never().optional(),
+    path: z.never().optional(),
+    query: zAccountingAccountControllerListV2Query.optional()
 });
 
 export const zLogsControllerRetrieveLogsByCompanyData = z.object({
