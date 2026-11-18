@@ -1800,87 +1800,6 @@ export class BillingThemeAsset {
     }
 }
 
-export class TransactionsV2 {
-    /**
-     * Get a bank transaction by id
-     */
-    public static retrieveTransactionByIdV2<ThrowOnError extends boolean = true>(options: Options<TransactionsControllerRetrieveTransactionByIdV2Data, ThrowOnError>) {
-        return (options.client ?? client).get<TransactionsControllerRetrieveTransactionByIdV2Responses, TransactionsControllerRetrieveTransactionByIdV2Errors, ThrowOnError>({
-            requestValidator: async (data) => await zTransactionsControllerRetrieveTransactionByIdV2Data.parseAsync(data),
-            responseTransformer: transactionsControllerRetrieveTransactionByIdV2ResponseTransformer,
-            security: [{ scheme: 'bearer', type: 'http' }],
-            url: '/v2/transactions/{id}',
-            ...options
-        });
-    }
-}
-
-export class AccountingBillingV2 {
-    /**
-     * Mark an invoice as paid
-     *
-     * Associates one or more payments to a finalized invoice to record its cashing. The sum of payment amounts (in cents) must match the invoice's remaining amount with tax. Use this endpoint to mark an invoice as paid via the public API.
-     */
-    public static reconciliateInvoiceV2<ThrowOnError extends boolean = true>(options: Options<AccountingBillingControllerReconciliateInvoiceV2Data, ThrowOnError>) {
-        return (options.client ?? client).post<AccountingBillingControllerReconciliateInvoiceV2Responses, AccountingBillingControllerReconciliateInvoiceV2Errors, ThrowOnError>({
-            requestValidator: async (data) => await zAccountingBillingControllerReconciliateInvoiceV2Data.parseAsync(data),
-            security: [{ scheme: 'bearer', type: 'http' }],
-            url: '/v2/accounting-billing/invoice/{invoiceId}/reconciliate',
-            ...options,
-            headers: {
-                'Content-Type': 'application/json',
-                ...options.headers
-            }
-        });
-    }
-    
-    /**
-     * Mark an advance as paid
-     *
-     * Associates one or more payments to a finalized advance to record its cashing. The sum of payment amounts (in cents) must match the advance remaining amount with tax. Use the same advanceId returned by POST /v2/billing/estimate/{id}/advance.
-     */
-    public static reconciliateAdvanceV2<ThrowOnError extends boolean = true>(options: Options<AccountingBillingControllerReconciliateAdvanceV2Data, ThrowOnError>) {
-        return (options.client ?? client).post<AccountingBillingControllerReconciliateAdvanceV2Responses, AccountingBillingControllerReconciliateAdvanceV2Errors, ThrowOnError>({
-            requestValidator: async (data) => await zAccountingBillingControllerReconciliateAdvanceV2Data.parseAsync(data),
-            security: [{ scheme: 'bearer', type: 'http' }],
-            url: '/v2/accounting-billing/advance/{advanceId}/reconciliate',
-            ...options,
-            headers: {
-                'Content-Type': 'application/json',
-                ...options.headers
-            }
-        });
-    }
-    
-    /**
-     * Mark an invoice as unpaid
-     *
-     * Removes the payments associated to an invoice and resets its paid state. Use this endpoint to revert a previously paid invoice.
-     */
-    public static markInvoiceAsUnpaidV2<ThrowOnError extends boolean = true>(options: Options<AccountingBillingControllerMarkInvoiceAsUnpaidV2Data, ThrowOnError>) {
-        return (options.client ?? client).post<AccountingBillingControllerMarkInvoiceAsUnpaidV2Responses, AccountingBillingControllerMarkInvoiceAsUnpaidV2Errors, ThrowOnError>({
-            requestValidator: async (data) => await zAccountingBillingControllerMarkInvoiceAsUnpaidV2Data.parseAsync(data),
-            security: [{ scheme: 'bearer', type: 'http' }],
-            url: '/v2/accounting-billing/invoice/{invoiceId}/mark-as-unpaid',
-            ...options
-        });
-    }
-}
-
-export class AccountingAccountV2 {
-    /**
-     * List the accounting accounts available to the current company
-     */
-    public static listV2<ThrowOnError extends boolean = true>(options?: Options<AccountingAccountControllerListV2Data, ThrowOnError>) {
-        return (options?.client ?? client).get<AccountingAccountControllerListV2Responses, unknown, ThrowOnError>({
-            requestValidator: async (data) => await zAccountingAccountControllerListV2Data.parseAsync(data),
-            security: [{ scheme: 'bearer', type: 'http' }],
-            url: '/v2/accounting-accounts',
-            ...options
-        });
-    }
-}
-
 export class Company {
     /**
      * Get current company, user and preferences
@@ -2152,6 +2071,87 @@ export class EInvoicing {
             requestValidator: async (data) => await zEInvoicingControllerRecordPlatformChoiceFromEmailLinkV2Data.parseAsync(data),
             security: [{ scheme: 'bearer', type: 'http' }],
             url: '/v2/e-invoicing/platform-choice',
+            ...options
+        });
+    }
+}
+
+export class TransactionsV2 {
+    /**
+     * Get a bank transaction by id
+     */
+    public static retrieveTransactionByIdV2<ThrowOnError extends boolean = true>(options: Options<TransactionsControllerRetrieveTransactionByIdV2Data, ThrowOnError>) {
+        return (options.client ?? client).get<TransactionsControllerRetrieveTransactionByIdV2Responses, TransactionsControllerRetrieveTransactionByIdV2Errors, ThrowOnError>({
+            requestValidator: async (data) => await zTransactionsControllerRetrieveTransactionByIdV2Data.parseAsync(data),
+            responseTransformer: transactionsControllerRetrieveTransactionByIdV2ResponseTransformer,
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/v2/transactions/{id}',
+            ...options
+        });
+    }
+}
+
+export class AccountingBillingV2 {
+    /**
+     * Mark an invoice as paid
+     *
+     * Associates one or more payments to a finalized invoice to record its cashing. The sum of payment amounts (in cents) must match the invoice's remaining amount with tax. Use this endpoint to mark an invoice as paid via the public API.
+     */
+    public static reconciliateInvoiceV2<ThrowOnError extends boolean = true>(options: Options<AccountingBillingControllerReconciliateInvoiceV2Data, ThrowOnError>) {
+        return (options.client ?? client).post<AccountingBillingControllerReconciliateInvoiceV2Responses, AccountingBillingControllerReconciliateInvoiceV2Errors, ThrowOnError>({
+            requestValidator: async (data) => await zAccountingBillingControllerReconciliateInvoiceV2Data.parseAsync(data),
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/v2/accounting-billing/invoice/{invoiceId}/reconciliate',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+    
+    /**
+     * Mark an advance as paid
+     *
+     * Associates one or more payments to a finalized advance to record its cashing. The sum of payment amounts (in cents) must match the advance remaining amount with tax. Use the same advanceId returned by POST /v2/billing/estimate/{id}/advance.
+     */
+    public static reconciliateAdvanceV2<ThrowOnError extends boolean = true>(options: Options<AccountingBillingControllerReconciliateAdvanceV2Data, ThrowOnError>) {
+        return (options.client ?? client).post<AccountingBillingControllerReconciliateAdvanceV2Responses, AccountingBillingControllerReconciliateAdvanceV2Errors, ThrowOnError>({
+            requestValidator: async (data) => await zAccountingBillingControllerReconciliateAdvanceV2Data.parseAsync(data),
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/v2/accounting-billing/advance/{advanceId}/reconciliate',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+    
+    /**
+     * Mark an invoice as unpaid
+     *
+     * Removes the payments associated to an invoice and resets its paid state. Use this endpoint to revert a previously paid invoice.
+     */
+    public static markInvoiceAsUnpaidV2<ThrowOnError extends boolean = true>(options: Options<AccountingBillingControllerMarkInvoiceAsUnpaidV2Data, ThrowOnError>) {
+        return (options.client ?? client).post<AccountingBillingControllerMarkInvoiceAsUnpaidV2Responses, AccountingBillingControllerMarkInvoiceAsUnpaidV2Errors, ThrowOnError>({
+            requestValidator: async (data) => await zAccountingBillingControllerMarkInvoiceAsUnpaidV2Data.parseAsync(data),
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/v2/accounting-billing/invoice/{invoiceId}/mark-as-unpaid',
+            ...options
+        });
+    }
+}
+
+export class AccountingAccountV2 {
+    /**
+     * List the accounting accounts available to the current company
+     */
+    public static listV2<ThrowOnError extends boolean = true>(options?: Options<AccountingAccountControllerListV2Data, ThrowOnError>) {
+        return (options?.client ?? client).get<AccountingAccountControllerListV2Responses, unknown, ThrowOnError>({
+            requestValidator: async (data) => await zAccountingAccountControllerListV2Data.parseAsync(data),
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/v2/accounting-accounts',
             ...options
         });
     }

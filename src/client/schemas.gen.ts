@@ -2282,6 +2282,12 @@ export const DismissPreferencesDtoSchema = {
         },
         PRO_ACCOUNT_CARD_WALLET_TUTORIAL: {
             $ref: '#/components/schemas/DismissStateDto'
+        },
+        PRO_ACCOUNT_INTERNATIONAL_WIRES: {
+            $ref: '#/components/schemas/DismissStateDto'
+        },
+        PRO_ACCOUNT_GROUPED_WIRES: {
+            $ref: '#/components/schemas/DismissStateDto'
         }
     }
 } as const;
