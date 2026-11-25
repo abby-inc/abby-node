@@ -21,6 +21,12 @@ export const zAccountingAccountDto = z.object({
 
 export const zAccountingBookType = z.enum(['income', 'purchase']);
 
+export const zAddBillingAttachmentDto = z.object({
+    fileId: z.string().register(z.globalRegistry, {
+        description: 'The id of the attachment'
+    })
+});
+
 export const zAddressType = z.union([
     z.literal(4),
     z.literal(1),
@@ -548,6 +554,22 @@ export const zCreateWebhookDto = z.object({
     events: z.array(z.string())
 });
 
+export const zCreatedWebhookV2Dto = z.object({
+    id: z.string(),
+    url: z.string(),
+    description: z.string().nullish(),
+    events: z.array(z.string()).register(z.globalRegistry, {
+        description: 'Stored names; a webhook created outside /v2 may hold names outside the public list'
+    }),
+    isActivated: z.boolean(),
+    isSigned: z.boolean().register(z.globalRegistry, {
+        description: 'Whether the webhook has a signing secret (false for webhooks created outside /v2)'
+    }),
+    secret: z.string().register(z.globalRegistry, {
+        description: '`whsec_` followed by 32 random bytes, base64url-encoded. Returned only by this response.'
+    })
+});
+
 export const zCreationCompanyStep = z.enum([
     'creation_requested',
     'files_requested',
@@ -653,17 +675,6 @@ export const zCurrencyOrigin = z.enum([
     'FIXED'
 ]);
 
-export const zCustomerPortalCompanyDto = z.object({
-    commercialName: z.string(),
-    name: z.string()
-});
-
-export const zCustomerPortalCustomerDto = z.object({
-    name: z.string(),
-    firstname: z.string().optional(),
-    lastname: z.string().optional()
-});
-
 export const zDeclarationPlatform = z.union([
     z.literal(6),
     z.literal(1),
@@ -729,7 +740,8 @@ export const zDismissPreferencesDto = z.object({
     PRO_ACCOUNT_BILLING_DOCUMENT: zDismissStateDto.optional(),
     PRO_ACCOUNT_CARD_WALLET_TUTORIAL: zDismissStateDto.optional(),
     PRO_ACCOUNT_INTERNATIONAL_WIRES: zDismissStateDto.optional(),
-    PRO_ACCOUNT_GROUPED_WIRES: zDismissStateDto.optional()
+    PRO_ACCOUNT_GROUPED_WIRES: zDismissStateDto.optional(),
+    TRIAL_RETRY_INVITATION: zDismissStateDto.optional()
 });
 
 export const zDisplayBillingSettingsDto = z.object({
@@ -759,6 +771,12 @@ export const zDisplaySettingsDto = z.object({
     displayTitle: z.boolean()
 });
 
+export const zDocumentType = z.enum([
+    'INVOICE',
+    'CORRECTED_INVOICE',
+    'ASSET'
+]);
+
 export const zDuplicateBillingThemeDto = z.object({
     name: z.string().register(z.globalRegistry, {
         description: 'Name for the duplicated theme'
@@ -778,27 +796,6 @@ export const zElectronicSignatureStatus = z.enum([
     'signed',
     'cancelled'
 ]);
-
-export const zCustomerPortalSignatureDto = z.object({
-    id: z.string(),
-    canceledAt: z.number().nullable(),
-    signedAt: z.number().nullable(),
-    refusedAt: z.number().nullable(),
-    status: zElectronicSignatureStatus
-});
-
-export const zCustomerPortalBillingDto = z.object({
-    id: z.string(),
-    number: z.string(),
-    date: z.number(),
-    billingState: zBillingState,
-    billingType: zBillingType,
-    amount: z.number(),
-    signatureId: z.string().optional(),
-    signature: zCustomerPortalSignatureDto.optional(),
-    dueDate: z.number().optional(),
-    validityDate: z.number().optional()
-});
 
 export const zElectronicSignatureDto = z.object({
     id: z.string(),
@@ -853,6 +850,97 @@ export const zFinalizeRequirementName = z.enum([
     'hasNoUrssafRoundingDrift'
 ]);
 
+export const zFlowLastEventDto = z.object({
+    code: z.number().register(z.globalRegistry, {
+        description: 'Code AFNOR de cycle de vie (200–501) du dernier événement du flux (tri submittedAt puis id)'
+    }),
+    rejectCode: z.string().register(z.globalRegistry, {
+        description: 'Code du motif de rejet/refus, le cas échéant'
+    }).optional(),
+    rejectLabel: z.string().register(z.globalRegistry, {
+        description: 'Libellé du motif de rejet/refus, le cas échéant'
+    }).optional(),
+    comment: z.string().register(z.globalRegistry, {
+        description: 'Commentaire libre saisi par l\'utilisateur (ex. accompagnant un refus), le cas échéant'
+    }).optional()
+});
+
+/**
+ * Syntaxe du flux facture (CII/UBL/Factur-X)
+ */
+export const zFlowSyntax = z.enum([
+    'CII',
+    'UBL',
+    'Factur-X'
+]).register(z.globalRegistry, {
+    description: 'Syntaxe du flux facture (CII/UBL/Factur-X)'
+});
+
+/**
+ * Nature commerciale du flux (vente/achat)
+ */
+export const zFlowType = z.enum(['CustomerInvoice', 'SupplierInvoice']).register(z.globalRegistry, {
+    description: 'Nature commerciale du flux (vente/achat)'
+});
+
+export const zFlowItemDto = z.object({
+    id: z.string().register(z.globalRegistry, {
+        description: 'Identifiant interne de la facture reçue'
+    }),
+    flowId: z.string().register(z.globalRegistry, {
+        description: 'Identifiant du flux Docoon'
+    }),
+    flowType: zFlowType,
+    flowSyntax: zFlowSyntax,
+    documentType: zDocumentType,
+    referencedInvoiceNumber: z.string().register(z.globalRegistry, {
+        description: 'N° de la facture référente (BT-25), renseigné pour une facture rectificative ou un avoir'
+    }).optional(),
+    supplierName: z.string().register(z.globalRegistry, {
+        description: 'Raison sociale du fournisseur (émetteur)'
+    }),
+    invoiceNumber: z.string().register(z.globalRegistry, {
+        description: 'Numéro de facture'
+    }),
+    invoiceDate: z.string().register(z.globalRegistry, {
+        description: 'Date de facture (format DATEONLY `YYYY-MM-DD`)'
+    }),
+    dueDate: z.string().register(z.globalRegistry, {
+        description: 'Date d\'échéance (format DATEONLY `YYYY-MM-DD`)'
+    }).optional(),
+    paymentDate: z.string().register(z.globalRegistry, {
+        description: 'Date de paiement (format DATEONLY `YYYY-MM-DD`), si la facture est payée'
+    }).optional(),
+    currency: z.string().register(z.globalRegistry, {
+        description: 'Devise ISO 4217'
+    }).optional(),
+    totalExcludingTax: z.number().register(z.globalRegistry, {
+        description: 'Montant HT en centimes (entier)'
+    }),
+    vatAmount: z.number().register(z.globalRegistry, {
+        description: 'Montant TVA en centimes (entier)'
+    }),
+    totalIncludingTax: z.number().register(z.globalRegistry, {
+        description: 'Montant TTC en centimes (entier)'
+    }),
+    flowStatus: z.number().register(z.globalRegistry, {
+        description: 'Code AFNOR de cycle de vie (ex. 204), si Docoon l\'a transmis'
+    }).optional(),
+    flowStatusLabel: z.string().register(z.globalRegistry, {
+        description: 'Libellé AFNOR du cycle de vie (ex. "IN_HAND"), "UNKNOWN" si code hors référentiel'
+    }).optional(),
+    submittedAt: z.number().register(z.globalRegistry, {
+        description: 'Date de réception (soumission Docoon, timestamp Unix en secondes)'
+    }),
+    isCancelled: z.boolean().register(z.globalRegistry, {
+        description: 'Facture annulée par une facture rectificative vivante (statut ≠ 210/213) du même fournisseur la référençant via son BT-25. Dérivé à la lecture — jamais vrai pour un avoir ou une rectificative.'
+    }).optional(),
+    remainingAmount: z.number().register(z.globalRegistry, {
+        description: 'Reste à payer TTC en centimes (entier) : TTC de la facture − somme des TTC des avoirs liés (même fournisseur, BT-25 = n° de la facture), plancher 0. Pour un avoir : son propre TTC.'
+    }).optional(),
+    lastEvent: zFlowLastEventDto.optional()
+});
+
 export const zFooterLogoDto = z.object({
     id: z.string().register(z.globalRegistry, {
         description: 'Theme asset ID (upload)'
@@ -898,6 +986,100 @@ export const zFrequencyDto = z.object({
 });
 
 export const zImpositionType = z.union([z.literal(1), z.literal(2)]);
+
+export const zIncomeBookGroupedPersonalService = z.enum(['GROUPED_PERSONAL_SERVICE']);
+
+export const zIncomeBookPersonalServiceActivity = z.enum([
+    'GARDE_ENFANT_HANDICAPE',
+    'ACCOMPAGNEMENT_ENFANT_HANDICAPE',
+    'AIDE_HUMAINE',
+    'CONDUITE_VEHICULE_PERSONNEL',
+    'AIDE_AU_DEPLACEMENT',
+    'ENTRETIEN_DE_LA_MAISON',
+    'JARDINAGE',
+    'BRICOLAGE',
+    'GARDE_ENFANT_PLUS_DE_6_ANS',
+    'SOUTIEN_SCOLAIRE_COURS_A_DOMICILE',
+    'SOIN_ESTHETIQUE_A_DOMICILE',
+    'PREPARATION_REPAS_A_DOMICILE',
+    'LIVRAISON_REPAS_A_DOMICILE',
+    'COLLECTE_ET_LIVRAISON_DE_LINGE_REPASSE',
+    'LIVRAISON_COURSES_A_DOMICILE',
+    'ASSISTANCE_INFORMATIQUE',
+    'SOINS_ET_PROMENADES_ANIMAUX_DE_COMPAGNIE_POUR_PERSONNES_DEPENDANTES',
+    'MAINTENANCE_ENTRETIEN_ET_VIGILANCE_DE_LA_RESIDENCE_PRINCIPALE',
+    'ASSISTANCE_ADMINISTRATIVE',
+    'ACCOMPAGNEMENT_ENFANT_PLUS_DE_6_ANS',
+    'TELEASSISTANCE',
+    'INTERPRETE_LANGUE_DES_SIGNES',
+    'CONDUITE_VEHICULE_PERSONNEL_EN_CAS_INVALIDITE_TEMPORAIRE',
+    'ACCOMPAGNEMENT_DEPLACEMENTS_EN_DEHORS_DU_DOMICILE',
+    'ASSISTANCE_PERSONNES_TEMPORAIREMENT_DEPENDANTES_A_DOMICILE',
+    'COORDINATION_ET_GESTION',
+    'DIVERS_NON_ELIGIBLE',
+    'MANUALLY_ADDED'
+]);
+
+export const zIncomeBookVatMention = z.enum([
+    'not_subject',
+    'second_hand_good',
+    'art_object',
+    'collection_antique',
+    'travel_agency',
+    'vat_not_applicable',
+    'vat_not_applicable_2',
+    'vat_exemption',
+    'vat_exemption_eu_sale',
+    'vat_exemption_eu_service',
+    'vat_construction',
+    'vat_psychologist',
+    'vat_psychologist_2',
+    'vat_reverse_charge',
+    'vat_reverse_charge_2',
+    'vat_reverse_charge_3',
+    'vat_reverse_charge_4',
+    'vat_reduced_rate',
+    'vat_reduced_rate_2',
+    'vat_article_261c_cgi',
+    'vat_exemption_294_cgi',
+    'cibs_franchise_in_base',
+    'cibs_health_regulated_professions',
+    'cibs_health_therapists',
+    'cibs_health_medical_biology',
+    'cibs_health_dental_prostheses',
+    'cibs_education_private_lessons',
+    'cibs_education_continuing_training',
+    'cibs_education_training_related',
+    'cibs_education_apprenticeship',
+    'cibs_education_school',
+    'cibs_education_university',
+    'cibs_education_agricultural',
+    'cibs_education_related_services',
+    'cibs_finance_insurance',
+    'cibs_finance_credit',
+    'cibs_finance_credit_brokerage',
+    'cibs_finance_guarantees',
+    'cibs_finance_payments',
+    'cibs_finance_currencies',
+    'cibs_finance_securities',
+    'cibs_finance_fund_management',
+    'cibs_finance_gold',
+    'cibs_finance_stamps',
+    'cibs_international_service_outside_france',
+    'cibs_international_intangible_service_outside_eu',
+    'cibs_international_eu_goods_delivery',
+    'cibs_international_export',
+    'cibs_international_drom_delivery',
+    'cibs_margin_second_hand_good',
+    'cibs_margin_art_object',
+    'cibs_margin_collection_antique',
+    'cibs_margin_travel_agency',
+    'cibs_reverse_charge_eu_service',
+    'cibs_reverse_charge_eu_service_directive',
+    'cibs_reverse_charge_construction',
+    'cibs_reduced_rate_housing_works',
+    'cibs_reduced_rate_home_help'
+]);
 
 export const zLatePenalty = z.enum([
     'three_time_legal_rate',
@@ -1090,19 +1272,6 @@ export const zLinkDto = z.object({
     url: z.string()
 });
 
-export const zLogStatus = z.enum([
-    'SUCCESS',
-    'ERROR',
-    'INFO'
-]);
-
-export const zLogStatusFilter = z.enum([
-    'ERROR',
-    'SUCCESS',
-    'INFO',
-    'ALL'
-]);
-
 export const zLogoDto = z.object({
     id: z.string().register(z.globalRegistry, {
         description: 'Theme asset ID (upload)'
@@ -1153,10 +1322,23 @@ export const zOperationType = z.enum([
     'asset'
 ]);
 
+export const zOpportunityCategoryDto = z.object({
+    id: z.string(),
+    name: z.string(),
+    rank: z.string(),
+    showDueDate: z.boolean(),
+    showAmount: z.boolean(),
+    showCustomer: z.boolean(),
+    color: z.string(),
+    count: z.number()
+});
+
 export const zOpportunityDto = z.object({
     id: z.string(),
     name: z.string()
 });
+
+export const zOpportunityOrderBy = z.enum(['createdAt']);
 
 export const zOpportunityType = z.enum([
     'orders',
@@ -1557,6 +1739,26 @@ export const zProviderSignUp = z.enum([
     'custom'
 ]);
 
+export const zPublicWebhookEvent = z.enum([
+    'opportunity.created',
+    'opportunity.updated',
+    'opportunity.deleted',
+    'task.created',
+    'task.updated',
+    'task.deleted',
+    'invoice.paid',
+    'advance.paid'
+]);
+
+export const zCreateWebhookV2Dto = z.object({
+    url: z.string().register(z.globalRegistry, {
+        description: 'Must use https://'
+    }),
+    description: z.string().optional(),
+    events: z.array(zPublicWebhookEvent),
+    isActivated: z.boolean().optional().default(true)
+});
+
 export const zPurchaseRegisterOrderBy = z.enum([
     'valueDate',
     'amount',
@@ -1787,6 +1989,75 @@ export const zReadBillingEmitterDto = z.object({
     hasVat: z.boolean().optional()
 });
 
+export const zReadBillingStatisticsDto = z.object({
+    countWithoutFilter: z.number().register(z.globalRegistry, {
+        description: 'Total count of billings without filters'
+    }),
+    countDraft: z.number().register(z.globalRegistry, {
+        description: 'Count of draft billings'
+    }),
+    countOverdue: z.number().register(z.globalRegistry, {
+        description: 'Count of overdue billings'
+    }),
+    countWaiting: z.number().register(z.globalRegistry, {
+        description: 'Count of waiting billings'
+    }),
+    countPaid: z.number().register(z.globalRegistry, {
+        description: 'Count of paid billings'
+    }),
+    countSigned: z.number().register(z.globalRegistry, {
+        description: 'Count of signed billings'
+    }),
+    countRefused: z.number().register(z.globalRegistry, {
+        description: 'Count of refused billings'
+    }),
+    countFinalized: z.number().register(z.globalRegistry, {
+        description: 'Count of finalized billings'
+    }),
+    amountWithoutFilterWithoutTax: z.number().register(z.globalRegistry, {
+        description: 'Total amount without tax without filters (in cents)'
+    }),
+    amountWithoutFilterTotalTax: z.number().register(z.globalRegistry, {
+        description: 'Total tax amount without filters (in cents)'
+    }),
+    amountDraftWithoutTax: z.number().register(z.globalRegistry, {
+        description: 'Total amount without tax for draft billings (in cents)'
+    }),
+    amountDraftTotalTax: z.number().register(z.globalRegistry, {
+        description: 'Total tax amount for draft billings (in cents)'
+    }),
+    amountPaidWithoutTax: z.number().register(z.globalRegistry, {
+        description: 'Total amount without tax for paid billings (in cents)'
+    }),
+    amountPaidTotalTax: z.number().register(z.globalRegistry, {
+        description: 'Total tax amount for paid billings (in cents)'
+    }),
+    amountOverdueWithoutTax: z.number().register(z.globalRegistry, {
+        description: 'Total amount without tax for overdue billings (in cents)'
+    }),
+    amountOverdueTotalTax: z.number().register(z.globalRegistry, {
+        description: 'Total tax amount for overdue billings (in cents)'
+    }),
+    amountWaitingWithoutTax: z.number().register(z.globalRegistry, {
+        description: 'Total amount without tax for waiting billings (in cents)'
+    }),
+    amountWaitingTotalTax: z.number().register(z.globalRegistry, {
+        description: 'Total tax amount for waiting billings (in cents)'
+    }),
+    amountSignedWithoutTax: z.number().register(z.globalRegistry, {
+        description: 'Total amount without tax for signed billings (in cents)'
+    }),
+    amountSignedTotalTax: z.number().register(z.globalRegistry, {
+        description: 'Total tax amount for signed billings (in cents)'
+    }),
+    amountRefusedWithoutTax: z.number().register(z.globalRegistry, {
+        description: 'Total amount without tax for refused billings (in cents)'
+    }),
+    amountRefusedTotalTax: z.number().register(z.globalRegistry, {
+        description: 'Total tax amount for refused billings (in cents)'
+    })
+});
+
 export const zReadBillingThemeAssignmentsDto = z.object({
     assignments: z.array(zReadAssignmentDto)
 });
@@ -1988,6 +2259,81 @@ export const zReadFooterDto = z.object({
     logos: z.array(zReadFooterLogoDto)
 });
 
+export const zReadIncomeBookFileDto = z.object({
+    id: z.string(),
+    url: z.string().optional(),
+    relativeUrl: z.string().optional()
+});
+
+export const zReadIncomeBookPaymentMethodDto = z.object({
+    value: zPaymentMethodLegacy.nullable(),
+    other: z.string().nullish()
+});
+
+export const zReadIncomeBookEntryDto = z.object({
+    _id: z.string(),
+    billing: z.record(z.string(), z.unknown()).optional(),
+    transactionIds: z.array(z.string()).optional(),
+    paidAt: z.iso.datetime({ offset: true }),
+    reference: z.string().nullish(),
+    productType: zLegacyProductType.nullish(),
+    priceWithoutTax: z.number().nullish(),
+    priceTotalTax: z.number().nullish(),
+    vatId: z.number().nullish(),
+    vatAmount: z.number().nullish(),
+    vatMention: zIncomeBookVatMention.nullish(),
+    paymentMethodUsed: zReadIncomeBookPaymentMethodDto.nullish(),
+    client: z.string().nullish(),
+    file: zReadIncomeBookFileDto.nullish(),
+    personalServiceActivity: zIncomeBookPersonalServiceActivity.nullish(),
+    isImported: z.boolean().nullish(),
+    isTaxIncluded: z.boolean().nullish(),
+    transactionId: z.string().nullish(),
+    billingObject: z.record(z.string(), z.unknown()).nullish()
+});
+
+export const zReadIncomeBookListEntryDto = z.object({
+    _id: z.string(),
+    billing: z.record(z.string(), z.unknown()).optional(),
+    transactionIds: z.array(z.string()).optional(),
+    priceTotalTax: z.number(),
+    priceWithoutTax: z.number(),
+    vatAmount: z.number(),
+    paidAt: z.iso.datetime({ offset: true }),
+    reference: z.string().nullable(),
+    productType: zLegacyProductType.nullable(),
+    transactionId: z.string().nullish(),
+    vatId: z.number().nullish(),
+    paymentMethodUsed: zReadIncomeBookPaymentMethodDto.nullable(),
+    client: z.string().nullish(),
+    file: zReadIncomeBookFileDto.nullish(),
+    personalServiceActivity: zIncomeBookGroupedPersonalService.nullish()
+});
+
+export const zReadIncomeBookCollectionDto = z.object({
+    docs: z.array(zReadIncomeBookListEntryDto),
+    totalDocs: z.number(),
+    limit: z.number(),
+    totalPages: z.number(),
+    page: z.number(),
+    pagingCounter: z.number(),
+    hasPrevPage: z.boolean(),
+    hasNextPage: z.boolean(),
+    prevPage: z.number(),
+    nextPage: z.number(),
+    countWithoutFilters: z.number().optional()
+});
+
+export const zReadIncomeBookStatisticsDto = z.object({
+    saleOfGoodsAndManufacturedGoodsWithoutTax: z.number(),
+    serviceDeliveryWithoutTax: z.number(),
+    commercialOrCraftServicesWithoutTax: z.number(),
+    disbursementWithoutTax: z.number(),
+    saleOfGoodsAndManufacturedGoodsTotalTax: z.number(),
+    serviceDeliveryTotalTax: z.number(),
+    commercialOrCraftServicesTotalTax: z.number()
+});
+
 export const zReadLinkDto = z.object({
     icon: z.string(),
     url: z.string()
@@ -2015,28 +2361,11 @@ export const zLegacyReadCustomerDto = z.object({
     currency: zCurrency.optional()
 });
 
-export const zReadLogDto = z.object({
-    id: z.string(),
-    status: zLogStatus,
-    context: z.string(),
-    data: z.string().optional(),
-    response: z.string().optional(),
-    httpStatus: z.number().optional(),
-    url: z.string().nullish(),
-    method: z.string().nullish(),
-    createdAt: z.iso.datetime({ offset: true })
-});
-
 export const zReadLogoDto = z.object({
     id: z.string().optional(),
     presetId: z.string().optional(),
     url: z.string(),
     size: z.number()
-});
-
-export const zReadLogsDto = z.object({
-    logs: z.array(zReadLogDto),
-    total: z.number()
 });
 
 export const zReadMarginsDto = z.object({
@@ -2167,6 +2496,21 @@ export const zReadProviderDto = z.object({
     })
 });
 
+export const zReadRegulationsDto = z.object({
+    commission: z.number(),
+    lossOfValueChangeRate: z.number()
+});
+
+export const zReadBillingPaymentDto = z.object({
+    id: z.string(),
+    amount: z.number(),
+    paymentMethod: zPaymentMethod,
+    otherMethod: z.string().optional(),
+    receivedAt: z.number(),
+    transactionId: z.string().optional(),
+    regulations: zReadRegulationsDto
+});
+
 export const zReadSuggestedAccountingAccountDto = z.object({
     id: z.number(),
     name: z.string(),
@@ -2192,6 +2536,79 @@ export const zReadTaskDto = z.object({
     createdAt: z.iso.datetime({ offset: true }),
     updatedAt: z.iso.datetime({ offset: true }),
     deletedAt: z.iso.datetime({ offset: true }).optional()
+});
+
+export const zReadTaskListClientDto = z.object({
+    email: z.string().optional(),
+    keywords: z.string().optional(),
+    language: z.string().optional(),
+    notes: z.string().optional(),
+    role: z.string().optional(),
+    website: z.string().optional(),
+    firstname: z.string().nullable(),
+    lastname: z.string().nullable(),
+    phone: z.string().nullish()
+});
+
+export const zReadTaskListLocationDto = z.object({
+    address: z.string(),
+    city: z.string(),
+    zipCode: z.string(),
+    additionalAddress: z.string().optional(),
+    country: z.string().nullish()
+});
+
+export const zReadTaskListCustomerDto = z.object({
+    _id: z.string(),
+    tiersPrestationIsActivatedForThisCustomer: z.boolean().optional(),
+    locale: z.string().optional(),
+    customerCompany: zReadCustomerCompanyDto.optional(),
+    tiersPrestation: z.record(z.string(), z.unknown()).optional(),
+    client: z.array(zReadTaskListClientDto).optional(),
+    location: zReadTaskListLocationDto,
+    deliveryLocation: zReadTaskListLocationDto.optional(),
+    deliveryLocationIsSame: z.boolean().nullish(),
+    currency: zCurrency.nullish(),
+    note: z.string().nullish()
+});
+
+export const zReadTaskListOpportunityDto = z.object({
+    id: z.string(),
+    amount: z.number(),
+    name: z.string().nullable(),
+    rank: z.string().nullable(),
+    customerId: z.string().nullable(),
+    categoryId: z.string().nullable(),
+    description: z.string().nullish(),
+    dueDate: z.iso.datetime({ offset: true }).nullish(),
+    createdAt: z.iso.datetime({ offset: true }).nullable(),
+    updatedAt: z.iso.datetime({ offset: true }).nullable(),
+    deletedAt: z.iso.datetime({ offset: true }).nullable()
+});
+
+export const zReadTaskListItemDto = z.object({
+    id: z.string(),
+    companyId: z.string(),
+    createdAt: z.iso.datetime({ offset: true }),
+    updatedAt: z.iso.datetime({ offset: true }),
+    name: z.string().nullable(),
+    rank: z.string().nullable(),
+    opportunityRank: z.string().nullable(),
+    dateRank: z.string().nullable(),
+    description: z.string().nullable(),
+    priority: z.number().nullable(),
+    customer: zReadTaskListCustomerDto.nullish(),
+    opportunity: zReadTaskListOpportunityDto.nullish(),
+    customerId: z.string().nullish(),
+    dueDate: z.string().nullish(),
+    opportunityId: z.string().nullish(),
+    doneAt: z.iso.datetime({ offset: true }).nullish(),
+    deletedAt: z.iso.datetime({ offset: true }).nullish()
+});
+
+export const zReadTaskCollectionDto = z.object({
+    totalItems: z.number(),
+    data: z.array(zReadTaskListItemDto)
 });
 
 export const zReadTiersPrestationDto = z.object({
@@ -2278,6 +2695,21 @@ export const zReadCustomerDto = z.object({
     }).optional()
 });
 
+export const zReadCustomerCollectionDto = z.object({
+    countWithoutFilters: z.number(),
+    totalDocs: z.number(),
+    limit: z.number(),
+    totalPages: z.number(),
+    hasNextPage: z.boolean(),
+    hasPrevPage: z.boolean(),
+    nextPage: z.number(),
+    page: z.number(),
+    prevPage: z.number(),
+    docs: z.array(zReadCustomerDto).register(z.globalRegistry, {
+        description: 'List of customers'
+    })
+});
+
 export const zReadOpportunityDto = z.object({
     id: z.string().register(z.globalRegistry, {
         description: 'The opportunity ID'
@@ -2310,6 +2742,33 @@ export const zReadOpportunityDto = z.object({
     customer: zReadCustomerDto
 });
 
+export const zReadOpportunityListItemDto = z.object({
+    id: z.string(),
+    name: z.string(),
+    amount: z.number(),
+    dueDate: z.number(),
+    customer: zReadCustomerDto,
+    category: zOpportunityCategoryDto
+});
+
+export const zReadOpportunityListDto = z.object({
+    countWithoutFilters: z.number(),
+    totalDocs: z.number(),
+    limit: z.number(),
+    totalPages: z.number(),
+    hasNextPage: z.boolean(),
+    hasPrevPage: z.boolean(),
+    nextPage: z.number(),
+    page: z.number(),
+    prevPage: z.number(),
+    docs: z.array(zReadOpportunityListItemDto).register(z.globalRegistry, {
+        description: 'The list of opportunities'
+    }),
+    totalAmount: z.number().register(z.globalRegistry, {
+        description: 'Total amount of all opportunities matching the filter criteria (not just the current page)'
+    })
+});
+
 export const zReadTrackingCompanyStepDto = z.object({
     companyId: z.string(),
     createdAt: z.iso.datetime({ offset: true }),
@@ -2329,6 +2788,52 @@ export const zReadWebhookDto = z.object({
     isActivated: z.boolean(),
     createdAt: z.iso.datetime({ offset: true })
 });
+
+export const zReceivedFlowStatusCountersDto = z.object({
+    received: z.number().register(z.globalRegistry, {
+        description: 'Nombre de documents de la famille Reçue — exposé par la rangée des avoirs reçus'
+    }),
+    toPay: z.number().register(z.globalRegistry, {
+        description: 'Nombre de factures à payer (reçues, reste à payer > 0, non annulées)'
+    }),
+    late: z.number().register(z.globalRegistry, {
+        description: 'Sous-ensemble de `toPay` dont l\'échéance est dépassée'
+    }),
+    paid: z.number().register(z.globalRegistry, {
+        description: 'Nombre de factures payées (211/212, solde couvert)'
+    }),
+    refused: z.number().register(z.globalRegistry, {
+        description: 'Nombre de factures refusées (code 210)'
+    }),
+    disputed: z.number().register(z.globalRegistry, {
+        description: 'Nombre de factures en litige (codes 206-208)'
+    })
+});
+
+export const zListFlowsResponseDto = z.object({
+    countWithoutFilters: z.number(),
+    totalDocs: z.number(),
+    limit: z.number(),
+    totalPages: z.number(),
+    hasNextPage: z.boolean(),
+    hasPrevPage: z.boolean(),
+    nextPage: z.number(),
+    page: z.number(),
+    prevPage: z.number(),
+    docs: z.array(zFlowItemDto).register(z.globalRegistry, {
+        description: 'Factures reçues de la page courante'
+    }),
+    counters: zReceivedFlowStatusCountersDto
+});
+
+export const zReceivedFlowStatusFilter = z.enum([
+    'RECEIVED',
+    'TO_PAY',
+    'LATE',
+    'PAID',
+    'REFUSED',
+    'DISPUTED'
+]);
 
 export const zRecurrence = z.union([
     z.literal(1),
@@ -2448,14 +2953,6 @@ export const zPreferencesDto = z.object({
     dismiss: zDismissPreferencesDto
 });
 
-export const zRetrieveCustomerPortalPaymentsDto = z.object({
-    customer: zCustomerPortalCustomerDto,
-    billings: z.array(zCustomerPortalBillingDto),
-    company: zCustomerPortalCompanyDto,
-    email: z.string(),
-    phone: z.string().optional()
-});
-
 export const zSendBillingByEmailDto = z.object({
     emails: z.array(z.string()).max(10).register(z.globalRegistry, {
         description: 'List of email addresses to send the billing document to'
@@ -2469,10 +2966,6 @@ export const zSendBillingByEmailDto = z.object({
     inCopy: z.boolean().register(z.globalRegistry, {
         description: 'Whether to send a copy to the sender'
     }).optional().default(false)
-});
-
-export const zSendTestEmailSignatureDto = z.object({
-    content: z.string().optional()
 });
 
 export const zSetDefaultContactDto = z.object({
@@ -2877,6 +3370,17 @@ export const zUpdateAdvanceAmountDto = z.object({
     mode: zAdvanceMode
 });
 
+export const zUpdateAdvanceTimelineDto = z.object({
+    emittedAt: z.number().gte(0).lte(4102444800).register(z.globalRegistry, {
+        description: 'The timestamp when the invoice was emitted, in seconds'
+    }),
+    paymentDelay: zPaymentDelay,
+    customDueDate: z.number().gte(0).lte(4102444800).register(z.globalRegistry, {
+        description: 'Custom due date for the invoice when payment delay is OTHER, in seconds'
+    }).optional(),
+    deliveryDate: z.number().gte(0).lte(4102444800).nullish()
+});
+
 export const zUpdateAssetTimelineDto = z.object({
     emittedAt: z.number().gte(0).lte(4102444800).register(z.globalRegistry, {
         description: 'The timestamp when the invoice was emitted, in seconds'
@@ -2997,7 +3501,8 @@ export const zUpdateContactDto = z.object({
     billingAddress: zClientAddressDto.optional(),
     deliveryAddress: zClientAddressDto.optional(),
     bankInformations: zBankInformationsDto.optional(),
-    preferences: zClientPreferencesDto.optional()
+    preferences: zClientPreferencesDto.optional(),
+    notes: z.string().nullish()
 });
 
 export const zUpdateDeliveryAddressDto = z.object({
@@ -3172,6 +3677,15 @@ export const zUpdateThirdPartyDto = z.object({
 
 export const zUpdateTitleDto = z.object({
     title: z.string().nullable()
+});
+
+export const zUpdateWebhookV2Dto = z.object({
+    url: z.string().register(z.globalRegistry, {
+        description: 'Must use https://'
+    }).optional(),
+    description: z.string().nullish(),
+    events: z.array(zPublicWebhookEvent).optional(),
+    isActivated: z.boolean().optional()
 });
 
 export const zUploadThemeAssetDto = z.object({
@@ -3835,6 +4349,38 @@ export const zUpdateInvoiceGeneralInformationsDto = z.object({
     reminder: zBillingReminderDto.optional()
 });
 
+/**
+ * `response`: the receiver answered; `timeout`: no answer within 5 s; `unreachable`: the address cannot be reached or is refused
+ */
+export const zWebhookTestSendOutcome = z.enum([
+    'response',
+    'timeout',
+    'unreachable'
+]).register(z.globalRegistry, {
+    description: '`response`: the receiver answered; `timeout`: no answer within 5 s; `unreachable`: the address cannot be reached or is refused'
+});
+
+export const zWebhookTestSendV2Dto = z.object({
+    outcome: zWebhookTestSendOutcome,
+    statusCode: z.number().nullable(),
+    durationMs: z.number().register(z.globalRegistry, {
+        description: 'Elapsed duration of the test send, in milliseconds'
+    })
+});
+
+export const zWebhookV2Dto = z.object({
+    id: z.string(),
+    url: z.string(),
+    description: z.string().nullish(),
+    events: z.array(z.string()).register(z.globalRegistry, {
+        description: 'Stored names; a webhook created outside /v2 may hold names outside the public list'
+    }),
+    isActivated: z.boolean(),
+    isSigned: z.boolean().register(z.globalRegistry, {
+        description: 'Whether the webhook has a signing secret (false for webhooks created outside /v2)'
+    })
+});
+
 export const zLegacyReadOpportunityDto = z.object({
     id: z.string(),
     name: z.string(),
@@ -4422,9 +4968,29 @@ export const zReadUserDto = z.object({
     wantsActivityStartAt: z.iso.datetime({ offset: true }).optional()
 });
 
+export const zIncomeBookControllerGetIncomeBookQuery = z.object({
+    page: z.number(),
+    limit: z.number(),
+    countWithoutFilters: z.boolean().optional(),
+    range: z.array(z.string()).optional(),
+    search: z.string().optional(),
+    sapActivity: z.boolean().optional()
+});
+
 export const zIncomeBookControllerPostIncomeBookItemBody = zCreateIncomeBookItemDto;
 
+export const zIncomeBookControllerGetStatisticsQuery = z.object({
+    from: z.string().optional(),
+    to: z.string().optional(),
+    search: z.string().optional(),
+    sapActivity: z.boolean().optional()
+});
+
 export const zIncomeBookControllerDeletePurchaseIncomeBookItemPath = z.object({
+    id: z.string()
+});
+
+export const zIncomeBookControllerGetIncomeBookItemByIdPath = z.object({
     id: z.string()
 });
 
@@ -4480,6 +5046,17 @@ export const zTaskControllerUpdateTaskPath = z.object({
     id: z.string()
 });
 
+export const zTasksControllerGetTasksQuery = z.object({
+    lastTask: z.string().optional(),
+    limit: z.number(),
+    search: z.string().optional(),
+    rankMode: zRankTaskMode.optional(),
+    customerId: z.string().optional(),
+    range: z.array(z.string()).optional(),
+    isDone: z.boolean().optional(),
+    opportunityId: z.string().optional()
+});
+
 export const zWebhookControllerPostWebhookCompanyBody = zCreateWebhookDto;
 
 export const zWebhookControllerDeleteWebhookCompanyPath = z.object({
@@ -4489,6 +5066,27 @@ export const zWebhookControllerDeleteWebhookCompanyPath = z.object({
 export const zBillingsControllerGetBillingsV2Query = z.object({
     page: z.number(),
     limit: z.number(),
+    search: z.string().optional(),
+    state: z.array(zBillingState).optional(),
+    late: z.boolean().optional(),
+    type: z.array(zBillingType).optional(),
+    tiersPrestationIsActivatedForThisBilling: z.boolean().optional(),
+    customerId: z.string().optional(),
+    organizationId: z.string().optional(),
+    opportunityId: z.string().optional(),
+    countWithoutFilters: z.boolean().optional(),
+    test: z.boolean(),
+    archived: z.boolean().optional(),
+    range: z.array(z.string()).register(z.globalRegistry, {
+        description: 'Inclusive date window `[from, to]` applied to the field named by `rangeType`; use the calendar-day form `YYYY-MM-DD`, each bound being interpreted as a whole day in the API timezone (`Europe/Paris`). A full ISO instant is also accepted transitionally, for older clients, and is snapped to the Paris day it falls on, which can widen the window (a UTC end-of-day instant lands on the next Paris day).'
+    }).optional(),
+    rangeType: zBillingRangeType.optional(),
+    onlyReminderActive: z.boolean().optional(),
+    onlyOnlineSignature: z.boolean().optional(),
+    onlyOnlinePayment: z.boolean().optional()
+});
+
+export const zBillingsControllerGetBillingStatisticsV2Query = z.object({
     search: z.string().optional(),
     state: z.array(zBillingState).optional(),
     late: z.boolean().optional(),
@@ -4523,8 +5121,6 @@ export const zBillingControllerDeleteBillingDocumentV2Path = z.object({
     })
 });
 
-export const zBillingControllerSendTestEmailSignatureV2Body = zSendTestEmailSignatureDto;
-
 export const zBillingControllerRenderEmailV2Path = z.object({
     billingId: z.string().register(z.globalRegistry, {
         description: 'ID of the billing to render'
@@ -4547,9 +5143,20 @@ export const zBillingControllerSendByEmailV2Path = z.object({
     })
 });
 
-export const zCustomerPortalControllerGetPaymentsV2Query = z.object({
-    id: z.string(),
-    token: z.string()
+export const zCustomersControllerPaginateV2Query = z.object({
+    page: z.number(),
+    limit: z.number(),
+    search: z.string().optional(),
+    organizationId: z.string().optional(),
+    excludeContactOrganization: z.boolean().optional()
+});
+
+export const zCustomerControllerRetrieveCustomerByContactV2Path = z.object({
+    id: z.string()
+});
+
+export const zCustomerControllerRetrieveCustomerByOrganizationV2Path = z.object({
+    id: z.string()
 });
 
 export const zBillingThemeControllerCreateThemeV2Body = zCreateBillingThemeDto;
@@ -4707,6 +5314,10 @@ export const zCatalogControllerPaginateV2Query = z.object({
     }).optional()
 });
 
+export const zCatalogControllerRemoveV2Path = z.object({
+    productId: z.string()
+});
+
 export const zCatalogControllerRetrieveV2Path = z.object({
     productId: z.string()
 });
@@ -4796,9 +5407,34 @@ export const zOrganizationsControllerRetrieveOrganizationsQuery = z.object({
     archived: z.boolean().optional()
 });
 
-export const zEInvoicingControllerRecordPlatformChoiceFromEmailLinkV2Query = z.object({
-    choice: z.string(),
-    token: z.string()
+export const zEInvoicingControllerGetIncomeFLowsV2Query = z.object({
+    page: z.number().register(z.globalRegistry, {
+        description: 'Page (1-indexée, défaut 1).'
+    }).optional().default(1),
+    limit: z.number().register(z.globalRegistry, {
+        description: 'Nombre de factures par page (défaut 25, plafond 100).'
+    }).optional().default(25),
+    documentType: z.array(zDocumentType).register(z.globalRegistry, {
+        description: 'Filtre sur la nature du document (BT-3), un ou plusieurs types séparés par des virgules (ex. `?documentType=INVOICE,ASSET`). Absent = tous les types.'
+    }).optional(),
+    dateFrom: z.string().register(z.globalRegistry, {
+        description: 'Filtre sur la date de facture (`invoiceDate`), borne inclusive (YYYY-MM-DD). Indépendant de `dateTo`.'
+    }).optional(),
+    dateTo: z.string().register(z.globalRegistry, {
+        description: 'Filtre sur la date de facture (`invoiceDate`), borne inclusive (YYYY-MM-DD). Indépendant de `dateFrom`.'
+    }).optional(),
+    search: z.string().register(z.globalRegistry, {
+        description: 'Recherche textuelle : correspondance partielle insensible à la casse sur le nom du fournisseur ou le numéro de facture. Ne porte jamais sur les montants.'
+    }).optional(),
+    status: zReceivedFlowStatusFilter.optional()
+});
+
+export const zEInvoicingControllerGetFlowPfFileV2Path = z.object({
+    id: z.string()
+});
+
+export const zEInvoicingControllerGetFlowXmlFileV2Path = z.object({
+    id: z.string()
 });
 
 export const zTransactionsControllerRetrieveTransactionByIdV2Path = z.object({
@@ -4821,6 +5457,12 @@ export const zAccountingBillingControllerReconciliateAdvanceV2Path = z.object({
     })
 });
 
+export const zAccountingBillingControllerGetInvoicePaymentsV2Path = z.object({
+    invoiceId: z.string().register(z.globalRegistry, {
+        description: 'ID of the invoice to retrieve associated payments'
+    })
+});
+
 export const zAccountingBillingControllerMarkInvoiceAsUnpaidV2Path = z.object({
     invoiceId: z.string().register(z.globalRegistry, {
         description: 'ID of the invoice to mark as unpaid'
@@ -4839,6 +5481,24 @@ export const zPurchaseRegisterControllerRemoveV3Path = z.object({
     })
 });
 
+export const zOpportunitiesControllerRetrieveOpportunitiesV2Query = z.object({
+    page: z.number(),
+    limit: z.number(),
+    search: z.string().optional(),
+    orderBy: zOpportunityOrderBy.optional(),
+    orderDirection: zOrderDirection.optional(),
+    customerId: z.string().optional(),
+    categoryId: z.string().register(z.globalRegistry, {
+        description: 'Filter by category ID'
+    }).optional(),
+    dateFrom: z.string().register(z.globalRegistry, {
+        description: 'Filter by creation date from (inclusive)'
+    }).optional(),
+    dateTo: z.string().register(z.globalRegistry, {
+        description: 'Filter by creation date to (inclusive)'
+    }).optional()
+});
+
 export const zOpportunityControllerDeleteOpportunityV2Path = z.object({
     id: z.string()
 });
@@ -4855,29 +5515,20 @@ export const zOpportunityControllerUpdateOpportunityV2Path = z.object({
 
 export const zOpportunityControllerCreateOpportunityV2Body = zCreateOpportunityDto;
 
-export const zLogsControllerRetrieveLogsByCompanyPath = z.object({
-    companyId: z.string().register(z.globalRegistry, {
-        description: 'ID of the company'
-    })
+export const zWebhookV2ControllerCreateV2Body = zCreateWebhookV2Dto;
+
+export const zWebhookV2ControllerRemoveV2Path = z.object({
+    id: z.string()
 });
 
-export const zLogsControllerRetrieveLogsByCompanyQuery = z.object({
-    limit: z.number().register(z.globalRegistry, {
-        description: 'Number of logs to retrieve'
-    }),
-    offset: z.number().register(z.globalRegistry, {
-        description: 'Offset for pagination'
-    }),
-    status: zLogStatusFilter.optional(),
-    context: z.string().register(z.globalRegistry, {
-        description: 'Filter by context. Exact match, or a wildcard "prefix.*" matched as a prefix.'
-    }).optional()
+export const zWebhookV2ControllerUpdateV2Body = zUpdateWebhookV2Dto;
+
+export const zWebhookV2ControllerUpdateV2Path = z.object({
+    id: z.string()
 });
 
-export const zLogsControllerRetrieveLastLogOfAResourcePath = z.object({
-    resourceId: z.string().register(z.globalRegistry, {
-        description: 'ID of the resource'
-    })
+export const zWebhookV2ControllerTestV2Path = z.object({
+    id: z.string()
 });
 
 export const zOpportunityControllerCreateOpportunityBody = zLegacyCreateOpportunityDto;
@@ -4898,6 +5549,12 @@ export const zEstimateControllerCreateEstimateByContactOrOrganizationIdV2Body = 
 
 export const zEstimateControllerCreateEstimateByContactOrOrganizationIdV2Path = z.object({
     customerId: z.string()
+});
+
+export const zEstimateControllerGetEstimateV2Path = z.object({
+    id: z.string().register(z.globalRegistry, {
+        description: 'The id of the estimate'
+    })
 });
 
 export const zEstimateControllerUpdateTimelineV2Body = zUpdateEstimateTimelineDto;
@@ -4975,6 +5632,12 @@ export const zEstimateControllerUpdateAdvanceLinesV2Body = zUpdateEstimateAdvanc
 export const zEstimateControllerUpdateAdvanceLinesV2Path = z.object({
     estimateId: z.string().register(z.globalRegistry, {
         description: 'ID of the estimate to update'
+    })
+});
+
+export const zEstimateControllerRevertToDraftV2Path = z.object({
+    estimateId: z.string().register(z.globalRegistry, {
+        description: 'ID of the estimate to revert to draft'
     })
 });
 
@@ -5131,6 +5794,14 @@ export const zBillingControllerUpdateTitleV2Path = z.object({
     })
 });
 
+export const zBillingControllerAddBillingAttachmentV2Body = zAddBillingAttachmentDto;
+
+export const zBillingControllerAddBillingAttachmentV2Path = z.object({
+    billingId: z.string().register(z.globalRegistry, {
+        description: 'ID of the document to attach file'
+    })
+});
+
 export const zBillingControllerGetBillingByIdV2Path = z.object({
     documentId: z.string().register(z.globalRegistry, {
         description: 'ID of the billing document'
@@ -5218,6 +5889,14 @@ export const zAdvanceControllerUpdateGeneralInformationsV2Path = z.object({
 export const zAdvanceControllerActivateOnlinePaymentV2Path = z.object({
     advanceId: z.string().register(z.globalRegistry, {
         description: 'ID of the advance'
+    })
+});
+
+export const zAdvanceControllerUpdateTimelineV2Body = zUpdateAdvanceTimelineDto;
+
+export const zAdvanceControllerUpdateTimelineV2Path = z.object({
+    advanceId: z.string().register(z.globalRegistry, {
+        description: 'ID of the advance to update'
     })
 });
 
@@ -5328,15 +6007,33 @@ export const zPurchaseRegisterControllerPaginateV3Query = z.object({
 
 export const zPurchaseRegisterControllerCreateV3Body = zCreatePurchaseRegisterDto;
 
+export const zIncomeBookControllerGetIncomeBookData = z.object({
+    body: z.never().optional(),
+    path: z.never().optional(),
+    query: zIncomeBookControllerGetIncomeBookQuery
+});
+
 export const zIncomeBookControllerPostIncomeBookItemData = z.object({
     body: zIncomeBookControllerPostIncomeBookItemBody,
     path: z.never().optional(),
     query: z.never().optional()
 });
 
+export const zIncomeBookControllerGetStatisticsData = z.object({
+    body: z.never().optional(),
+    path: z.never().optional(),
+    query: zIncomeBookControllerGetStatisticsQuery.optional()
+});
+
 export const zIncomeBookControllerDeletePurchaseIncomeBookItemData = z.object({
     body: z.never().optional(),
     path: zIncomeBookControllerDeletePurchaseIncomeBookItemPath,
+    query: z.never().optional()
+});
+
+export const zIncomeBookControllerGetIncomeBookItemByIdData = z.object({
+    body: z.never().optional(),
+    path: zIncomeBookControllerGetIncomeBookItemByIdPath,
     query: z.never().optional()
 });
 
@@ -5368,6 +6065,12 @@ export const zOpportunityControllerUpdateOpportunityData = z.object({
     body: zOpportunityControllerUpdateOpportunityBody,
     path: zOpportunityControllerUpdateOpportunityPath,
     query: z.never().optional()
+});
+
+export const zOpportunitiesControllerRetrieveOpportunitiesV2Data = z.object({
+    body: z.never().optional(),
+    path: z.never().optional(),
+    query: zOpportunitiesControllerRetrieveOpportunitiesV2Query
 });
 
 export const zOpportunityControllerRetrieveCategoriesV2Data = z.object({
@@ -5496,6 +6199,12 @@ export const zTaskControllerUpdateTaskData = z.object({
     query: z.never().optional()
 });
 
+export const zTasksControllerGetTasksData = z.object({
+    body: z.never().optional(),
+    path: z.never().optional(),
+    query: zTasksControllerGetTasksQuery
+});
+
 export const zWebhookControllerPostWebhookCompanyData = z.object({
     body: zWebhookControllerPostWebhookCompanyBody,
     path: z.never().optional(),
@@ -5508,9 +6217,45 @@ export const zWebhookControllerDeleteWebhookCompanyData = z.object({
     query: z.never().optional()
 });
 
+export const zWebhookV2ControllerListV2Data = z.object({
+    body: z.never().optional(),
+    path: z.never().optional(),
+    query: z.never().optional()
+});
+
+export const zWebhookV2ControllerCreateV2Data = z.object({
+    body: zWebhookV2ControllerCreateV2Body,
+    path: z.never().optional(),
+    query: z.never().optional()
+});
+
+export const zWebhookV2ControllerRemoveV2Data = z.object({
+    body: z.never().optional(),
+    path: zWebhookV2ControllerRemoveV2Path,
+    query: z.never().optional()
+});
+
+export const zWebhookV2ControllerUpdateV2Data = z.object({
+    body: zWebhookV2ControllerUpdateV2Body,
+    path: zWebhookV2ControllerUpdateV2Path,
+    query: z.never().optional()
+});
+
+export const zWebhookV2ControllerTestV2Data = z.object({
+    body: z.never().optional(),
+    path: zWebhookV2ControllerTestV2Path,
+    query: z.never().optional()
+});
+
 export const zEstimateControllerCreateEstimateByContactOrOrganizationIdV2Data = z.object({
     body: zEstimateControllerCreateEstimateByContactOrOrganizationIdV2Body,
     path: zEstimateControllerCreateEstimateByContactOrOrganizationIdV2Path,
+    query: z.never().optional()
+});
+
+export const zEstimateControllerGetEstimateV2Data = z.object({
+    body: z.never().optional(),
+    path: zEstimateControllerGetEstimateV2Path,
     query: z.never().optional()
 });
 
@@ -5577,6 +6322,12 @@ export const zEstimateControllerUpdateCurrencyV2Data = z.object({
 export const zEstimateControllerUpdateAdvanceLinesV2Data = z.object({
     body: zEstimateControllerUpdateAdvanceLinesV2Body,
     path: zEstimateControllerUpdateAdvanceLinesV2Path,
+    query: z.never().optional()
+});
+
+export const zEstimateControllerRevertToDraftV2Data = z.object({
+    body: z.never().optional(),
+    path: zEstimateControllerRevertToDraftV2Path,
     query: z.never().optional()
 });
 
@@ -5694,6 +6445,12 @@ export const zBillingsControllerGetBillingsV2Data = z.object({
     query: zBillingsControllerGetBillingsV2Query
 });
 
+export const zBillingsControllerGetBillingStatisticsV2Data = z.object({
+    body: z.never().optional(),
+    path: z.never().optional(),
+    query: zBillingsControllerGetBillingStatisticsV2Query
+});
+
 export const zBillingControllerDownloadPdfV2Data = z.object({
     body: z.never().optional(),
     path: zBillingControllerDownloadPdfV2Path,
@@ -5718,6 +6475,12 @@ export const zBillingControllerUpdateTitleV2Data = z.object({
     query: z.never().optional()
 });
 
+export const zBillingControllerAddBillingAttachmentV2Data = z.object({
+    body: zBillingControllerAddBillingAttachmentV2Body,
+    path: zBillingControllerAddBillingAttachmentV2Path,
+    query: z.never().optional()
+});
+
 export const zBillingControllerDeleteBillingDocumentV2Data = z.object({
     body: z.never().optional(),
     path: zBillingControllerDeleteBillingDocumentV2Path,
@@ -5727,12 +6490,6 @@ export const zBillingControllerDeleteBillingDocumentV2Data = z.object({
 export const zBillingControllerGetBillingByIdV2Data = z.object({
     body: z.never().optional(),
     path: zBillingControllerGetBillingByIdV2Path,
-    query: z.never().optional()
-});
-
-export const zBillingControllerSendTestEmailSignatureV2Data = z.object({
-    body: zBillingControllerSendTestEmailSignatureV2Body,
-    path: z.never().optional(),
     query: z.never().optional()
 });
 
@@ -5826,6 +6583,12 @@ export const zAdvanceControllerActivateOnlinePaymentV2Data = z.object({
     query: z.never().optional()
 });
 
+export const zAdvanceControllerUpdateTimelineV2Data = z.object({
+    body: zAdvanceControllerUpdateTimelineV2Body,
+    path: zAdvanceControllerUpdateTimelineV2Path,
+    query: z.never().optional()
+});
+
 export const zAdvanceControllerUpdateAmountV2Data = z.object({
     body: zAdvanceControllerUpdateAmountV2Body,
     path: zAdvanceControllerUpdateAmountV2Path,
@@ -5841,6 +6604,24 @@ export const zAdvanceControllerCreateAssetV2Data = z.object({
 export const zAdvanceControllerCancelAdvanceV2Data = z.object({
     body: zAdvanceControllerCancelAdvanceV2Body,
     path: zAdvanceControllerCancelAdvanceV2Path,
+    query: z.never().optional()
+});
+
+export const zCustomersControllerPaginateV2Data = z.object({
+    body: z.never().optional(),
+    path: z.never().optional(),
+    query: zCustomersControllerPaginateV2Query
+});
+
+export const zCustomerControllerRetrieveCustomerByContactV2Data = z.object({
+    body: z.never().optional(),
+    path: zCustomerControllerRetrieveCustomerByContactV2Path,
+    query: z.never().optional()
+});
+
+export const zCustomerControllerRetrieveCustomerByOrganizationV2Data = z.object({
+    body: z.never().optional(),
+    path: zCustomerControllerRetrieveCustomerByOrganizationV2Path,
     query: z.never().optional()
 });
 
@@ -5878,12 +6659,6 @@ export const zAssetControllerUpdateCurrencyV2Data = z.object({
     body: zAssetControllerUpdateCurrencyV2Body,
     path: zAssetControllerUpdateCurrencyV2Path,
     query: z.never().optional()
-});
-
-export const zCustomerPortalControllerGetPaymentsV2Data = z.object({
-    body: z.never().optional(),
-    path: z.never().optional(),
-    query: zCustomerPortalControllerGetPaymentsV2Query
 });
 
 export const zBillingThemeControllerListThemesV2Data = z.object({
@@ -6036,6 +6811,12 @@ export const zCatalogControllerPaginateV2Data = z.object({
     query: zCatalogControllerPaginateV2Query
 });
 
+export const zCatalogControllerRemoveV2Data = z.object({
+    body: z.never().optional(),
+    path: zCatalogControllerRemoveV2Path,
+    query: z.never().optional()
+});
+
 export const zCatalogControllerRetrieveV2Data = z.object({
     body: z.never().optional(),
     path: zCatalogControllerRetrieveV2Path,
@@ -6144,10 +6925,22 @@ export const zOrganizationsControllerRetrieveOrganizationsData = z.object({
     query: zOrganizationsControllerRetrieveOrganizationsQuery
 });
 
-export const zEInvoicingControllerRecordPlatformChoiceFromEmailLinkV2Data = z.object({
+export const zEInvoicingControllerGetIncomeFLowsV2Data = z.object({
     body: z.never().optional(),
     path: z.never().optional(),
-    query: zEInvoicingControllerRecordPlatformChoiceFromEmailLinkV2Query
+    query: zEInvoicingControllerGetIncomeFLowsV2Query.optional()
+});
+
+export const zEInvoicingControllerGetFlowPfFileV2Data = z.object({
+    body: z.never().optional(),
+    path: zEInvoicingControllerGetFlowPfFileV2Path,
+    query: z.never().optional()
+});
+
+export const zEInvoicingControllerGetFlowXmlFileV2Data = z.object({
+    body: z.never().optional(),
+    path: zEInvoicingControllerGetFlowXmlFileV2Path,
+    query: z.never().optional()
 });
 
 export const zTransactionsControllerRetrieveTransactionByIdV2Data = z.object({
@@ -6168,6 +6961,12 @@ export const zAccountingBillingControllerReconciliateAdvanceV2Data = z.object({
     query: z.never().optional()
 });
 
+export const zAccountingBillingControllerGetInvoicePaymentsV2Data = z.object({
+    body: z.never().optional(),
+    path: zAccountingBillingControllerGetInvoicePaymentsV2Path,
+    query: z.never().optional()
+});
+
 export const zAccountingBillingControllerMarkInvoiceAsUnpaidV2Data = z.object({
     body: z.never().optional(),
     path: zAccountingBillingControllerMarkInvoiceAsUnpaidV2Path,
@@ -6178,16 +6977,4 @@ export const zAccountingAccountControllerListV2Data = z.object({
     body: z.never().optional(),
     path: z.never().optional(),
     query: zAccountingAccountControllerListV2Query.optional()
-});
-
-export const zLogsControllerRetrieveLogsByCompanyData = z.object({
-    body: z.never().optional(),
-    path: zLogsControllerRetrieveLogsByCompanyPath,
-    query: zLogsControllerRetrieveLogsByCompanyQuery
-});
-
-export const zLogsControllerRetrieveLastLogOfAResourceData = z.object({
-    body: z.never().optional(),
-    path: zLogsControllerRetrieveLastLogOfAResourcePath,
-    query: z.never().optional()
 });

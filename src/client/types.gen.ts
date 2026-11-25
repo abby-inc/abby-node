@@ -23,6 +23,13 @@ export type AccountingAccountDto = {
 
 export type AccountingBookType = 'income' | 'purchase';
 
+export type AddBillingAttachmentDto = {
+    /**
+     * The id of the attachment
+     */
+    fileId: string;
+};
+
 export type AddressDto = {
     /**
      * First line of the address
@@ -677,6 +684,35 @@ export type CreateWebhookDto = {
     events: Array<string>;
 };
 
+export type CreateWebhookV2Dto = {
+    /**
+     * Must use https://
+     */
+    url: string;
+    description?: string;
+    events: Array<PublicWebhookEvent>;
+    isActivated?: boolean;
+};
+
+export type CreatedWebhookV2Dto = {
+    id: string;
+    url: string;
+    description?: string | null;
+    /**
+     * Stored names; a webhook created outside /v2 may hold names outside the public list
+     */
+    events: Array<string>;
+    isActivated: boolean;
+    /**
+     * Whether the webhook has a signing secret (false for webhooks created outside /v2)
+     */
+    isSigned: boolean;
+    /**
+     * `whsec_` followed by 32 random bytes, base64url-encoded. Returned only by this response.
+     */
+    secret: string;
+};
+
 export type CreationCompanyStep = 'creation_requested' | 'files_requested' | 'declaration_sent' | 'declaration_refused' | 'company_created' | 'urssaf_account_created' | 'impots_account_created' | 'acre_requested' | 'cfe_declared' | 'all_files_deposed' | 'has_file_refused' | 'all_files_validated' | 'none';
 
 export type CreationDashboardStep = 'files_to_validate' | 'declaration_to_do' | 'declaration_in_progress' | 'pending_declaration' | 'declaration_to_report' | 'declaration_refused' | 'declaration_pending_denial' | 'declaration_to_retry' | 'regularisation_gu' | 'refus_gu' | 'to_call_cfe' | 'declared' | 'declaration_accepted' | 'to_call' | 'ended' | 'abandoned' | 'none';
@@ -689,38 +725,6 @@ export type Currency = 'EUR' | 'GBP' | 'CHF' | 'USD' | 'AUD' | 'CAD' | 'JPY' | '
 export type CurrencyCode = 'EUR' | 'GBP' | 'CHF' | 'USD' | 'AUD' | 'CAD' | 'JPY' | 'CNH' | 'CZK' | 'DKK' | 'BGN' | 'PLN' | 'HUF' | 'RON' | 'SEK' | 'NOK' | 'TRY' | 'BRL' | 'HKD' | 'ILS' | 'INR' | 'KRW' | 'MXN' | 'XPF' | 'XOF' | 'XAF';
 
 export type CurrencyOrigin = 'ECB' | 'USER' | 'FIXED';
-
-export type CustomerPortalBillingDto = {
-    id: string;
-    number: string;
-    date: number;
-    billingState: BillingState;
-    billingType: BillingType;
-    amount: number;
-    signatureId?: string;
-    signature?: CustomerPortalSignatureDto;
-    dueDate?: number;
-    validityDate?: number;
-};
-
-export type CustomerPortalCompanyDto = {
-    commercialName: string;
-    name: string;
-};
-
-export type CustomerPortalCustomerDto = {
-    name: string;
-    firstname?: string;
-    lastname?: string;
-};
-
-export type CustomerPortalSignatureDto = {
-    id: string;
-    canceledAt: number | null;
-    signedAt: number | null;
-    refusedAt: number | null;
-    status: ElectronicSignatureStatus;
-};
 
 export type DeclarationPlatform = 6 | 1 | 2 | 3 | 4 | 5;
 
@@ -781,6 +785,7 @@ export type DismissPreferencesDto = {
     PRO_ACCOUNT_CARD_WALLET_TUTORIAL?: DismissStateDto;
     PRO_ACCOUNT_INTERNATIONAL_WIRES?: DismissStateDto;
     PRO_ACCOUNT_GROUPED_WIRES?: DismissStateDto;
+    TRIAL_RETRY_INVITATION?: DismissStateDto;
 };
 
 export type DismissStateDto = {
@@ -820,6 +825,8 @@ export type DisplaySettingsDto = {
     displayAbbyLogo: boolean;
     displayTitle: boolean;
 };
+
+export type DocumentType = 'INVOICE' | 'CORRECTED_INVOICE' | 'ASSET';
 
 export type DuplicateBillingThemeDto = {
     /**
@@ -920,6 +927,122 @@ export type FinalizeRequirementDto = {
 
 export type FinalizeRequirementName = 'hasValidLines' | 'hasLineDesignation' | 'hasQuantityGreaterThanOrEqualToZero' | 'hasValidLineType' | 'hasValidPersonalServiceActivityLines' | 'advancesAreAllFinalized' | 'HasValidLineDiscountAmount' | 'HasValidLineDiscountPercentage' | 'HasValidGlobalDiscountAmount' | 'HasValidGlobalDiscountPercentage' | 'hasValidProductQuantityUnitForPersonalServiceActivity' | 'hasConsistentVatRateForEuMention' | 'isNotAlreadyFinalized' | 'hasValidElectronicSignature' | 'validateEmittedDate' | 'hasValidEmittedAt' | 'hasValidAmount' | 'hasPositiveAmount' | 'hasValidReminder' | 'hasValidPaymentRequestAdvanceAmount' | 'hasNoUrssafRoundingDrift';
 
+export type FlowItemDto = {
+    /**
+     * Identifiant interne de la facture reçue
+     */
+    id: string;
+    /**
+     * Identifiant du flux Docoon
+     */
+    flowId: string;
+    /**
+     * Nature commerciale du flux (vente/achat)
+     */
+    flowType: FlowType;
+    /**
+     * Syntaxe du flux facture (CII/UBL/Factur-X)
+     */
+    flowSyntax: FlowSyntax;
+    /**
+     * Nature du document (BT-3) : `INVOICE` (facture), `CORRECTED_INVOICE` (facture rectificative) ou `ASSET` (avoir).
+     */
+    documentType: DocumentType;
+    /**
+     * N° de la facture référente (BT-25), renseigné pour une facture rectificative ou un avoir
+     */
+    referencedInvoiceNumber?: string;
+    /**
+     * Raison sociale du fournisseur (émetteur)
+     */
+    supplierName: string;
+    /**
+     * Numéro de facture
+     */
+    invoiceNumber: string;
+    /**
+     * Date de facture (format DATEONLY `YYYY-MM-DD`)
+     */
+    invoiceDate: string;
+    /**
+     * Date d'échéance (format DATEONLY `YYYY-MM-DD`)
+     */
+    dueDate?: string;
+    /**
+     * Date de paiement (format DATEONLY `YYYY-MM-DD`), si la facture est payée
+     */
+    paymentDate?: string;
+    /**
+     * Devise ISO 4217
+     */
+    currency?: string;
+    /**
+     * Montant HT en centimes (entier)
+     */
+    totalExcludingTax: number;
+    /**
+     * Montant TVA en centimes (entier)
+     */
+    vatAmount: number;
+    /**
+     * Montant TTC en centimes (entier)
+     */
+    totalIncludingTax: number;
+    /**
+     * Code AFNOR de cycle de vie (ex. 204), si Docoon l'a transmis
+     */
+    flowStatus?: number;
+    /**
+     * Libellé AFNOR du cycle de vie (ex. "IN_HAND"), "UNKNOWN" si code hors référentiel
+     */
+    flowStatusLabel?: string;
+    /**
+     * Date de réception (soumission Docoon, timestamp Unix en secondes)
+     */
+    submittedAt: number;
+    /**
+     * Facture annulée par une facture rectificative vivante (statut ≠ 210/213) du même fournisseur la référençant via son BT-25. Dérivé à la lecture — jamais vrai pour un avoir ou une rectificative.
+     */
+    isCancelled?: boolean;
+    /**
+     * Reste à payer TTC en centimes (entier) : TTC de la facture − somme des TTC des avoirs liés (même fournisseur, BT-25 = n° de la facture), plancher 0. Pour un avoir : son propre TTC.
+     */
+    remainingAmount?: number;
+    /**
+     * Dernier événement de cycle de vie du flux (tri submittedAt puis id), avec motif de rejet/refus et commentaire éventuels. Absent tant qu'aucun événement n'a été reçu.
+     */
+    lastEvent?: FlowLastEventDto;
+};
+
+export type FlowLastEventDto = {
+    /**
+     * Code AFNOR de cycle de vie (200–501) du dernier événement du flux (tri submittedAt puis id)
+     */
+    code: number;
+    /**
+     * Code du motif de rejet/refus, le cas échéant
+     */
+    rejectCode?: string;
+    /**
+     * Libellé du motif de rejet/refus, le cas échéant
+     */
+    rejectLabel?: string;
+    /**
+     * Commentaire libre saisi par l'utilisateur (ex. accompagnant un refus), le cas échéant
+     */
+    comment?: string;
+};
+
+/**
+ * Syntaxe du flux facture (CII/UBL/Factur-X)
+ */
+export type FlowSyntax = 'CII' | 'UBL' | 'Factur-X';
+
+/**
+ * Nature commerciale du flux (vente/achat)
+ */
+export type FlowType = 'CustomerInvoice' | 'SupplierInvoice';
+
 export type FontDto = {
     name: ThemeGoogleFont;
     size: ThemeFontSize;
@@ -958,6 +1081,12 @@ export type FrequencyDto = {
 export type FrequencyInterval = 'day' | 'week' | 'month' | 'year';
 
 export type ImpositionType = 1 | 2;
+
+export type IncomeBookGroupedPersonalService = 'GROUPED_PERSONAL_SERVICE';
+
+export type IncomeBookPersonalServiceActivity = 'GARDE_ENFANT_HANDICAPE' | 'ACCOMPAGNEMENT_ENFANT_HANDICAPE' | 'AIDE_HUMAINE' | 'CONDUITE_VEHICULE_PERSONNEL' | 'AIDE_AU_DEPLACEMENT' | 'ENTRETIEN_DE_LA_MAISON' | 'JARDINAGE' | 'BRICOLAGE' | 'GARDE_ENFANT_PLUS_DE_6_ANS' | 'SOUTIEN_SCOLAIRE_COURS_A_DOMICILE' | 'SOIN_ESTHETIQUE_A_DOMICILE' | 'PREPARATION_REPAS_A_DOMICILE' | 'LIVRAISON_REPAS_A_DOMICILE' | 'COLLECTE_ET_LIVRAISON_DE_LINGE_REPASSE' | 'LIVRAISON_COURSES_A_DOMICILE' | 'ASSISTANCE_INFORMATIQUE' | 'SOINS_ET_PROMENADES_ANIMAUX_DE_COMPAGNIE_POUR_PERSONNES_DEPENDANTES' | 'MAINTENANCE_ENTRETIEN_ET_VIGILANCE_DE_LA_RESIDENCE_PRINCIPALE' | 'ASSISTANCE_ADMINISTRATIVE' | 'ACCOMPAGNEMENT_ENFANT_PLUS_DE_6_ANS' | 'TELEASSISTANCE' | 'INTERPRETE_LANGUE_DES_SIGNES' | 'CONDUITE_VEHICULE_PERSONNEL_EN_CAS_INVALIDITE_TEMPORAIRE' | 'ACCOMPAGNEMENT_DEPLACEMENTS_EN_DEHORS_DU_DOMICILE' | 'ASSISTANCE_PERSONNES_TEMPORAIREMENT_DEPENDANTES_A_DOMICILE' | 'COORDINATION_ET_GESTION' | 'DIVERS_NON_ELIGIBLE' | 'MANUALLY_ADDED';
+
+export type IncomeBookVatMention = 'not_subject' | 'second_hand_good' | 'art_object' | 'collection_antique' | 'travel_agency' | 'vat_not_applicable' | 'vat_not_applicable_2' | 'vat_exemption' | 'vat_exemption_eu_sale' | 'vat_exemption_eu_service' | 'vat_construction' | 'vat_psychologist' | 'vat_psychologist_2' | 'vat_reverse_charge' | 'vat_reverse_charge_2' | 'vat_reverse_charge_3' | 'vat_reverse_charge_4' | 'vat_reduced_rate' | 'vat_reduced_rate_2' | 'vat_article_261c_cgi' | 'vat_exemption_294_cgi' | 'cibs_franchise_in_base' | 'cibs_health_regulated_professions' | 'cibs_health_therapists' | 'cibs_health_medical_biology' | 'cibs_health_dental_prostheses' | 'cibs_education_private_lessons' | 'cibs_education_continuing_training' | 'cibs_education_training_related' | 'cibs_education_apprenticeship' | 'cibs_education_school' | 'cibs_education_university' | 'cibs_education_agricultural' | 'cibs_education_related_services' | 'cibs_finance_insurance' | 'cibs_finance_credit' | 'cibs_finance_credit_brokerage' | 'cibs_finance_guarantees' | 'cibs_finance_payments' | 'cibs_finance_currencies' | 'cibs_finance_securities' | 'cibs_finance_fund_management' | 'cibs_finance_gold' | 'cibs_finance_stamps' | 'cibs_international_service_outside_france' | 'cibs_international_intangible_service_outside_eu' | 'cibs_international_eu_goods_delivery' | 'cibs_international_export' | 'cibs_international_drom_delivery' | 'cibs_margin_second_hand_good' | 'cibs_margin_art_object' | 'cibs_margin_collection_antique' | 'cibs_margin_travel_agency' | 'cibs_reverse_charge_eu_service' | 'cibs_reverse_charge_eu_service_directive' | 'cibs_reverse_charge_construction' | 'cibs_reduced_rate_housing_works' | 'cibs_reduced_rate_home_help';
 
 export type LatePenalty = 'three_time_legal_rate' | 'bce_director_rate_plus_ten_points' | 'other';
 
@@ -1084,9 +1213,25 @@ export type LinksDto = {
     iconSize: number;
 };
 
-export type LogStatus = 'SUCCESS' | 'ERROR' | 'INFO';
-
-export type LogStatusFilter = 'ERROR' | 'SUCCESS' | 'INFO' | 'ALL';
+export type ListFlowsResponseDto = {
+    countWithoutFilters: number;
+    totalDocs: number;
+    limit: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+    nextPage: number;
+    page: number;
+    prevPage: number;
+    /**
+     * Factures reçues de la page courante
+     */
+    docs: Array<FlowItemDto>;
+    /**
+     * Compteurs globaux par famille de statut d'affichage (D-10589), indépendants des filtres actifs
+     */
+    counters: ReceivedFlowStatusCountersDto;
+};
 
 export type LogoDto = {
     /**
@@ -1167,10 +1312,23 @@ export type NotificationPreferencesDto = {
 
 export type OperationType = 'sale' | 'purchase' | 'refund' | 'asset';
 
+export type OpportunityCategoryDto = {
+    id: string;
+    name: string;
+    rank: string;
+    showDueDate: boolean;
+    showAmount: boolean;
+    showCustomer: boolean;
+    color: string;
+    count: number;
+};
+
 export type OpportunityDto = {
     id: string;
     name: string;
 };
+
+export type OpportunityOrderBy = 'createdAt';
 
 export type OpportunityType = 'orders' | 'projects' | 'opportunities';
 
@@ -1305,6 +1463,8 @@ export type ProductType = 'sale_of_goods' | 'service_delivery' | 'commercial_or_
 export type ProductUnit = 'unit' | 'gram' | 'hour' | 'day' | 'week' | 'fixed_rate' | 'year' | 'character' | 'line' | 'license' | 'article' | 'month' | 'kilogram' | 'kilometer' | 'liter' | 'batch' | 'meter' | 'square_meter' | 'cubic_meter' | 'linear_meter' | 'person' | 'ton' | 'word' | 'page' | 'leaflet' | 'paragraph' | 'minute' | 'overnight_stay';
 
 export type ProviderSignUp = 'google.com' | 'facebook.com' | 'apple.com' | 'password' | 'custom';
+
+export type PublicWebhookEvent = 'opportunity.created' | 'opportunity.updated' | 'opportunity.deleted' | 'task.created' | 'task.updated' | 'task.deleted' | 'invoice.paid' | 'advance.paid';
 
 export type PurchaseRegisterOrderBy = 'valueDate' | 'amount' | 'reference' | 'label';
 
@@ -1899,6 +2059,107 @@ export type ReadBillingEmitterDto = {
     hasVat?: boolean;
 };
 
+export type ReadBillingPaymentDto = {
+    id: string;
+    amount: number;
+    paymentMethod: PaymentMethod;
+    otherMethod?: string;
+    receivedAt: number;
+    transactionId?: string;
+    regulations: ReadRegulationsDto;
+};
+
+export type ReadBillingStatisticsDto = {
+    /**
+     * Total count of billings without filters
+     */
+    countWithoutFilter: number;
+    /**
+     * Count of draft billings
+     */
+    countDraft: number;
+    /**
+     * Count of overdue billings
+     */
+    countOverdue: number;
+    /**
+     * Count of waiting billings
+     */
+    countWaiting: number;
+    /**
+     * Count of paid billings
+     */
+    countPaid: number;
+    /**
+     * Count of signed billings
+     */
+    countSigned: number;
+    /**
+     * Count of refused billings
+     */
+    countRefused: number;
+    /**
+     * Count of finalized billings
+     */
+    countFinalized: number;
+    /**
+     * Total amount without tax without filters (in cents)
+     */
+    amountWithoutFilterWithoutTax: number;
+    /**
+     * Total tax amount without filters (in cents)
+     */
+    amountWithoutFilterTotalTax: number;
+    /**
+     * Total amount without tax for draft billings (in cents)
+     */
+    amountDraftWithoutTax: number;
+    /**
+     * Total tax amount for draft billings (in cents)
+     */
+    amountDraftTotalTax: number;
+    /**
+     * Total amount without tax for paid billings (in cents)
+     */
+    amountPaidWithoutTax: number;
+    /**
+     * Total tax amount for paid billings (in cents)
+     */
+    amountPaidTotalTax: number;
+    /**
+     * Total amount without tax for overdue billings (in cents)
+     */
+    amountOverdueWithoutTax: number;
+    /**
+     * Total tax amount for overdue billings (in cents)
+     */
+    amountOverdueTotalTax: number;
+    /**
+     * Total amount without tax for waiting billings (in cents)
+     */
+    amountWaitingWithoutTax: number;
+    /**
+     * Total tax amount for waiting billings (in cents)
+     */
+    amountWaitingTotalTax: number;
+    /**
+     * Total amount without tax for signed billings (in cents)
+     */
+    amountSignedWithoutTax: number;
+    /**
+     * Total tax amount for signed billings (in cents)
+     */
+    amountSignedTotalTax: number;
+    /**
+     * Total amount without tax for refused billings (in cents)
+     */
+    amountRefusedWithoutTax: number;
+    /**
+     * Total tax amount for refused billings (in cents)
+     */
+    amountRefusedTotalTax: number;
+};
+
 export type ReadBillingThemeAssignmentsDto = {
     assignments: Array<ReadAssignmentDto>;
 };
@@ -2342,6 +2603,22 @@ export type ReadCustomerAddressDto = {
     country: CountryCode;
 };
 
+export type ReadCustomerCollectionDto = {
+    countWithoutFilters: number;
+    totalDocs: number;
+    limit: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+    nextPage: number;
+    page: number;
+    prevPage: number;
+    /**
+     * List of customers
+     */
+    docs: Array<ReadCustomerDto>;
+};
+
 export type ReadCustomerCompanyDto = {
     name: string;
     siret: string;
@@ -2615,6 +2892,52 @@ export type ReadFooterLogoDto = {
     url: string;
 };
 
+export type ReadIncomeBookCollectionDto = {
+    docs: Array<ReadIncomeBookListEntryDto>;
+    totalDocs: number;
+    limit: number;
+    totalPages: number;
+    page: number;
+    pagingCounter: number;
+    hasPrevPage: boolean;
+    hasNextPage: boolean;
+    prevPage: number;
+    nextPage: number;
+    countWithoutFilters?: number;
+};
+
+export type ReadIncomeBookEntryDto = {
+    _id: string;
+    billing?: {
+        [key: string]: unknown;
+    };
+    transactionIds?: Array<string>;
+    paidAt: Date;
+    reference?: string | null;
+    productType?: LegacyProductType | null;
+    priceWithoutTax?: number | null;
+    priceTotalTax?: number | null;
+    vatId?: number | null;
+    vatAmount?: number | null;
+    vatMention?: IncomeBookVatMention | null;
+    paymentMethodUsed?: ReadIncomeBookPaymentMethodDto | null;
+    client?: string | null;
+    file?: ReadIncomeBookFileDto | null;
+    personalServiceActivity?: IncomeBookPersonalServiceActivity | null;
+    isImported?: boolean | null;
+    isTaxIncluded?: boolean | null;
+    transactionId?: string | null;
+    billingObject?: {
+        [key: string]: unknown;
+    } | null;
+};
+
+export type ReadIncomeBookFileDto = {
+    id: string;
+    url?: string;
+    relativeUrl?: string;
+};
+
 export type ReadIncomeBookItemDto = {
     _id: string;
     billing?: {
@@ -2634,6 +2957,41 @@ export type ReadIncomeBookItemDto = {
     vatId?: number;
     vatMention?: VatMention | null;
     isTaxIncluded?: boolean;
+};
+
+export type ReadIncomeBookListEntryDto = {
+    _id: string;
+    billing?: {
+        [key: string]: unknown;
+    };
+    transactionIds?: Array<string>;
+    priceTotalTax: number;
+    priceWithoutTax: number;
+    vatAmount: number;
+    paidAt: Date;
+    reference: string | null;
+    productType: LegacyProductType | null;
+    transactionId?: string | null;
+    vatId?: number | null;
+    paymentMethodUsed: ReadIncomeBookPaymentMethodDto | null;
+    client?: string | null;
+    file?: ReadIncomeBookFileDto | null;
+    personalServiceActivity?: IncomeBookGroupedPersonalService | null;
+};
+
+export type ReadIncomeBookPaymentMethodDto = {
+    value: PaymentMethodLegacy | null;
+    other?: string | null;
+};
+
+export type ReadIncomeBookStatisticsDto = {
+    saleOfGoodsAndManufacturedGoodsWithoutTax: number;
+    serviceDeliveryWithoutTax: number;
+    commercialOrCraftServicesWithoutTax: number;
+    disbursementWithoutTax: number;
+    saleOfGoodsAndManufacturedGoodsTotalTax: number;
+    serviceDeliveryTotalTax: number;
+    commercialOrCraftServicesTotalTax: number;
 };
 
 export type ReadInvoiceDto = {
@@ -2750,28 +3108,11 @@ export type ReadLocationDto = {
     additionalAddress?: string;
 };
 
-export type ReadLogDto = {
-    id: string;
-    status: LogStatus;
-    context: string;
-    data?: string;
-    response?: string;
-    httpStatus?: number;
-    url?: string | null;
-    method?: string | null;
-    createdAt: Date;
-};
-
 export type ReadLogoDto = {
     id?: string;
     presetId?: string;
     url: string;
     size: number;
-};
-
-export type ReadLogsDto = {
-    logs: Array<ReadLogDto>;
-    total: number;
 };
 
 export type ReadMarginsDto = {
@@ -2914,6 +3255,35 @@ export type ReadOpportunityDto = {
      * The customer of the opportunity
      */
     customer: ReadCustomerDto;
+};
+
+export type ReadOpportunityListDto = {
+    countWithoutFilters: number;
+    totalDocs: number;
+    limit: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+    nextPage: number;
+    page: number;
+    prevPage: number;
+    /**
+     * The list of opportunities
+     */
+    docs: Array<ReadOpportunityListItemDto>;
+    /**
+     * Total amount of all opportunities matching the filter criteria (not just the current page)
+     */
+    totalAmount: number;
+};
+
+export type ReadOpportunityListItemDto = {
+    id: string;
+    name: string;
+    amount: number;
+    dueDate: number;
+    customer: ReadCustomerDto;
+    category: OpportunityCategoryDto;
 };
 
 export type ReadOrganizationDto = {
@@ -3268,6 +3638,11 @@ export type ReadPurchaseRegisterLineDto = {
     accountingAccount: ReadAccountingAccountDto;
 };
 
+export type ReadRegulationsDto = {
+    commission: number;
+    lossOfValueChangeRate: number;
+};
+
 export type ReadStripeProductDto = {
     id: StripeProductType;
     productId: string;
@@ -3302,6 +3677,11 @@ export type ReadTableDto = {
     borderRadius: number;
 };
 
+export type ReadTaskCollectionDto = {
+    totalItems: number;
+    data: Array<ReadTaskListItemDto>;
+};
+
 export type ReadTaskDto = {
     id: string;
     companyId: string;
@@ -3328,6 +3708,76 @@ export type ReadTaskDto = {
     createdAt: Date;
     updatedAt: Date;
     deletedAt?: Date;
+};
+
+export type ReadTaskListClientDto = {
+    email?: string;
+    keywords?: string;
+    language?: string;
+    notes?: string;
+    role?: string;
+    website?: string;
+    firstname: string | null;
+    lastname: string | null;
+    phone?: string | null;
+};
+
+export type ReadTaskListCustomerDto = {
+    _id: string;
+    tiersPrestationIsActivatedForThisCustomer?: boolean;
+    locale?: string;
+    customerCompany?: ReadCustomerCompanyDto;
+    tiersPrestation?: {
+        [key: string]: unknown;
+    };
+    client?: Array<ReadTaskListClientDto>;
+    location: ReadTaskListLocationDto;
+    deliveryLocation?: ReadTaskListLocationDto;
+    deliveryLocationIsSame?: boolean | null;
+    currency?: Currency | null;
+    note?: string | null;
+};
+
+export type ReadTaskListItemDto = {
+    id: string;
+    companyId: string;
+    createdAt: Date;
+    updatedAt: Date;
+    name: string | null;
+    rank: string | null;
+    opportunityRank: string | null;
+    dateRank: string | null;
+    description: string | null;
+    priority: number | null;
+    customer?: ReadTaskListCustomerDto | null;
+    opportunity?: ReadTaskListOpportunityDto | null;
+    customerId?: string | null;
+    dueDate?: string | null;
+    opportunityId?: string | null;
+    doneAt?: Date | null;
+    deletedAt?: Date | null;
+};
+
+export type ReadTaskListLocationDto = {
+    address: string;
+    city: string;
+    zipCode: string;
+    additionalAddress?: string;
+    country?: string | null;
+};
+
+export type ReadTaskListOpportunityDto = {
+    id: string;
+    amount: number;
+    name: string | null;
+    rank: string | null;
+    customerId: string | null;
+    categoryId: string | null;
+    description?: string | null;
+    dueDate?: Date | null;
+    createdAt: Date | null;
+    updatedAt: Date | null;
+    deletedAt: Date | null;
 };
 
 export type ReadThemeAssetDto = {
@@ -3495,6 +3945,35 @@ export type ReadWebhookDto = {
     createdAt: Date;
 };
 
+export type ReceivedFlowStatusCountersDto = {
+    /**
+     * Nombre de documents de la famille Reçue — exposé par la rangée des avoirs reçus
+     */
+    received: number;
+    /**
+     * Nombre de factures à payer (reçues, reste à payer > 0, non annulées)
+     */
+    toPay: number;
+    /**
+     * Sous-ensemble de `toPay` dont l'échéance est dépassée
+     */
+    late: number;
+    /**
+     * Nombre de factures payées (211/212, solde couvert)
+     */
+    paid: number;
+    /**
+     * Nombre de factures refusées (code 210)
+     */
+    refused: number;
+    /**
+     * Nombre de factures en litige (codes 206-208)
+     */
+    disputed: number;
+};
+
+export type ReceivedFlowStatusFilter = 'RECEIVED' | 'TO_PAY' | 'LATE' | 'PAID' | 'REFUSED' | 'DISPUTED';
+
 export type ReconciliateInvoiceDto = {
     payments: Array<PaymentDto>;
 };
@@ -3536,14 +4015,6 @@ export type RentabilityPreferencesDto = {
     defaultOverheadCosts: number;
 };
 
-export type RetrieveCustomerPortalPaymentsDto = {
-    customer: CustomerPortalCustomerDto;
-    billings: Array<CustomerPortalBillingDto>;
-    company: CustomerPortalCompanyDto;
-    email: string;
-    phone?: string;
-};
-
 export type SendBillingByEmailDto = {
     /**
      * List of email addresses to send the billing document to
@@ -3561,10 +4032,6 @@ export type SendBillingByEmailDto = {
      * Whether to send a copy to the sender
      */
     inCopy?: boolean;
-};
-
-export type SendTestEmailSignatureDto = {
-    content?: string;
 };
 
 export type SetBillingThemeAssignmentsDto = {
@@ -3739,6 +4206,25 @@ export type UpdateAdvanceGeneralInformationsDto = {
      * Reminder settings for the invoice
      */
     reminder?: BillingReminderDto;
+};
+
+export type UpdateAdvanceTimelineDto = {
+    /**
+     * The timestamp when the invoice was emitted, in seconds
+     */
+    emittedAt: number;
+    /**
+     * The payment delay for the invoice
+     */
+    paymentDelay: PaymentDelay;
+    /**
+     * Custom due date for the invoice when payment delay is OTHER, in seconds
+     */
+    customDueDate?: number;
+    /**
+     * The timestamp for delivery date, in seconds
+     */
+    deliveryDate?: number | null;
 };
 
 export type UpdateAssetGeneralInformationsDto = {
@@ -3945,6 +4431,7 @@ export type UpdateContactDto = {
     deliveryAddress?: ClientAddressDto;
     bankInformations?: BankInformationsDto;
     preferences?: ClientPreferencesDto;
+    notes?: string | null;
 };
 
 export type UpdateDeliveryAddressDto = {
@@ -4316,6 +4803,19 @@ export type UpdateTitleDto = {
     title: string | null;
 };
 
+export type UpdateWebhookV2Dto = {
+    /**
+     * Must use https://
+     */
+    url?: string;
+    /**
+     * `null` clears the description
+     */
+    description?: string | null;
+    events?: Array<PublicWebhookEvent>;
+    isActivated?: boolean;
+};
+
 export type UploadThemeAssetDto = {
     /**
      * File name
@@ -4408,6 +4908,61 @@ export type VatDetailDto = {
 
 export type VatMention = 'not_subject' | 'second_hand_good' | 'art_object' | 'collection_antique' | 'travel_agency' | 'vat_not_applicable' | 'vat_not_applicable_2' | 'vat_exemption' | 'vat_exemption_eu_sale' | 'vat_exemption_eu_service' | 'vat_construction' | 'vat_psychologist' | 'vat_psychologist_2' | 'vat_reverse_charge' | 'vat_reverse_charge_2' | 'vat_reverse_charge_3' | 'vat_reverse_charge_4' | 'vat_reduced_rate' | 'vat_reduced_rate_2' | 'vat_article_261c_cgi' | 'vat_exemption_294_cgi';
 
+/**
+ * `response`: the receiver answered; `timeout`: no answer within 5 s; `unreachable`: the address cannot be reached or is refused
+ */
+export type WebhookTestSendOutcome = 'response' | 'timeout' | 'unreachable';
+
+export type WebhookTestSendV2Dto = {
+    /**
+     * `response`: the receiver answered; `timeout`: no answer within 5 s; `unreachable`: the address cannot be reached or is refused
+     */
+    outcome: WebhookTestSendOutcome;
+    /**
+     * Status code of the answer; null unless the outcome is `response`
+     */
+    statusCode: number | null;
+    /**
+     * Elapsed duration of the test send, in milliseconds
+     */
+    durationMs: number;
+};
+
+export type WebhookV2Dto = {
+    id: string;
+    url: string;
+    description?: string | null;
+    /**
+     * Stored names; a webhook created outside /v2 may hold names outside the public list
+     */
+    events: Array<string>;
+    isActivated: boolean;
+    /**
+     * Whether the webhook has a signing secret (false for webhooks created outside /v2)
+     */
+    isSigned: boolean;
+};
+
+export type IncomeBookControllerGetIncomeBookData = {
+    body?: never;
+    path?: never;
+    query: {
+        page: number;
+        limit: number;
+        countWithoutFilters?: boolean;
+        range?: Array<string>;
+        search?: string;
+        sapActivity?: boolean;
+    };
+    url: '/incomeBook/items';
+};
+
+export type IncomeBookControllerGetIncomeBookResponses = {
+    200: ReadIncomeBookCollectionDto;
+};
+
+export type IncomeBookControllerGetIncomeBookResponse = IncomeBookControllerGetIncomeBookResponses[keyof IncomeBookControllerGetIncomeBookResponses];
+
 export type IncomeBookControllerPostIncomeBookItemData = {
     body: CreateIncomeBookItemDto;
     path?: never;
@@ -4421,6 +4976,24 @@ export type IncomeBookControllerPostIncomeBookItemResponses = {
 
 export type IncomeBookControllerPostIncomeBookItemResponse = IncomeBookControllerPostIncomeBookItemResponses[keyof IncomeBookControllerPostIncomeBookItemResponses];
 
+export type IncomeBookControllerGetStatisticsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        from?: string;
+        to?: string;
+        search?: string;
+        sapActivity?: boolean;
+    };
+    url: '/incomeBook/statistics';
+};
+
+export type IncomeBookControllerGetStatisticsResponses = {
+    200: ReadIncomeBookStatisticsDto;
+};
+
+export type IncomeBookControllerGetStatisticsResponse = IncomeBookControllerGetStatisticsResponses[keyof IncomeBookControllerGetStatisticsResponses];
+
 export type IncomeBookControllerDeletePurchaseIncomeBookItemData = {
     body?: never;
     path: {
@@ -4433,6 +5006,21 @@ export type IncomeBookControllerDeletePurchaseIncomeBookItemData = {
 export type IncomeBookControllerDeletePurchaseIncomeBookItemResponses = {
     200: unknown;
 };
+
+export type IncomeBookControllerGetIncomeBookItemByIdData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/incomeBook/{id}';
+};
+
+export type IncomeBookControllerGetIncomeBookItemByIdResponses = {
+    200: ReadIncomeBookEntryDto;
+};
+
+export type IncomeBookControllerGetIncomeBookItemByIdResponse = IncomeBookControllerGetIncomeBookItemByIdResponses[keyof IncomeBookControllerGetIncomeBookItemByIdResponses];
 
 export type OpportunityControllerCreateOpportunityData = {
     body: LegacyCreateOpportunityDto;
@@ -4726,6 +5314,28 @@ export type TaskControllerUpdateTaskResponses = {
     200: unknown;
 };
 
+export type TasksControllerGetTasksData = {
+    body?: never;
+    path?: never;
+    query: {
+        lastTask?: string;
+        limit: number;
+        search?: string;
+        rankMode?: RankTaskMode;
+        customerId?: string;
+        range?: Array<string>;
+        isDone?: boolean;
+        opportunityId?: string;
+    };
+    url: '/tasks';
+};
+
+export type TasksControllerGetTasksResponses = {
+    200: ReadTaskCollectionDto;
+};
+
+export type TasksControllerGetTasksResponse = TasksControllerGetTasksResponses[keyof TasksControllerGetTasksResponses];
+
 export type WebhookControllerPostWebhookCompanyData = {
     body: CreateWebhookDto;
     path?: never;
@@ -4780,6 +5390,31 @@ export type EstimateControllerCreateEstimateByContactOrOrganizationIdV2Responses
 };
 
 export type EstimateControllerCreateEstimateByContactOrOrganizationIdV2Response = EstimateControllerCreateEstimateByContactOrOrganizationIdV2Responses[keyof EstimateControllerCreateEstimateByContactOrOrganizationIdV2Responses];
+
+export type EstimateControllerGetEstimateV2Data = {
+    body?: never;
+    path: {
+        /**
+         * The id of the estimate
+         */
+        id: string;
+    };
+    query?: never;
+    url: '/v2/billing/estimate/{id}';
+};
+
+export type EstimateControllerGetEstimateV2Errors = {
+    /**
+     * Estimate not found
+     */
+    404: unknown;
+};
+
+export type EstimateControllerGetEstimateV2Responses = {
+    200: ReadEstimateDto;
+};
+
+export type EstimateControllerGetEstimateV2Response = EstimateControllerGetEstimateV2Responses[keyof EstimateControllerGetEstimateV2Responses];
 
 export type EstimateControllerUpdateTimelineV2Data = {
     body: UpdateEstimateTimelineDto;
@@ -5148,6 +5783,42 @@ export type EstimateControllerUpdateAdvanceLinesV2Responses = {
 };
 
 export type EstimateControllerUpdateAdvanceLinesV2Response = EstimateControllerUpdateAdvanceLinesV2Responses[keyof EstimateControllerUpdateAdvanceLinesV2Responses];
+
+export type EstimateControllerRevertToDraftV2Data = {
+    body?: never;
+    path: {
+        /**
+         * ID of the estimate to revert to draft
+         */
+        estimateId: string;
+    };
+    query?: never;
+    url: '/v2/billing/estimate/{estimateId}/revert-to-draft';
+};
+
+export type EstimateControllerRevertToDraftV2Errors = {
+    /**
+     * Bad Request
+     */
+    400: unknown;
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+    /**
+     * Estimate not found
+     */
+    404: unknown;
+};
+
+export type EstimateControllerRevertToDraftV2Responses = {
+    /**
+     * Estimate reverted to draft successfully
+     */
+    200: ReadEstimateDto;
+};
+
+export type EstimateControllerRevertToDraftV2Response = EstimateControllerRevertToDraftV2Responses[keyof EstimateControllerRevertToDraftV2Responses];
 
 export type InvoiceControllerGetInvoiceV2Data = {
     body?: never;
@@ -5772,6 +6443,42 @@ export type BillingsControllerGetBillingsV2Responses = {
 
 export type BillingsControllerGetBillingsV2Response = BillingsControllerGetBillingsV2Responses[keyof BillingsControllerGetBillingsV2Responses];
 
+export type BillingsControllerGetBillingStatisticsV2Data = {
+    body?: never;
+    path?: never;
+    query: {
+        search?: string;
+        state?: Array<BillingState>;
+        late?: boolean;
+        type?: Array<BillingType>;
+        tiersPrestationIsActivatedForThisBilling?: boolean;
+        customerId?: string;
+        organizationId?: string;
+        opportunityId?: string;
+        countWithoutFilters?: boolean;
+        test: boolean;
+        archived?: boolean;
+        /**
+         * Inclusive date window `[from, to]` applied to the field named by `rangeType`; use the calendar-day form `YYYY-MM-DD`, each bound being interpreted as a whole day in the API timezone (`Europe/Paris`). A full ISO instant is also accepted transitionally, for older clients, and is snapped to the Paris day it falls on, which can widen the window (a UTC end-of-day instant lands on the next Paris day).
+         */
+        range?: Array<string>;
+        rangeType?: BillingRangeType;
+        onlyReminderActive?: boolean;
+        onlyOnlineSignature?: boolean;
+        onlyOnlinePayment?: boolean;
+    };
+    url: '/v2/billings/statistics';
+};
+
+export type BillingsControllerGetBillingStatisticsV2Responses = {
+    /**
+     * The billing statistics
+     */
+    200: ReadBillingStatisticsDto;
+};
+
+export type BillingsControllerGetBillingStatisticsV2Response = BillingsControllerGetBillingStatisticsV2Responses[keyof BillingsControllerGetBillingStatisticsV2Responses];
+
 export type BillingControllerDownloadPdfV2Data = {
     body?: never;
     path: {
@@ -5899,6 +6606,38 @@ export type BillingControllerUpdateTitleV2Responses = {
 
 export type BillingControllerUpdateTitleV2Response = BillingControllerUpdateTitleV2Responses[keyof BillingControllerUpdateTitleV2Responses];
 
+export type BillingControllerAddBillingAttachmentV2Data = {
+    body: AddBillingAttachmentDto;
+    path: {
+        /**
+         * ID of the document to attach file
+         */
+        billingId: string;
+    };
+    query?: never;
+    url: '/v2/billing/{billingId}/attachment';
+};
+
+export type BillingControllerAddBillingAttachmentV2Errors = {
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+    /**
+     * Billing or file not found
+     */
+    404: unknown;
+};
+
+export type BillingControllerAddBillingAttachmentV2Responses = {
+    /**
+     * Billing attachment added successfully
+     */
+    200: ReadInvoiceDto | ReadEstimateDto | ReadAdvanceDto | ReadAssetDto;
+};
+
+export type BillingControllerAddBillingAttachmentV2Response = BillingControllerAddBillingAttachmentV2Responses[keyof BillingControllerAddBillingAttachmentV2Responses];
+
 export type BillingControllerDeleteBillingDocumentV2Data = {
     body?: never;
     path: {
@@ -5962,29 +6701,6 @@ export type BillingControllerGetBillingByIdV2Responses = {
 };
 
 export type BillingControllerGetBillingByIdV2Response = BillingControllerGetBillingByIdV2Responses[keyof BillingControllerGetBillingByIdV2Responses];
-
-export type BillingControllerSendTestEmailSignatureV2Data = {
-    body: SendTestEmailSignatureDto;
-    path?: never;
-    query?: never;
-    url: '/v2/billing/send-test-signature';
-};
-
-export type BillingControllerSendTestEmailSignatureV2Errors = {
-    /**
-     * Unauthorized
-     */
-    401: unknown;
-};
-
-export type BillingControllerSendTestEmailSignatureV2Responses = {
-    /**
-     * Email sent successfully
-     */
-    204: void;
-};
-
-export type BillingControllerSendTestEmailSignatureV2Response = BillingControllerSendTestEmailSignatureV2Responses[keyof BillingControllerSendTestEmailSignatureV2Responses];
 
 export type BillingControllerRenderEmailV2Data = {
     body?: never;
@@ -6496,6 +7212,38 @@ export type AdvanceControllerActivateOnlinePaymentV2Responses = {
 
 export type AdvanceControllerActivateOnlinePaymentV2Response = AdvanceControllerActivateOnlinePaymentV2Responses[keyof AdvanceControllerActivateOnlinePaymentV2Responses];
 
+export type AdvanceControllerUpdateTimelineV2Data = {
+    body: UpdateAdvanceTimelineDto;
+    path: {
+        /**
+         * ID of the advance to update
+         */
+        advanceId: string;
+    };
+    query?: never;
+    url: '/v2/billing/advance/{advanceId}/timeline';
+};
+
+export type AdvanceControllerUpdateTimelineV2Errors = {
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+    /**
+     * Advance not found
+     */
+    404: unknown;
+};
+
+export type AdvanceControllerUpdateTimelineV2Responses = {
+    /**
+     * Advance timeline updated successfully
+     */
+    200: ReadAdvanceDto;
+};
+
+export type AdvanceControllerUpdateTimelineV2Response = AdvanceControllerUpdateTimelineV2Responses[keyof AdvanceControllerUpdateTimelineV2Responses];
+
 export type AdvanceControllerUpdateAmountV2Data = {
     body: UpdateAdvanceAmountDto;
     path: {
@@ -6595,6 +7343,55 @@ export type AdvanceControllerCancelAdvanceV2Responses = {
 };
 
 export type AdvanceControllerCancelAdvanceV2Response = AdvanceControllerCancelAdvanceV2Responses[keyof AdvanceControllerCancelAdvanceV2Responses];
+
+export type CustomersControllerPaginateV2Data = {
+    body?: never;
+    path?: never;
+    query: {
+        page: number;
+        limit: number;
+        search?: string;
+        organizationId?: string;
+        excludeContactOrganization?: boolean;
+    };
+    url: '/v2/billing/customers';
+};
+
+export type CustomersControllerPaginateV2Responses = {
+    200: ReadCustomerCollectionDto;
+};
+
+export type CustomersControllerPaginateV2Response = CustomersControllerPaginateV2Responses[keyof CustomersControllerPaginateV2Responses];
+
+export type CustomerControllerRetrieveCustomerByContactV2Data = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/v2/customer/contact/{id}';
+};
+
+export type CustomerControllerRetrieveCustomerByContactV2Responses = {
+    200: ReadCustomerDto;
+};
+
+export type CustomerControllerRetrieveCustomerByContactV2Response = CustomerControllerRetrieveCustomerByContactV2Responses[keyof CustomerControllerRetrieveCustomerByContactV2Responses];
+
+export type CustomerControllerRetrieveCustomerByOrganizationV2Data = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/v2/customer/organization/{id}';
+};
+
+export type CustomerControllerRetrieveCustomerByOrganizationV2Responses = {
+    200: ReadCustomerDto;
+};
+
+export type CustomerControllerRetrieveCustomerByOrganizationV2Response = CustomerControllerRetrieveCustomerByOrganizationV2Responses[keyof CustomerControllerRetrieveCustomerByOrganizationV2Responses];
 
 export type AssetControllerGetAssetV2Data = {
     body?: never;
@@ -6783,22 +7580,6 @@ export type AssetControllerUpdateCurrencyV2Responses = {
 };
 
 export type AssetControllerUpdateCurrencyV2Response = AssetControllerUpdateCurrencyV2Responses[keyof AssetControllerUpdateCurrencyV2Responses];
-
-export type CustomerPortalControllerGetPaymentsV2Data = {
-    body?: never;
-    path?: never;
-    query: {
-        id: string;
-        token: string;
-    };
-    url: '/v2/customer-portal/payments';
-};
-
-export type CustomerPortalControllerGetPaymentsV2Responses = {
-    200: RetrieveCustomerPortalPaymentsDto;
-};
-
-export type CustomerPortalControllerGetPaymentsV2Response = CustomerPortalControllerGetPaymentsV2Responses[keyof CustomerPortalControllerGetPaymentsV2Responses];
 
 export type BillingThemeControllerListThemesV2Data = {
     body?: never;
@@ -7600,6 +8381,22 @@ export type CatalogControllerPaginateV2Responses = {
 
 export type CatalogControllerPaginateV2Response = CatalogControllerPaginateV2Responses[keyof CatalogControllerPaginateV2Responses];
 
+export type CatalogControllerRemoveV2Data = {
+    body?: never;
+    path: {
+        productId: string;
+    };
+    query?: never;
+    url: '/v2/catalog/product/{productId}';
+};
+
+export type CatalogControllerRemoveV2Responses = {
+    /**
+     * Product deleted, empty body
+     */
+    200: unknown;
+};
+
 export type CatalogControllerRetrieveV2Data = {
     body?: never;
     path: {
@@ -7951,19 +8748,95 @@ export type OrganizationsControllerRetrieveOrganizationsResponses = {
 
 export type OrganizationsControllerRetrieveOrganizationsResponse = OrganizationsControllerRetrieveOrganizationsResponses[keyof OrganizationsControllerRetrieveOrganizationsResponses];
 
-export type EInvoicingControllerRecordPlatformChoiceFromEmailLinkV2Data = {
+export type EInvoicingControllerGetIncomeFLowsV2Data = {
     body?: never;
     path?: never;
-    query: {
-        choice: string;
-        token: string;
+    query?: {
+        /**
+         * Page (1-indexée, défaut 1).
+         */
+        page?: number;
+        /**
+         * Nombre de factures par page (défaut 25, plafond 100).
+         */
+        limit?: number;
+        /**
+         * Filtre sur la nature du document (BT-3), un ou plusieurs types séparés par des virgules (ex. `?documentType=INVOICE,ASSET`). Absent = tous les types.
+         */
+        documentType?: Array<DocumentType>;
+        /**
+         * Filtre sur la date de facture (`invoiceDate`), borne inclusive (YYYY-MM-DD). Indépendant de `dateTo`.
+         */
+        dateFrom?: string;
+        /**
+         * Filtre sur la date de facture (`invoiceDate`), borne inclusive (YYYY-MM-DD). Indépendant de `dateFrom`.
+         */
+        dateTo?: string;
+        /**
+         * Recherche textuelle : correspondance partielle insensible à la casse sur le nom du fournisseur ou le numéro de facture. Ne porte jamais sur les montants.
+         */
+        search?: string;
+        /**
+         * Filtre par famille de statut d'affichage (`TO_PAY`, `LATE`, `PAID`, `REFUSED`, `DISPUTED`), cumulé en ET logique avec les autres filtres. Absent = tous statuts.
+         */
+        status?: ReceivedFlowStatusFilter;
     };
-    url: '/v2/e-invoicing/platform-choice';
+    url: '/v2/e-invoicing/income-flow';
 };
 
-export type EInvoicingControllerRecordPlatformChoiceFromEmailLinkV2Responses = {
-    200: unknown;
+export type EInvoicingControllerGetIncomeFLowsV2Responses = {
+    200: ListFlowsResponseDto;
 };
+
+export type EInvoicingControllerGetIncomeFLowsV2Response = EInvoicingControllerGetIncomeFLowsV2Responses[keyof EInvoicingControllerGetIncomeFLowsV2Responses];
+
+export type EInvoicingControllerGetFlowPfFileV2Data = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/v2/e-invoicing/income-flow/{id}/pdf';
+};
+
+export type EInvoicingControllerGetFlowPfFileV2Errors = {
+    /**
+     * Facture ou fichier introuvable
+     */
+    404: unknown;
+};
+
+export type EInvoicingControllerGetFlowPfFileV2Responses = {
+    200: Blob | File;
+};
+
+export type EInvoicingControllerGetFlowPfFileV2Response = EInvoicingControllerGetFlowPfFileV2Responses[keyof EInvoicingControllerGetFlowPfFileV2Responses];
+
+export type EInvoicingControllerGetFlowXmlFileV2Data = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/v2/e-invoicing/income-flow/{id}/xml';
+};
+
+export type EInvoicingControllerGetFlowXmlFileV2Errors = {
+    /**
+     * Facture Factur-X : pas de XML séparé, télécharger le PDF
+     */
+    400: unknown;
+    /**
+     * Facture ou fichier introuvable
+     */
+    404: unknown;
+};
+
+export type EInvoicingControllerGetFlowXmlFileV2Responses = {
+    200: Blob | File;
+};
+
+export type EInvoicingControllerGetFlowXmlFileV2Response = EInvoicingControllerGetFlowXmlFileV2Responses[keyof EInvoicingControllerGetFlowXmlFileV2Responses];
 
 export type TransactionsControllerRetrieveTransactionByIdV2Data = {
     body?: never;
@@ -8061,6 +8934,34 @@ export type AccountingBillingControllerReconciliateAdvanceV2Responses = {
      */
     200: unknown;
 };
+
+export type AccountingBillingControllerGetInvoicePaymentsV2Data = {
+    body?: never;
+    path: {
+        /**
+         * ID of the invoice to retrieve associated payments
+         */
+        invoiceId: string;
+    };
+    query?: never;
+    url: '/v2/accounting-billing/{invoiceId}/payments';
+};
+
+export type AccountingBillingControllerGetInvoicePaymentsV2Errors = {
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+};
+
+export type AccountingBillingControllerGetInvoicePaymentsV2Responses = {
+    /**
+     * Invoice payments retrieved successfully
+     */
+    200: Array<ReadBillingPaymentDto>;
+};
+
+export type AccountingBillingControllerGetInvoicePaymentsV2Response = AccountingBillingControllerGetInvoicePaymentsV2Responses[keyof AccountingBillingControllerGetInvoicePaymentsV2Responses];
 
 export type AccountingBillingControllerMarkInvoiceAsUnpaidV2Data = {
     body?: never;
@@ -8299,6 +9200,44 @@ export type PurchaseRegisterControllerCreateV3Responses = {
 
 export type PurchaseRegisterControllerCreateV3Response = PurchaseRegisterControllerCreateV3Responses[keyof PurchaseRegisterControllerCreateV3Responses];
 
+export type OpportunitiesControllerRetrieveOpportunitiesV2Data = {
+    body?: never;
+    path?: never;
+    query: {
+        page: number;
+        limit: number;
+        search?: string;
+        /**
+         * The field to order by
+         */
+        orderBy?: OpportunityOrderBy;
+        /**
+         * The direction to order by
+         */
+        orderDirection?: OrderDirection;
+        customerId?: string;
+        /**
+         * Filter by category ID
+         */
+        categoryId?: string;
+        /**
+         * Filter by creation date from (inclusive)
+         */
+        dateFrom?: string;
+        /**
+         * Filter by creation date to (inclusive)
+         */
+        dateTo?: string;
+    };
+    url: '/v2/opportunities';
+};
+
+export type OpportunitiesControllerRetrieveOpportunitiesV2Responses = {
+    200: ReadOpportunityListDto;
+};
+
+export type OpportunitiesControllerRetrieveOpportunitiesV2Response = OpportunitiesControllerRetrieveOpportunitiesV2Responses[keyof OpportunitiesControllerRetrieveOpportunitiesV2Responses];
+
 export type OpportunityControllerRetrieveCategoriesV2Data = {
     body?: never;
     path?: never;
@@ -8368,87 +9307,80 @@ export type OpportunityControllerCreateOpportunityV2Responses = {
 
 export type OpportunityControllerCreateOpportunityV2Response = OpportunityControllerCreateOpportunityV2Responses[keyof OpportunityControllerCreateOpportunityV2Responses];
 
-export type LogsControllerRetrieveLogsByCompanyData = {
+export type WebhookV2ControllerListV2Data = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v2/webhooks';
+};
+
+export type WebhookV2ControllerListV2Responses = {
+    200: Array<WebhookV2Dto>;
+};
+
+export type WebhookV2ControllerListV2Response = WebhookV2ControllerListV2Responses[keyof WebhookV2ControllerListV2Responses];
+
+export type WebhookV2ControllerCreateV2Data = {
+    body: CreateWebhookV2Dto;
+    path?: never;
+    query?: never;
+    url: '/v2/webhooks';
+};
+
+export type WebhookV2ControllerCreateV2Responses = {
+    201: CreatedWebhookV2Dto;
+};
+
+export type WebhookV2ControllerCreateV2Response = WebhookV2ControllerCreateV2Responses[keyof WebhookV2ControllerCreateV2Responses];
+
+export type WebhookV2ControllerRemoveV2Data = {
     body?: never;
     path: {
-        /**
-         * ID of the company
-         */
-        companyId: string;
-    };
-    query: {
-        /**
-         * Number of logs to retrieve
-         */
-        limit: number;
-        /**
-         * Offset for pagination
-         */
-        offset: number;
-        /**
-         * Filter by status. Defaults to ERROR when omitted.
-         */
-        status?: LogStatusFilter;
-        /**
-         * Filter by context. Exact match, or a wildcard "prefix.*" matched as a prefix.
-         */
-        context?: string;
-    };
-    url: '/logs/company/{companyId}';
-};
-
-export type LogsControllerRetrieveLogsByCompanyErrors = {
-    /**
-     * Unauthorized
-     */
-    401: unknown;
-    /**
-     * Company not found
-     */
-    404: unknown;
-};
-
-export type LogsControllerRetrieveLogsByCompanyResponses = {
-    /**
-     * Logs retrieved successfully
-     */
-    200: ReadLogsDto;
-};
-
-export type LogsControllerRetrieveLogsByCompanyResponse = LogsControllerRetrieveLogsByCompanyResponses[keyof LogsControllerRetrieveLogsByCompanyResponses];
-
-export type LogsControllerRetrieveLastLogOfAResourceData = {
-    body?: never;
-    path: {
-        /**
-         * ID of the resource
-         */
-        resourceId: string;
+        id: string;
     };
     query?: never;
-    url: '/logs/{resourceId}';
+    url: '/v2/webhooks/{id}';
 };
 
-export type LogsControllerRetrieveLastLogOfAResourceErrors = {
-    /**
-     * Unauthorized
-     */
-    401: unknown;
-    /**
-     * Forbidden — staff role required
-     */
-    403: unknown;
-    /**
-     * Log not found
-     */
-    404: unknown;
+export type WebhookV2ControllerRemoveV2Responses = {
+    204: void;
 };
 
-export type LogsControllerRetrieveLastLogOfAResourceResponses = {
-    /**
-     * Log retrieved successfully
-     */
-    200: ReadLogDto;
+export type WebhookV2ControllerRemoveV2Response = WebhookV2ControllerRemoveV2Responses[keyof WebhookV2ControllerRemoveV2Responses];
+
+export type WebhookV2ControllerUpdateV2Data = {
+    body: UpdateWebhookV2Dto;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/v2/webhooks/{id}';
 };
 
-export type LogsControllerRetrieveLastLogOfAResourceResponse = LogsControllerRetrieveLastLogOfAResourceResponses[keyof LogsControllerRetrieveLastLogOfAResourceResponses];
+export type WebhookV2ControllerUpdateV2Responses = {
+    200: WebhookV2Dto;
+};
+
+export type WebhookV2ControllerUpdateV2Response = WebhookV2ControllerUpdateV2Responses[keyof WebhookV2ControllerUpdateV2Responses];
+
+export type WebhookV2ControllerTestV2Data = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/v2/webhooks/{id}/test';
+};
+
+export type WebhookV2ControllerTestV2Errors = {
+    /**
+     * More than 10 test sends in 60 seconds for the company; see `Retry-After`.
+     */
+    429: unknown;
+};
+
+export type WebhookV2ControllerTestV2Responses = {
+    200: WebhookTestSendV2Dto;
+};
+
+export type WebhookV2ControllerTestV2Response = WebhookV2ControllerTestV2Responses[keyof WebhookV2ControllerTestV2Responses];
