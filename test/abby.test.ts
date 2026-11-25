@@ -81,10 +81,6 @@ describe('Abby SDK', () => {
     it('should expose asset service', () => {
       expect(abby.asset).toBeDefined();
     });
-
-    it('should expose customerPortal service', () => {
-      expect(abby.customerPortal).toBeDefined();
-    });
   });
 
   describe('getClient', () => {

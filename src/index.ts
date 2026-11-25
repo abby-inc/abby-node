@@ -31,7 +31,6 @@ import {
   Billing,
   Advance,
   Asset,
-  CustomerPortal,
   Contact,
   Organization,
   Opportunity,
@@ -50,7 +49,6 @@ export {
   Billing,
   Advance,
   Asset,
-  CustomerPortal,
   Contact,
   Organization,
   Opportunity,
@@ -232,7 +230,6 @@ export class Abby {
   private _billing?: ServiceProxy<typeof Billing>;
   private _advance?: ServiceProxy<typeof Advance>;
   private _asset?: ServiceProxy<typeof Asset>;
-  private _customerPortal?: ServiceProxy<typeof CustomerPortal>;
   private _contact?: ServiceProxy<typeof Contact>;
   private _organization?: ServiceProxy<typeof Organization>;
   private _opportunity?: ServiceProxy<typeof Opportunity>;
@@ -545,16 +542,6 @@ export class Abby {
       this._asset = createServiceProxy(Asset, this.instanceClient);
     }
     return this._asset;
-  }
-
-  /**
-   * Customer Portal service - Customer-facing operations
-   */
-  get customerPortal(): ServiceProxy<typeof CustomerPortal> {
-    if (!this._customerPortal) {
-      this._customerPortal = createServiceProxy(CustomerPortal, this.instanceClient);
-    }
-    return this._customerPortal;
   }
 
   /**
