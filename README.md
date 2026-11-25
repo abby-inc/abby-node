@@ -81,7 +81,6 @@ The SDK provides several services to interact with different parts of the Abby A
 - `abby.opportunity`: CRM and opportunities management.
 - `abby.asset`: Manage business assets.
 - `abby.advance`: Manage advance payments.
-- `abby.customerPortal`: Customer portal payments and billing themes.
 
 ### Basic Example
 
