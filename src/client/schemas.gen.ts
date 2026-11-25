@@ -81,6 +81,19 @@ export const AccountingBookTypeSchema = {
     ]
 } as const;
 
+export const AddBillingAttachmentDtoSchema = {
+    type: 'object',
+    properties: {
+        fileId: {
+            type: 'string',
+            description: 'The id of the attachment'
+        }
+    },
+    required: [
+        'fileId'
+    ]
+} as const;
+
 export const AddressDtoSchema = {
     type: 'object',
     properties: {
@@ -1909,6 +1922,76 @@ export const CreateWebhookDtoSchema = {
     ]
 } as const;
 
+export const CreateWebhookV2DtoSchema = {
+    type: 'object',
+    properties: {
+        url: {
+            type: 'string',
+            example: 'https://example.com/hooks/abby',
+            description: 'Must use https://'
+        },
+        description: {
+            type: 'string'
+        },
+        events: {
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/PublicWebhookEvent'
+            }
+        },
+        isActivated: {
+            type: 'boolean',
+            default: true
+        }
+    },
+    required: [
+        'url',
+        'events'
+    ]
+} as const;
+
+export const CreatedWebhookV2DtoSchema = {
+    type: 'object',
+    properties: {
+        id: {
+            type: 'string'
+        },
+        url: {
+            type: 'string'
+        },
+        description: {
+            type: 'string',
+            nullable: true
+        },
+        events: {
+            description: 'Stored names; a webhook created outside /v2 may hold names outside the public list',
+            type: 'array',
+            items: {
+                type: 'string'
+            }
+        },
+        isActivated: {
+            type: 'boolean'
+        },
+        isSigned: {
+            type: 'boolean',
+            description: 'Whether the webhook has a signing secret (false for webhooks created outside /v2)'
+        },
+        secret: {
+            type: 'string',
+            description: '`whsec_` followed by 32 random bytes, base64url-encoded. Returned only by this response.'
+        }
+    },
+    required: [
+        'id',
+        'url',
+        'events',
+        'isActivated',
+        'isSigned',
+        'secret'
+    ]
+} as const;
+
 export const CreationCompanyStepSchema = {
     type: 'string',
     enum: [
@@ -2022,127 +2105,6 @@ export const CurrencyOriginSchema = {
         'ECB',
         'USER',
         'FIXED'
-    ]
-} as const;
-
-export const CustomerPortalBillingDtoSchema = {
-    type: 'object',
-    properties: {
-        id: {
-            type: 'string'
-        },
-        number: {
-            type: 'string'
-        },
-        date: {
-            type: 'number'
-        },
-        billingState: {
-            allOf: [
-                {
-                    $ref: '#/components/schemas/BillingState'
-                }
-            ]
-        },
-        billingType: {
-            allOf: [
-                {
-                    $ref: '#/components/schemas/BillingType'
-                }
-            ]
-        },
-        amount: {
-            type: 'number'
-        },
-        signatureId: {
-            type: 'string'
-        },
-        signature: {
-            $ref: '#/components/schemas/CustomerPortalSignatureDto'
-        },
-        dueDate: {
-            type: 'number'
-        },
-        validityDate: {
-            type: 'number'
-        }
-    },
-    required: [
-        'id',
-        'number',
-        'date',
-        'billingState',
-        'billingType',
-        'amount'
-    ]
-} as const;
-
-export const CustomerPortalCompanyDtoSchema = {
-    type: 'object',
-    properties: {
-        commercialName: {
-            type: 'string'
-        },
-        name: {
-            type: 'string'
-        }
-    },
-    required: [
-        'commercialName',
-        'name'
-    ]
-} as const;
-
-export const CustomerPortalCustomerDtoSchema = {
-    type: 'object',
-    properties: {
-        name: {
-            type: 'string'
-        },
-        firstname: {
-            type: 'string'
-        },
-        lastname: {
-            type: 'string'
-        }
-    },
-    required: [
-        'name'
-    ]
-} as const;
-
-export const CustomerPortalSignatureDtoSchema = {
-    type: 'object',
-    properties: {
-        id: {
-            type: 'string'
-        },
-        canceledAt: {
-            type: 'number',
-            nullable: true
-        },
-        signedAt: {
-            type: 'number',
-            nullable: true
-        },
-        refusedAt: {
-            type: 'number',
-            nullable: true
-        },
-        status: {
-            allOf: [
-                {
-                    $ref: '#/components/schemas/ElectronicSignatureStatus'
-                }
-            ]
-        }
-    },
-    required: [
-        'id',
-        'canceledAt',
-        'signedAt',
-        'refusedAt',
-        'status'
     ]
 } as const;
 
@@ -2288,6 +2250,9 @@ export const DismissPreferencesDtoSchema = {
         },
         PRO_ACCOUNT_GROUPED_WIRES: {
             $ref: '#/components/schemas/DismissStateDto'
+        },
+        TRIAL_RETRY_INVITATION: {
+            $ref: '#/components/schemas/DismissStateDto'
         }
     }
 } as const;
@@ -2428,6 +2393,15 @@ export const DisplaySettingsDtoSchema = {
         'displayMemberOfAnApprovedAssociation',
         'displayAbbyLogo',
         'displayTitle'
+    ]
+} as const;
+
+export const DocumentTypeSchema = {
+    type: 'string',
+    enum: [
+        'INVOICE',
+        'CORRECTED_INVOICE',
+        'ASSET'
     ]
 } as const;
 
@@ -2817,6 +2791,170 @@ export const FinalizeRequirementNameSchema = {
     ]
 } as const;
 
+export const FlowItemDtoSchema = {
+    type: 'object',
+    properties: {
+        id: {
+            type: 'string',
+            description: 'Identifiant interne de la facture reçue'
+        },
+        flowId: {
+            type: 'string',
+            description: 'Identifiant du flux Docoon'
+        },
+        flowType: {
+            description: 'Nature commerciale du flux (vente/achat)',
+            allOf: [
+                {
+                    $ref: '#/components/schemas/FlowType'
+                }
+            ]
+        },
+        flowSyntax: {
+            description: 'Syntaxe du flux facture (CII/UBL/Factur-X)',
+            allOf: [
+                {
+                    $ref: '#/components/schemas/FlowSyntax'
+                }
+            ]
+        },
+        documentType: {
+            description: 'Nature du document (BT-3) : `INVOICE` (facture), `CORRECTED_INVOICE` (facture rectificative) ou `ASSET` (avoir).',
+            allOf: [
+                {
+                    $ref: '#/components/schemas/DocumentType'
+                }
+            ]
+        },
+        referencedInvoiceNumber: {
+            type: 'string',
+            description: 'N° de la facture référente (BT-25), renseigné pour une facture rectificative ou un avoir'
+        },
+        supplierName: {
+            type: 'string',
+            description: 'Raison sociale du fournisseur (émetteur)'
+        },
+        invoiceNumber: {
+            type: 'string',
+            description: 'Numéro de facture'
+        },
+        invoiceDate: {
+            type: 'string',
+            description: 'Date de facture (format DATEONLY `YYYY-MM-DD`)'
+        },
+        dueDate: {
+            type: 'string',
+            description: 'Date d\'échéance (format DATEONLY `YYYY-MM-DD`)'
+        },
+        paymentDate: {
+            type: 'string',
+            description: 'Date de paiement (format DATEONLY `YYYY-MM-DD`), si la facture est payée'
+        },
+        currency: {
+            type: 'string',
+            description: 'Devise ISO 4217'
+        },
+        totalExcludingTax: {
+            type: 'number',
+            description: 'Montant HT en centimes (entier)'
+        },
+        vatAmount: {
+            type: 'number',
+            description: 'Montant TVA en centimes (entier)'
+        },
+        totalIncludingTax: {
+            type: 'number',
+            description: 'Montant TTC en centimes (entier)'
+        },
+        flowStatus: {
+            type: 'number',
+            description: 'Code AFNOR de cycle de vie (ex. 204), si Docoon l\'a transmis'
+        },
+        flowStatusLabel: {
+            type: 'string',
+            description: 'Libellé AFNOR du cycle de vie (ex. "IN_HAND"), "UNKNOWN" si code hors référentiel'
+        },
+        submittedAt: {
+            type: 'number',
+            description: 'Date de réception (soumission Docoon, timestamp Unix en secondes)'
+        },
+        isCancelled: {
+            type: 'boolean',
+            description: 'Facture annulée par une facture rectificative vivante (statut ≠ 210/213) du même fournisseur la référençant via son BT-25. Dérivé à la lecture — jamais vrai pour un avoir ou une rectificative.'
+        },
+        remainingAmount: {
+            type: 'number',
+            description: 'Reste à payer TTC en centimes (entier) : TTC de la facture − somme des TTC des avoirs liés (même fournisseur, BT-25 = n° de la facture), plancher 0. Pour un avoir : son propre TTC.'
+        },
+        lastEvent: {
+            description: 'Dernier événement de cycle de vie du flux (tri submittedAt puis id), avec motif de rejet/refus et commentaire éventuels. Absent tant qu\'aucun événement n\'a été reçu.',
+            allOf: [
+                {
+                    $ref: '#/components/schemas/FlowLastEventDto'
+                }
+            ]
+        }
+    },
+    required: [
+        'id',
+        'flowId',
+        'flowType',
+        'flowSyntax',
+        'documentType',
+        'supplierName',
+        'invoiceNumber',
+        'invoiceDate',
+        'totalExcludingTax',
+        'vatAmount',
+        'totalIncludingTax',
+        'submittedAt'
+    ]
+} as const;
+
+export const FlowLastEventDtoSchema = {
+    type: 'object',
+    properties: {
+        code: {
+            type: 'number',
+            description: 'Code AFNOR de cycle de vie (200–501) du dernier événement du flux (tri submittedAt puis id)'
+        },
+        rejectCode: {
+            type: 'string',
+            description: 'Code du motif de rejet/refus, le cas échéant'
+        },
+        rejectLabel: {
+            type: 'string',
+            description: 'Libellé du motif de rejet/refus, le cas échéant'
+        },
+        comment: {
+            type: 'string',
+            description: 'Commentaire libre saisi par l\'utilisateur (ex. accompagnant un refus), le cas échéant'
+        }
+    },
+    required: [
+        'code'
+    ]
+} as const;
+
+export const FlowSyntaxSchema = {
+    type: 'string',
+    enum: [
+        'CII',
+        'UBL',
+        'Factur-X'
+    ],
+    description: 'Syntaxe du flux facture (CII/UBL/Factur-X)'
+} as const;
+
+export const FlowTypeSchema = {
+    type: 'string',
+    enum: [
+        'CustomerInvoice',
+        'SupplierInvoice'
+    ],
+    description: 'Nature commerciale du flux (vente/achat)'
+} as const;
+
 export const FontDtoSchema = {
     type: 'object',
     properties: {
@@ -2940,6 +3078,111 @@ export const ImpositionTypeSchema = {
     enum: [
         1,
         2
+    ]
+} as const;
+
+export const IncomeBookGroupedPersonalServiceSchema = {
+    type: 'string',
+    enum: [
+        'GROUPED_PERSONAL_SERVICE'
+    ]
+} as const;
+
+export const IncomeBookPersonalServiceActivitySchema = {
+    type: 'string',
+    enum: [
+        'GARDE_ENFANT_HANDICAPE',
+        'ACCOMPAGNEMENT_ENFANT_HANDICAPE',
+        'AIDE_HUMAINE',
+        'CONDUITE_VEHICULE_PERSONNEL',
+        'AIDE_AU_DEPLACEMENT',
+        'ENTRETIEN_DE_LA_MAISON',
+        'JARDINAGE',
+        'BRICOLAGE',
+        'GARDE_ENFANT_PLUS_DE_6_ANS',
+        'SOUTIEN_SCOLAIRE_COURS_A_DOMICILE',
+        'SOIN_ESTHETIQUE_A_DOMICILE',
+        'PREPARATION_REPAS_A_DOMICILE',
+        'LIVRAISON_REPAS_A_DOMICILE',
+        'COLLECTE_ET_LIVRAISON_DE_LINGE_REPASSE',
+        'LIVRAISON_COURSES_A_DOMICILE',
+        'ASSISTANCE_INFORMATIQUE',
+        'SOINS_ET_PROMENADES_ANIMAUX_DE_COMPAGNIE_POUR_PERSONNES_DEPENDANTES',
+        'MAINTENANCE_ENTRETIEN_ET_VIGILANCE_DE_LA_RESIDENCE_PRINCIPALE',
+        'ASSISTANCE_ADMINISTRATIVE',
+        'ACCOMPAGNEMENT_ENFANT_PLUS_DE_6_ANS',
+        'TELEASSISTANCE',
+        'INTERPRETE_LANGUE_DES_SIGNES',
+        'CONDUITE_VEHICULE_PERSONNEL_EN_CAS_INVALIDITE_TEMPORAIRE',
+        'ACCOMPAGNEMENT_DEPLACEMENTS_EN_DEHORS_DU_DOMICILE',
+        'ASSISTANCE_PERSONNES_TEMPORAIREMENT_DEPENDANTES_A_DOMICILE',
+        'COORDINATION_ET_GESTION',
+        'DIVERS_NON_ELIGIBLE',
+        'MANUALLY_ADDED'
+    ]
+} as const;
+
+export const IncomeBookVatMentionSchema = {
+    type: 'string',
+    enum: [
+        'not_subject',
+        'second_hand_good',
+        'art_object',
+        'collection_antique',
+        'travel_agency',
+        'vat_not_applicable',
+        'vat_not_applicable_2',
+        'vat_exemption',
+        'vat_exemption_eu_sale',
+        'vat_exemption_eu_service',
+        'vat_construction',
+        'vat_psychologist',
+        'vat_psychologist_2',
+        'vat_reverse_charge',
+        'vat_reverse_charge_2',
+        'vat_reverse_charge_3',
+        'vat_reverse_charge_4',
+        'vat_reduced_rate',
+        'vat_reduced_rate_2',
+        'vat_article_261c_cgi',
+        'vat_exemption_294_cgi',
+        'cibs_franchise_in_base',
+        'cibs_health_regulated_professions',
+        'cibs_health_therapists',
+        'cibs_health_medical_biology',
+        'cibs_health_dental_prostheses',
+        'cibs_education_private_lessons',
+        'cibs_education_continuing_training',
+        'cibs_education_training_related',
+        'cibs_education_apprenticeship',
+        'cibs_education_school',
+        'cibs_education_university',
+        'cibs_education_agricultural',
+        'cibs_education_related_services',
+        'cibs_finance_insurance',
+        'cibs_finance_credit',
+        'cibs_finance_credit_brokerage',
+        'cibs_finance_guarantees',
+        'cibs_finance_payments',
+        'cibs_finance_currencies',
+        'cibs_finance_securities',
+        'cibs_finance_fund_management',
+        'cibs_finance_gold',
+        'cibs_finance_stamps',
+        'cibs_international_service_outside_france',
+        'cibs_international_intangible_service_outside_eu',
+        'cibs_international_eu_goods_delivery',
+        'cibs_international_export',
+        'cibs_international_drom_delivery',
+        'cibs_margin_second_hand_good',
+        'cibs_margin_art_object',
+        'cibs_margin_collection_antique',
+        'cibs_margin_travel_agency',
+        'cibs_reverse_charge_eu_service',
+        'cibs_reverse_charge_eu_service_directive',
+        'cibs_reverse_charge_construction',
+        'cibs_reduced_rate_housing_works',
+        'cibs_reduced_rate_home_help'
     ]
 } as const;
 
@@ -3342,22 +3585,64 @@ export const LinksDtoSchema = {
     ]
 } as const;
 
-export const LogStatusSchema = {
-    type: 'string',
-    enum: [
-        'SUCCESS',
-        'ERROR',
-        'INFO'
-    ]
-} as const;
-
-export const LogStatusFilterSchema = {
-    type: 'string',
-    enum: [
-        'ERROR',
-        'SUCCESS',
-        'INFO',
-        'ALL'
+export const ListFlowsResponseDtoSchema = {
+    type: 'object',
+    properties: {
+        countWithoutFilters: {
+            type: 'number'
+        },
+        totalDocs: {
+            type: 'number'
+        },
+        limit: {
+            type: 'number'
+        },
+        totalPages: {
+            type: 'number'
+        },
+        hasNextPage: {
+            type: 'boolean'
+        },
+        hasPrevPage: {
+            type: 'boolean'
+        },
+        nextPage: {
+            type: 'number'
+        },
+        page: {
+            type: 'number'
+        },
+        prevPage: {
+            type: 'number'
+        },
+        docs: {
+            description: 'Factures reçues de la page courante',
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/FlowItemDto'
+            }
+        },
+        counters: {
+            description: 'Compteurs globaux par famille de statut d\'affichage (D-10589), indépendants des filtres actifs',
+            allOf: [
+                {
+                    $ref: '#/components/schemas/ReceivedFlowStatusCountersDto'
+                }
+            ]
+        }
+    },
+    required: [
+        'countWithoutFilters',
+        'totalDocs',
+        'limit',
+        'totalPages',
+        'hasNextPage',
+        'hasPrevPage',
+        'nextPage',
+        'page',
+        'prevPage',
+        'docs',
+        'counters'
     ]
 } as const;
 
@@ -3527,6 +3812,46 @@ export const OperationTypeSchema = {
     ]
 } as const;
 
+export const OpportunityCategoryDtoSchema = {
+    type: 'object',
+    properties: {
+        id: {
+            type: 'string'
+        },
+        name: {
+            type: 'string'
+        },
+        rank: {
+            type: 'string'
+        },
+        showDueDate: {
+            type: 'boolean'
+        },
+        showAmount: {
+            type: 'boolean'
+        },
+        showCustomer: {
+            type: 'boolean'
+        },
+        color: {
+            type: 'string'
+        },
+        count: {
+            type: 'number'
+        }
+    },
+    required: [
+        'id',
+        'name',
+        'rank',
+        'showDueDate',
+        'showAmount',
+        'showCustomer',
+        'color',
+        'count'
+    ]
+} as const;
+
 export const OpportunityDtoSchema = {
     type: 'object',
     properties: {
@@ -3542,6 +3867,13 @@ export const OpportunityDtoSchema = {
     required: [
         'id',
         'name'
+    ]
+} as const;
+
+export const OpportunityOrderBySchema = {
+    type: 'string',
+    enum: [
+        'createdAt'
     ]
 } as const;
 
@@ -4041,6 +4373,20 @@ export const ProviderSignUpSchema = {
         'apple.com',
         'password',
         'custom'
+    ]
+} as const;
+
+export const PublicWebhookEventSchema = {
+    type: 'string',
+    enum: [
+        'opportunity.created',
+        'opportunity.updated',
+        'opportunity.deleted',
+        'task.created',
+        'task.updated',
+        'task.deleted',
+        'invoice.paid',
+        'advance.paid'
     ]
 } as const;
 
@@ -5876,6 +6222,184 @@ export const ReadBillingEmitterDtoSchema = {
     }
 } as const;
 
+export const ReadBillingPaymentDtoSchema = {
+    type: 'object',
+    properties: {
+        id: {
+            type: 'string'
+        },
+        amount: {
+            type: 'number'
+        },
+        paymentMethod: {
+            allOf: [
+                {
+                    $ref: '#/components/schemas/PaymentMethod'
+                }
+            ]
+        },
+        otherMethod: {
+            type: 'string'
+        },
+        receivedAt: {
+            type: 'number'
+        },
+        transactionId: {
+            type: 'string'
+        },
+        regulations: {
+            $ref: '#/components/schemas/ReadRegulationsDto'
+        }
+    },
+    required: [
+        'id',
+        'amount',
+        'paymentMethod',
+        'receivedAt',
+        'regulations'
+    ]
+} as const;
+
+export const ReadBillingStatisticsDtoSchema = {
+    type: 'object',
+    properties: {
+        countWithoutFilter: {
+            type: 'number',
+            description: 'Total count of billings without filters',
+            example: 100
+        },
+        countDraft: {
+            type: 'number',
+            description: 'Count of draft billings',
+            example: 5
+        },
+        countOverdue: {
+            type: 'number',
+            description: 'Count of overdue billings',
+            example: 10
+        },
+        countWaiting: {
+            type: 'number',
+            description: 'Count of waiting billings',
+            example: 15
+        },
+        countPaid: {
+            type: 'number',
+            description: 'Count of paid billings',
+            example: 50
+        },
+        countSigned: {
+            type: 'number',
+            description: 'Count of signed billings',
+            example: 8
+        },
+        countRefused: {
+            type: 'number',
+            description: 'Count of refused billings',
+            example: 2
+        },
+        countFinalized: {
+            type: 'number',
+            description: 'Count of finalized billings',
+            example: 20
+        },
+        amountWithoutFilterWithoutTax: {
+            type: 'number',
+            description: 'Total amount without tax without filters (in cents)',
+            example: 1000000
+        },
+        amountWithoutFilterTotalTax: {
+            type: 'number',
+            description: 'Total tax amount without filters (in cents)',
+            example: 200000
+        },
+        amountDraftWithoutTax: {
+            type: 'number',
+            description: 'Total amount without tax for draft billings (in cents)',
+            example: 50000
+        },
+        amountDraftTotalTax: {
+            type: 'number',
+            description: 'Total tax amount for draft billings (in cents)',
+            example: 10000
+        },
+        amountPaidWithoutTax: {
+            type: 'number',
+            description: 'Total amount without tax for paid billings (in cents)',
+            example: 500000
+        },
+        amountPaidTotalTax: {
+            type: 'number',
+            description: 'Total tax amount for paid billings (in cents)',
+            example: 100000
+        },
+        amountOverdueWithoutTax: {
+            type: 'number',
+            description: 'Total amount without tax for overdue billings (in cents)',
+            example: 100000
+        },
+        amountOverdueTotalTax: {
+            type: 'number',
+            description: 'Total tax amount for overdue billings (in cents)',
+            example: 20000
+        },
+        amountWaitingWithoutTax: {
+            type: 'number',
+            description: 'Total amount without tax for waiting billings (in cents)',
+            example: 150000
+        },
+        amountWaitingTotalTax: {
+            type: 'number',
+            description: 'Total tax amount for waiting billings (in cents)',
+            example: 30000
+        },
+        amountSignedWithoutTax: {
+            type: 'number',
+            description: 'Total amount without tax for signed billings (in cents)',
+            example: 80000
+        },
+        amountSignedTotalTax: {
+            type: 'number',
+            description: 'Total tax amount for signed billings (in cents)',
+            example: 16000
+        },
+        amountRefusedWithoutTax: {
+            type: 'number',
+            description: 'Total amount without tax for refused billings (in cents)',
+            example: 20000
+        },
+        amountRefusedTotalTax: {
+            type: 'number',
+            description: 'Total tax amount for refused billings (in cents)',
+            example: 4000
+        }
+    },
+    required: [
+        'countWithoutFilter',
+        'countDraft',
+        'countOverdue',
+        'countWaiting',
+        'countPaid',
+        'countSigned',
+        'countRefused',
+        'countFinalized',
+        'amountWithoutFilterWithoutTax',
+        'amountWithoutFilterTotalTax',
+        'amountDraftWithoutTax',
+        'amountDraftTotalTax',
+        'amountPaidWithoutTax',
+        'amountPaidTotalTax',
+        'amountOverdueWithoutTax',
+        'amountOverdueTotalTax',
+        'amountWaitingWithoutTax',
+        'amountWaitingTotalTax',
+        'amountSignedWithoutTax',
+        'amountSignedTotalTax',
+        'amountRefusedWithoutTax',
+        'amountRefusedTotalTax'
+    ]
+} as const;
+
 export const ReadBillingThemeAssignmentsDtoSchema = {
     type: 'object',
     properties: {
@@ -7068,6 +7592,58 @@ export const ReadCustomerAddressDtoSchema = {
     ]
 } as const;
 
+export const ReadCustomerCollectionDtoSchema = {
+    type: 'object',
+    properties: {
+        countWithoutFilters: {
+            type: 'number'
+        },
+        totalDocs: {
+            type: 'number'
+        },
+        limit: {
+            type: 'number'
+        },
+        totalPages: {
+            type: 'number'
+        },
+        hasNextPage: {
+            type: 'boolean'
+        },
+        hasPrevPage: {
+            type: 'boolean'
+        },
+        nextPage: {
+            type: 'number'
+        },
+        page: {
+            type: 'number'
+        },
+        prevPage: {
+            type: 'number'
+        },
+        docs: {
+            description: 'List of customers',
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/ReadCustomerDto'
+            }
+        }
+    },
+    required: [
+        'countWithoutFilters',
+        'totalDocs',
+        'limit',
+        'totalPages',
+        'hasNextPage',
+        'hasPrevPage',
+        'nextPage',
+        'page',
+        'prevPage',
+        'docs'
+    ]
+} as const;
+
 export const ReadCustomerCompanyDtoSchema = {
     type: 'object',
     properties: {
@@ -7816,6 +8392,184 @@ export const ReadFooterLogoDtoSchema = {
     ]
 } as const;
 
+export const ReadIncomeBookCollectionDtoSchema = {
+    type: 'object',
+    properties: {
+        docs: {
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/ReadIncomeBookListEntryDto'
+            }
+        },
+        totalDocs: {
+            type: 'number'
+        },
+        limit: {
+            type: 'number'
+        },
+        totalPages: {
+            type: 'number'
+        },
+        page: {
+            type: 'number'
+        },
+        pagingCounter: {
+            type: 'number'
+        },
+        hasPrevPage: {
+            type: 'boolean'
+        },
+        hasNextPage: {
+            type: 'boolean'
+        },
+        prevPage: {
+            type: 'number'
+        },
+        nextPage: {
+            type: 'number'
+        },
+        countWithoutFilters: {
+            type: 'number'
+        }
+    },
+    required: [
+        'docs',
+        'totalDocs',
+        'limit',
+        'totalPages',
+        'page',
+        'pagingCounter',
+        'hasPrevPage',
+        'hasNextPage',
+        'prevPage',
+        'nextPage'
+    ]
+} as const;
+
+export const ReadIncomeBookEntryDtoSchema = {
+    type: 'object',
+    properties: {
+        _id: {
+            type: 'string'
+        },
+        billing: {
+            type: 'object'
+        },
+        transactionIds: {
+            type: 'array',
+            items: {
+                type: 'string'
+            }
+        },
+        paidAt: {
+            format: 'date-time',
+            type: 'string'
+        },
+        reference: {
+            type: 'string',
+            nullable: true
+        },
+        productType: {
+            nullable: true,
+            allOf: [
+                {
+                    $ref: '#/components/schemas/LegacyProductType'
+                }
+            ]
+        },
+        priceWithoutTax: {
+            type: 'number',
+            nullable: true
+        },
+        priceTotalTax: {
+            type: 'number',
+            nullable: true
+        },
+        vatId: {
+            type: 'number',
+            nullable: true
+        },
+        vatAmount: {
+            type: 'number',
+            nullable: true
+        },
+        vatMention: {
+            nullable: true,
+            allOf: [
+                {
+                    $ref: '#/components/schemas/IncomeBookVatMention'
+                }
+            ]
+        },
+        paymentMethodUsed: {
+            nullable: true,
+            allOf: [
+                {
+                    $ref: '#/components/schemas/ReadIncomeBookPaymentMethodDto'
+                }
+            ]
+        },
+        client: {
+            type: 'string',
+            nullable: true
+        },
+        file: {
+            nullable: true,
+            allOf: [
+                {
+                    $ref: '#/components/schemas/ReadIncomeBookFileDto'
+                }
+            ]
+        },
+        personalServiceActivity: {
+            nullable: true,
+            allOf: [
+                {
+                    $ref: '#/components/schemas/IncomeBookPersonalServiceActivity'
+                }
+            ]
+        },
+        isImported: {
+            type: 'boolean',
+            nullable: true
+        },
+        isTaxIncluded: {
+            type: 'boolean',
+            nullable: true
+        },
+        transactionId: {
+            type: 'string',
+            nullable: true
+        },
+        billingObject: {
+            type: 'object',
+            nullable: true
+        }
+    },
+    required: [
+        '_id',
+        'paidAt'
+    ]
+} as const;
+
+export const ReadIncomeBookFileDtoSchema = {
+    type: 'object',
+    properties: {
+        id: {
+            type: 'string'
+        },
+        url: {
+            type: 'string'
+        },
+        relativeUrl: {
+            type: 'string'
+        }
+    },
+    required: [
+        'id'
+    ]
+} as const;
+
 export const ReadIncomeBookItemDtoSchema = {
     type: 'object',
     properties: {
@@ -7882,6 +8636,152 @@ export const ReadIncomeBookItemDtoSchema = {
         'productType',
         'reference',
         'vatAmount'
+    ]
+} as const;
+
+export const ReadIncomeBookListEntryDtoSchema = {
+    type: 'object',
+    properties: {
+        _id: {
+            type: 'string'
+        },
+        billing: {
+            type: 'object'
+        },
+        transactionIds: {
+            type: 'array',
+            items: {
+                type: 'string'
+            }
+        },
+        priceTotalTax: {
+            type: 'number'
+        },
+        priceWithoutTax: {
+            type: 'number'
+        },
+        vatAmount: {
+            type: 'number'
+        },
+        paidAt: {
+            format: 'date-time',
+            type: 'string'
+        },
+        reference: {
+            type: 'string',
+            nullable: true
+        },
+        productType: {
+            nullable: true,
+            allOf: [
+                {
+                    $ref: '#/components/schemas/LegacyProductType'
+                }
+            ]
+        },
+        transactionId: {
+            type: 'string',
+            nullable: true
+        },
+        vatId: {
+            type: 'number',
+            nullable: true
+        },
+        paymentMethodUsed: {
+            nullable: true,
+            allOf: [
+                {
+                    $ref: '#/components/schemas/ReadIncomeBookPaymentMethodDto'
+                }
+            ]
+        },
+        client: {
+            type: 'string',
+            nullable: true
+        },
+        file: {
+            nullable: true,
+            allOf: [
+                {
+                    $ref: '#/components/schemas/ReadIncomeBookFileDto'
+                }
+            ]
+        },
+        personalServiceActivity: {
+            nullable: true,
+            allOf: [
+                {
+                    $ref: '#/components/schemas/IncomeBookGroupedPersonalService'
+                }
+            ]
+        }
+    },
+    required: [
+        '_id',
+        'priceTotalTax',
+        'priceWithoutTax',
+        'vatAmount',
+        'paidAt',
+        'reference',
+        'productType',
+        'paymentMethodUsed'
+    ]
+} as const;
+
+export const ReadIncomeBookPaymentMethodDtoSchema = {
+    type: 'object',
+    properties: {
+        value: {
+            nullable: true,
+            allOf: [
+                {
+                    $ref: '#/components/schemas/PaymentMethodLegacy'
+                }
+            ]
+        },
+        other: {
+            type: 'string',
+            nullable: true
+        }
+    },
+    required: [
+        'value'
+    ]
+} as const;
+
+export const ReadIncomeBookStatisticsDtoSchema = {
+    type: 'object',
+    properties: {
+        saleOfGoodsAndManufacturedGoodsWithoutTax: {
+            type: 'number'
+        },
+        serviceDeliveryWithoutTax: {
+            type: 'number'
+        },
+        commercialOrCraftServicesWithoutTax: {
+            type: 'number'
+        },
+        disbursementWithoutTax: {
+            type: 'number'
+        },
+        saleOfGoodsAndManufacturedGoodsTotalTax: {
+            type: 'number'
+        },
+        serviceDeliveryTotalTax: {
+            type: 'number'
+        },
+        commercialOrCraftServicesTotalTax: {
+            type: 'number'
+        }
+    },
+    required: [
+        'saleOfGoodsAndManufacturedGoodsWithoutTax',
+        'serviceDeliveryWithoutTax',
+        'commercialOrCraftServicesWithoutTax',
+        'disbursementWithoutTax',
+        'saleOfGoodsAndManufacturedGoodsTotalTax',
+        'serviceDeliveryTotalTax',
+        'commercialOrCraftServicesTotalTax'
     ]
 } as const;
 
@@ -8355,61 +9255,6 @@ export const ReadLocationDtoSchema = {
     ]
 } as const;
 
-export const ReadLogDtoSchema = {
-    type: 'object',
-    properties: {
-        id: {
-            type: 'string',
-            example: '123e4567-e89b-12d3-a456-426614174000'
-        },
-        status: {
-            example: 'ERROR',
-            allOf: [
-                {
-                    $ref: '#/components/schemas/LogStatus'
-                }
-            ]
-        },
-        context: {
-            type: 'string',
-            example: 'billing'
-        },
-        data: {
-            type: 'string',
-            example: '{"key": "value"}'
-        },
-        response: {
-            type: 'string',
-            example: 'Internal server error'
-        },
-        httpStatus: {
-            type: 'number',
-            example: 400
-        },
-        url: {
-            type: 'string',
-            nullable: true,
-            example: 'https://api.urssaf.fr/tiersdecl/v1/ae/sepa/mandats'
-        },
-        method: {
-            type: 'string',
-            nullable: true,
-            example: 'POST'
-        },
-        createdAt: {
-            format: 'date-time',
-            type: 'string',
-            example: '2024-01-09T10:00:00.000Z'
-        }
-    },
-    required: [
-        'id',
-        'status',
-        'context',
-        'createdAt'
-    ]
-} as const;
-
 export const ReadLogoDtoSchema = {
     type: 'object',
     properties: {
@@ -8429,26 +9274,6 @@ export const ReadLogoDtoSchema = {
     required: [
         'url',
         'size'
-    ]
-} as const;
-
-export const ReadLogsDtoSchema = {
-    type: 'object',
-    properties: {
-        logs: {
-            type: 'array',
-            items: {
-                $ref: '#/components/schemas/ReadLogDto'
-            }
-        },
-        total: {
-            type: 'number',
-            example: 42
-        }
-    },
-    required: [
-        'logs',
-        'total'
     ]
 } as const;
 
@@ -8751,6 +9576,96 @@ export const ReadOpportunityDtoSchema = {
         'categoryId',
         'category',
         'customer'
+    ]
+} as const;
+
+export const ReadOpportunityListDtoSchema = {
+    type: 'object',
+    properties: {
+        countWithoutFilters: {
+            type: 'number'
+        },
+        totalDocs: {
+            type: 'number'
+        },
+        limit: {
+            type: 'number'
+        },
+        totalPages: {
+            type: 'number'
+        },
+        hasNextPage: {
+            type: 'boolean'
+        },
+        hasPrevPage: {
+            type: 'boolean'
+        },
+        nextPage: {
+            type: 'number'
+        },
+        page: {
+            type: 'number'
+        },
+        prevPage: {
+            type: 'number'
+        },
+        docs: {
+            description: 'The list of opportunities',
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/ReadOpportunityListItemDto'
+            }
+        },
+        totalAmount: {
+            type: 'number',
+            description: 'Total amount of all opportunities matching the filter criteria (not just the current page)',
+            example: 15000
+        }
+    },
+    required: [
+        'countWithoutFilters',
+        'totalDocs',
+        'limit',
+        'totalPages',
+        'hasNextPage',
+        'hasPrevPage',
+        'nextPage',
+        'page',
+        'prevPage',
+        'docs',
+        'totalAmount'
+    ]
+} as const;
+
+export const ReadOpportunityListItemDtoSchema = {
+    type: 'object',
+    properties: {
+        id: {
+            type: 'string'
+        },
+        name: {
+            type: 'string'
+        },
+        amount: {
+            type: 'number'
+        },
+        dueDate: {
+            type: 'number'
+        },
+        customer: {
+            $ref: '#/components/schemas/ReadCustomerDto'
+        },
+        category: {
+            $ref: '#/components/schemas/OpportunityCategoryDto'
+        }
+    },
+    required: [
+        'id',
+        'name',
+        'amount',
+        'dueDate',
+        'customer',
+        'category'
     ]
 } as const;
 
@@ -9463,6 +10378,22 @@ export const ReadPurchaseRegisterLineDtoSchema = {
     ]
 } as const;
 
+export const ReadRegulationsDtoSchema = {
+    type: 'object',
+    properties: {
+        commission: {
+            type: 'number'
+        },
+        lossOfValueChangeRate: {
+            type: 'number'
+        }
+    },
+    required: [
+        'commission',
+        'lossOfValueChangeRate'
+    ]
+} as const;
+
 export const ReadStripeProductDtoSchema = {
     type: 'object',
     properties: {
@@ -9589,6 +10520,25 @@ export const ReadTableDtoSchema = {
     ]
 } as const;
 
+export const ReadTaskCollectionDtoSchema = {
+    type: 'object',
+    properties: {
+        totalItems: {
+            type: 'number'
+        },
+        data: {
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/ReadTaskListItemDto'
+            }
+        }
+    },
+    required: [
+        'totalItems',
+        'data'
+    ]
+} as const;
+
 export const ReadTaskDtoSchema = {
     type: 'object',
     properties: {
@@ -9659,6 +10609,283 @@ export const ReadTaskDtoSchema = {
         'dateRank',
         'createdAt',
         'updatedAt'
+    ]
+} as const;
+
+export const ReadTaskListClientDtoSchema = {
+    type: 'object',
+    properties: {
+        email: {
+            type: 'string'
+        },
+        keywords: {
+            type: 'string'
+        },
+        language: {
+            type: 'string'
+        },
+        notes: {
+            type: 'string'
+        },
+        role: {
+            type: 'string'
+        },
+        website: {
+            type: 'string'
+        },
+        firstname: {
+            type: 'string',
+            nullable: true
+        },
+        lastname: {
+            type: 'string',
+            nullable: true
+        },
+        phone: {
+            type: 'string',
+            nullable: true
+        }
+    },
+    required: [
+        'firstname',
+        'lastname'
+    ]
+} as const;
+
+export const ReadTaskListCustomerDtoSchema = {
+    type: 'object',
+    properties: {
+        _id: {
+            type: 'string'
+        },
+        tiersPrestationIsActivatedForThisCustomer: {
+            type: 'boolean'
+        },
+        locale: {
+            type: 'string'
+        },
+        customerCompany: {
+            $ref: '#/components/schemas/ReadCustomerCompanyDto'
+        },
+        tiersPrestation: {
+            type: 'object'
+        },
+        client: {
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/ReadTaskListClientDto'
+            }
+        },
+        location: {
+            $ref: '#/components/schemas/ReadTaskListLocationDto'
+        },
+        deliveryLocation: {
+            $ref: '#/components/schemas/ReadTaskListLocationDto'
+        },
+        deliveryLocationIsSame: {
+            type: 'boolean',
+            nullable: true
+        },
+        currency: {
+            nullable: true,
+            allOf: [
+                {
+                    $ref: '#/components/schemas/Currency'
+                }
+            ]
+        },
+        note: {
+            type: 'string',
+            nullable: true
+        }
+    },
+    required: [
+        '_id',
+        'location'
+    ]
+} as const;
+
+export const ReadTaskListItemDtoSchema = {
+    type: 'object',
+    properties: {
+        id: {
+            type: 'string'
+        },
+        companyId: {
+            type: 'string'
+        },
+        createdAt: {
+            format: 'date-time',
+            type: 'string'
+        },
+        updatedAt: {
+            format: 'date-time',
+            type: 'string'
+        },
+        name: {
+            type: 'string',
+            nullable: true
+        },
+        rank: {
+            type: 'string',
+            nullable: true
+        },
+        opportunityRank: {
+            type: 'string',
+            nullable: true
+        },
+        dateRank: {
+            type: 'string',
+            nullable: true
+        },
+        description: {
+            type: 'string',
+            nullable: true
+        },
+        priority: {
+            type: 'number',
+            nullable: true
+        },
+        customer: {
+            nullable: true,
+            allOf: [
+                {
+                    $ref: '#/components/schemas/ReadTaskListCustomerDto'
+                }
+            ]
+        },
+        opportunity: {
+            nullable: true,
+            allOf: [
+                {
+                    $ref: '#/components/schemas/ReadTaskListOpportunityDto'
+                }
+            ]
+        },
+        customerId: {
+            type: 'string',
+            nullable: true
+        },
+        dueDate: {
+            type: 'string',
+            nullable: true
+        },
+        opportunityId: {
+            type: 'string',
+            nullable: true
+        },
+        doneAt: {
+            format: 'date-time',
+            type: 'string',
+            nullable: true
+        },
+        deletedAt: {
+            format: 'date-time',
+            type: 'string',
+            nullable: true
+        }
+    },
+    required: [
+        'id',
+        'companyId',
+        'createdAt',
+        'updatedAt',
+        'name',
+        'rank',
+        'opportunityRank',
+        'dateRank',
+        'description',
+        'priority'
+    ]
+} as const;
+
+export const ReadTaskListLocationDtoSchema = {
+    type: 'object',
+    properties: {
+        address: {
+            type: 'string'
+        },
+        city: {
+            type: 'string'
+        },
+        zipCode: {
+            type: 'string'
+        },
+        additionalAddress: {
+            type: 'string'
+        },
+        country: {
+            type: 'string',
+            nullable: true
+        }
+    },
+    required: [
+        'address',
+        'city',
+        'zipCode'
+    ]
+} as const;
+
+export const ReadTaskListOpportunityDtoSchema = {
+    type: 'object',
+    properties: {
+        id: {
+            type: 'string'
+        },
+        amount: {
+            type: 'number'
+        },
+        name: {
+            type: 'string',
+            nullable: true
+        },
+        rank: {
+            type: 'string',
+            nullable: true
+        },
+        customerId: {
+            type: 'string',
+            nullable: true
+        },
+        categoryId: {
+            type: 'string',
+            nullable: true
+        },
+        description: {
+            type: 'string',
+            nullable: true
+        },
+        dueDate: {
+            format: 'date-time',
+            type: 'string',
+            nullable: true
+        },
+        createdAt: {
+            format: 'date-time',
+            type: 'string',
+            nullable: true
+        },
+        updatedAt: {
+            format: 'date-time',
+            type: 'string',
+            nullable: true
+        },
+        deletedAt: {
+            format: 'date-time',
+            type: 'string',
+            nullable: true
+        }
+    },
+    required: [
+        'id',
+        'amount',
+        'name',
+        'rank',
+        'customerId',
+        'categoryId',
+        'createdAt',
+        'updatedAt',
+        'deletedAt'
     ]
 } as const;
 
@@ -10191,6 +11418,56 @@ export const ReadWebhookDtoSchema = {
     ]
 } as const;
 
+export const ReceivedFlowStatusCountersDtoSchema = {
+    type: 'object',
+    properties: {
+        received: {
+            type: 'number',
+            description: 'Nombre de documents de la famille Reçue — exposé par la rangée des avoirs reçus'
+        },
+        toPay: {
+            type: 'number',
+            description: 'Nombre de factures à payer (reçues, reste à payer > 0, non annulées)'
+        },
+        late: {
+            type: 'number',
+            description: 'Sous-ensemble de `toPay` dont l\'échéance est dépassée'
+        },
+        paid: {
+            type: 'number',
+            description: 'Nombre de factures payées (211/212, solde couvert)'
+        },
+        refused: {
+            type: 'number',
+            description: 'Nombre de factures refusées (code 210)'
+        },
+        disputed: {
+            type: 'number',
+            description: 'Nombre de factures en litige (codes 206-208)'
+        }
+    },
+    required: [
+        'received',
+        'toPay',
+        'late',
+        'paid',
+        'refused',
+        'disputed'
+    ]
+} as const;
+
+export const ReceivedFlowStatusFilterSchema = {
+    type: 'string',
+    enum: [
+        'RECEIVED',
+        'TO_PAY',
+        'LATE',
+        'PAID',
+        'REFUSED',
+        'DISPUTED'
+    ]
+} as const;
+
 export const ReconciliateInvoiceDtoSchema = {
     type: 'object',
     properties: {
@@ -10325,36 +11602,6 @@ export const RentabilityPreferencesDtoSchema = {
     ]
 } as const;
 
-export const RetrieveCustomerPortalPaymentsDtoSchema = {
-    type: 'object',
-    properties: {
-        customer: {
-            $ref: '#/components/schemas/CustomerPortalCustomerDto'
-        },
-        billings: {
-            type: 'array',
-            items: {
-                $ref: '#/components/schemas/CustomerPortalBillingDto'
-            }
-        },
-        company: {
-            $ref: '#/components/schemas/CustomerPortalCompanyDto'
-        },
-        email: {
-            type: 'string'
-        },
-        phone: {
-            type: 'string'
-        }
-    },
-    required: [
-        'customer',
-        'billings',
-        'company',
-        'email'
-    ]
-} as const;
-
 export const SendBillingByEmailDtoSchema = {
     type: 'object',
     properties: {
@@ -10392,15 +11639,6 @@ export const SendBillingByEmailDtoSchema = {
         'subject',
         'content'
     ]
-} as const;
-
-export const SendTestEmailSignatureDtoSchema = {
-    type: 'object',
-    properties: {
-        content: {
-            type: 'string'
-        }
-    }
 } as const;
 
 export const SetBillingThemeAssignmentsDtoSchema = {
@@ -10896,6 +12134,47 @@ export const UpdateAdvanceGeneralInformationsDtoSchema = {
             ]
         }
     }
+} as const;
+
+export const UpdateAdvanceTimelineDtoSchema = {
+    type: 'object',
+    properties: {
+        emittedAt: {
+            type: 'number',
+            description: 'The timestamp when the invoice was emitted, in seconds',
+            example: 1617187200,
+            minimum: 0,
+            maximum: 4102444800
+        },
+        paymentDelay: {
+            description: 'The payment delay for the invoice',
+            example: 'thirty_days',
+            allOf: [
+                {
+                    $ref: '#/components/schemas/PaymentDelay'
+                }
+            ]
+        },
+        customDueDate: {
+            type: 'number',
+            description: 'Custom due date for the invoice when payment delay is OTHER, in seconds',
+            example: 1619865600,
+            minimum: 0,
+            maximum: 4102444800
+        },
+        deliveryDate: {
+            type: 'number',
+            description: 'The timestamp for delivery date, in seconds',
+            example: 1617187200,
+            nullable: true,
+            minimum: 0,
+            maximum: 4102444800
+        }
+    },
+    required: [
+        'emittedAt',
+        'paymentDelay'
+    ]
 } as const;
 
 export const UpdateAssetGeneralInformationsDtoSchema = {
@@ -11398,6 +12677,10 @@ export const UpdateContactDtoSchema = {
         },
         preferences: {
             $ref: '#/components/schemas/ClientPreferencesDto'
+        },
+        notes: {
+            type: 'string',
+            nullable: true
         }
     },
     required: [
@@ -12288,6 +13571,31 @@ export const UpdateTitleDtoSchema = {
     ]
 } as const;
 
+export const UpdateWebhookV2DtoSchema = {
+    type: 'object',
+    properties: {
+        url: {
+            type: 'string',
+            example: 'https://example.com/hooks/abby',
+            description: 'Must use https://'
+        },
+        description: {
+            type: 'string',
+            nullable: true,
+            description: '`null` clears the description'
+        },
+        events: {
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/PublicWebhookEvent'
+            }
+        },
+        isActivated: {
+            type: 'boolean'
+        }
+    }
+} as const;
+
 export const UploadThemeAssetDtoSchema = {
     type: 'object',
     properties: {
@@ -12510,5 +13818,80 @@ export const VatMentionSchema = {
         'vat_reduced_rate_2',
         'vat_article_261c_cgi',
         'vat_exemption_294_cgi'
+    ]
+} as const;
+
+export const WebhookTestSendOutcomeSchema = {
+    type: 'string',
+    enum: [
+        'response',
+        'timeout',
+        'unreachable'
+    ],
+    description: '`response`: the receiver answered; `timeout`: no answer within 5 s; `unreachable`: the address cannot be reached or is refused'
+} as const;
+
+export const WebhookTestSendV2DtoSchema = {
+    type: 'object',
+    properties: {
+        outcome: {
+            description: '`response`: the receiver answered; `timeout`: no answer within 5 s; `unreachable`: the address cannot be reached or is refused',
+            allOf: [
+                {
+                    $ref: '#/components/schemas/WebhookTestSendOutcome'
+                }
+            ]
+        },
+        statusCode: {
+            type: 'number',
+            nullable: true,
+            description: 'Status code of the answer; null unless the outcome is `response`'
+        },
+        durationMs: {
+            type: 'number',
+            description: 'Elapsed duration of the test send, in milliseconds'
+        }
+    },
+    required: [
+        'outcome',
+        'statusCode',
+        'durationMs'
+    ]
+} as const;
+
+export const WebhookV2DtoSchema = {
+    type: 'object',
+    properties: {
+        id: {
+            type: 'string'
+        },
+        url: {
+            type: 'string'
+        },
+        description: {
+            type: 'string',
+            nullable: true
+        },
+        events: {
+            description: 'Stored names; a webhook created outside /v2 may hold names outside the public list',
+            type: 'array',
+            items: {
+                type: 'string'
+            }
+        },
+        isActivated: {
+            type: 'boolean'
+        },
+        isSigned: {
+            type: 'boolean',
+            description: 'Whether the webhook has a signing secret (false for webhooks created outside /v2)'
+        }
+    },
+    required: [
+        'id',
+        'url',
+        'events',
+        'isActivated',
+        'isSigned'
     ]
 } as const;
