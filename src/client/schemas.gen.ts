@@ -4491,6 +4491,7 @@ export const QueryTransactionDtoSchema = {
         },
         thirdParty: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/ReadAccountingThirdPartyDto'
@@ -5174,6 +5175,7 @@ export const ReadAdvanceDtoSchema = {
         },
         discountAdvancePayment: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/BillingDiscountAdvancePaymentDto'
@@ -5489,6 +5491,7 @@ export const ReadAssetDtoSchema = {
         },
         latePenalty: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/BillingLatePenaltyDto'
@@ -5497,6 +5500,7 @@ export const ReadAssetDtoSchema = {
         },
         lumpSumCompensation: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/BillingLumpSumCompensationDto'
@@ -5505,6 +5509,7 @@ export const ReadAssetDtoSchema = {
         },
         discountAdvancePayment: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/BillingDiscountAdvancePaymentDto'
@@ -6431,6 +6436,7 @@ export const ReadBillingThemeDtoSchema = {
         },
         logo: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/ReadLogoDto'
@@ -6448,6 +6454,7 @@ export const ReadBillingThemeDtoSchema = {
         },
         decoration: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/ReadDecorationDto'
@@ -6456,6 +6463,7 @@ export const ReadBillingThemeDtoSchema = {
         },
         footer: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/ReadFooterDto'
@@ -6467,6 +6475,7 @@ export const ReadBillingThemeDtoSchema = {
         },
         links: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/ReadLinksDto'
@@ -6765,6 +6774,7 @@ export const ReadColorsDtoSchema = {
         },
         automaticSuggested: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/ReadColorSetDto'
@@ -8216,6 +8226,7 @@ export const ReadEstimateDtoSchema = {
         },
         discountAdvancePayment: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/BillingDiscountAdvancePaymentDto'
@@ -8503,6 +8514,7 @@ export const ReadIncomeBookEntryDtoSchema = {
         },
         paymentMethodUsed: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/ReadIncomeBookPaymentMethodDto'
@@ -8515,6 +8527,7 @@ export const ReadIncomeBookEntryDtoSchema = {
         },
         file: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/ReadIncomeBookFileDto'
@@ -8689,6 +8702,7 @@ export const ReadIncomeBookListEntryDtoSchema = {
         },
         paymentMethodUsed: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/ReadIncomeBookPaymentMethodDto'
@@ -8701,6 +8715,7 @@ export const ReadIncomeBookListEntryDtoSchema = {
         },
         file: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/ReadIncomeBookFileDto'
@@ -8992,6 +9007,7 @@ export const ReadInvoiceDtoSchema = {
         },
         discountAdvancePayment: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/BillingDiscountAdvancePaymentDto'
@@ -9003,6 +9019,7 @@ export const ReadInvoiceDtoSchema = {
         },
         paymentRequest: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/PaymentRequestDto'
@@ -9397,6 +9414,7 @@ export const ReadMeEInvoicingDtoSchema = {
         platformTransfer: {
             nullable: true,
             description: 'Transfert de portabilité sortant en cours (le client rejoint Abby). Non-null uniquement si la ligne d\'annuaire est `SUSPENDED`, le dossier PA Hub est `OUTBOUND` et un `request_id` est persisté. `null` dans tous les autres cas (pas de dossier, dossier entrant, ligne non suspendue, lecture indisponible) — jamais une erreur HTTP.',
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/ReadMePlatformTransferDto'
@@ -10748,6 +10766,7 @@ export const ReadTaskListItemDtoSchema = {
         },
         customer: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/ReadTaskListCustomerDto'
@@ -10756,6 +10775,7 @@ export const ReadTaskListItemDtoSchema = {
         },
         opportunity: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/ReadTaskListOpportunityDto'
@@ -11176,6 +11196,7 @@ export const ReadTransactionDtoSchema = {
         },
         suggestedAccountingAccount: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/ReadSuggestedAccountingAccountDto'
@@ -11188,6 +11209,7 @@ export const ReadTransactionDtoSchema = {
         },
         thirdParty: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/ReadThirdPartyDto'
@@ -12089,6 +12111,7 @@ export const UpdateAdvanceGeneralInformationsDtoSchema = {
         },
         latePenalty: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/BillingLatePenaltyDto'
@@ -12097,6 +12120,7 @@ export const UpdateAdvanceGeneralInformationsDtoSchema = {
         },
         lumpSumCompensation: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/BillingLumpSumCompensationDto'
@@ -12105,6 +12129,7 @@ export const UpdateAdvanceGeneralInformationsDtoSchema = {
         },
         discountAdvancePayment: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/BillingDiscountAdvancePaymentDto'
@@ -12227,6 +12252,7 @@ export const UpdateAssetGeneralInformationsDtoSchema = {
         },
         latePenalty: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/BillingLatePenaltyDto'
@@ -12235,6 +12261,7 @@ export const UpdateAssetGeneralInformationsDtoSchema = {
         },
         lumpSumCompensation: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/BillingLumpSumCompensationDto'
@@ -12243,6 +12270,7 @@ export const UpdateAssetGeneralInformationsDtoSchema = {
         },
         discountAdvancePayment: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/BillingDiscountAdvancePaymentDto'
@@ -12298,6 +12326,7 @@ export const UpdateBillingBankInformationDtoSchema = {
     properties: {
         bankInformation: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/BankInformationDto'
@@ -12338,6 +12367,7 @@ export const UpdateBillingDeliveryAddressDtoSchema = {
     properties: {
         deliveryAddress: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/UpdateDeliveryAddressDto'
@@ -12488,6 +12518,7 @@ export const UpdateBillingThemeDecorationDtoSchema = {
     properties: {
         decoration: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/DecorationDto'
@@ -12528,6 +12559,7 @@ export const UpdateBillingThemeDtoSchema = {
         },
         logo: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/LogoDto'
@@ -12545,6 +12577,7 @@ export const UpdateBillingThemeDtoSchema = {
         },
         decoration: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/DecorationDto'
@@ -12553,6 +12586,7 @@ export const UpdateBillingThemeDtoSchema = {
         },
         footer: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/FooterDto'
@@ -12564,6 +12598,7 @@ export const UpdateBillingThemeDtoSchema = {
         },
         links: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/LinksDto'
@@ -12585,6 +12620,7 @@ export const UpdateBillingThemeFooterDtoSchema = {
     properties: {
         footer: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/FooterDto'
@@ -12602,6 +12638,7 @@ export const UpdateBillingThemeLinksDtoSchema = {
     properties: {
         links: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/LinksDto'
@@ -12619,6 +12656,7 @@ export const UpdateBillingThemeLogoDtoSchema = {
     properties: {
         logo: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/LogoDto'
@@ -12803,6 +12841,7 @@ export const UpdateEstimateGeneralInformationsDtoSchema = {
         },
         latePenalty: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/BillingLatePenaltyDto'
@@ -12811,6 +12850,7 @@ export const UpdateEstimateGeneralInformationsDtoSchema = {
         },
         lumpSumCompensation: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/BillingLumpSumCompensationDto'
@@ -12819,6 +12859,7 @@ export const UpdateEstimateGeneralInformationsDtoSchema = {
         },
         discountAdvancePayment: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/BillingDiscountAdvancePaymentDto'
@@ -12882,6 +12923,7 @@ export const UpdateInvoiceBankInformationDtoSchema = {
     properties: {
         bankInformation: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/BankInformationDto'
@@ -12899,6 +12941,7 @@ export const UpdateInvoiceDeliveryAddressDtoSchema = {
     properties: {
         deliveryAddress: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/UpdateDeliveryAddressDto'
@@ -13007,6 +13050,7 @@ export const UpdateInvoiceGeneralInformationsDtoSchema = {
         },
         latePenalty: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/BillingLatePenaltyDto'
@@ -13015,6 +13059,7 @@ export const UpdateInvoiceGeneralInformationsDtoSchema = {
         },
         lumpSumCompensation: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/BillingLumpSumCompensationDto'
@@ -13023,6 +13068,7 @@ export const UpdateInvoiceGeneralInformationsDtoSchema = {
         },
         discountAdvancePayment: {
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/BillingDiscountAdvancePaymentDto'
@@ -13060,6 +13106,7 @@ export const UpdateInvoicePaymentRequestDtoSchema = {
         paymentRequest: {
             description: 'The payment request for the invoice',
             nullable: true,
+            type: 'object',
             allOf: [
                 {
                     $ref: '#/components/schemas/PaymentRequestPayloadDto'
