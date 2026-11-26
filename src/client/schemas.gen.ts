@@ -4183,8 +4183,8 @@ export const PaymentRequestStatusUrssafTpSchema = {
         '30',
         '40',
         '50',
-        '60',
         '70',
+        '60',
         '110',
         '111',
         '120',
@@ -4881,6 +4881,152 @@ export const ReadAccountingBookDtoSchema = {
         'companyId',
         'createdAt',
         'updatedAt'
+    ]
+} as const;
+
+export const ReadAccountingIncomeBookEntryDtoSchema = {
+    type: 'object',
+    properties: {
+        id: {
+            type: 'string'
+        },
+        paymentReceivedAt: {
+            type: 'number',
+            description: 'Unix timestamp, in seconds'
+        },
+        amountWithoutTax: {
+            type: 'number',
+            nullable: true,
+            description: 'In cents'
+        },
+        amountWithTax: {
+            type: 'number',
+            nullable: true,
+            description: 'In cents'
+        },
+        vatAmount: {
+            type: 'number',
+            nullable: true,
+            description: 'In cents'
+        },
+        vatCode: {
+            nullable: true,
+            allOf: [
+                {
+                    $ref: '#/components/schemas/VatCode'
+                }
+            ]
+        },
+        vatMention: {
+            nullable: true,
+            allOf: [
+                {
+                    $ref: '#/components/schemas/IncomeBookVatMention'
+                }
+            ]
+        },
+        productType: {
+            nullable: true,
+            allOf: [
+                {
+                    $ref: '#/components/schemas/ProductType'
+                }
+            ]
+        },
+        paymentMethod: {
+            nullable: true,
+            allOf: [
+                {
+                    $ref: '#/components/schemas/PaymentMethod'
+                }
+            ]
+        },
+        otherMethod: {
+            type: 'string',
+            nullable: true
+        },
+        personalServiceActivity: {
+            type: 'string',
+            nullable: true,
+            description: 'A PersonalServiceActivity, or MANUALLY_ADDED for a manual SAP entry'
+        },
+        reference: {
+            type: 'string',
+            nullable: true,
+            description: 'The invoice number when the entry comes from an invoice'
+        },
+        client: {
+            type: 'string',
+            nullable: true
+        },
+        billingId: {
+            type: 'string',
+            nullable: true,
+            description: 'The linked invoice'
+        },
+        billingNumber: {
+            type: 'string',
+            nullable: true,
+            description: 'The number of the linked invoice'
+        },
+        transactionId: {
+            type: 'string',
+            nullable: true
+        },
+        file: {
+            nullable: true,
+            type: 'object',
+            allOf: [
+                {
+                    $ref: '#/components/schemas/ReadAccountingIncomeBookEntryFileDto'
+                }
+            ]
+        },
+        isTaxIncluded: {
+            type: 'boolean'
+        }
+    },
+    required: [
+        'id',
+        'paymentReceivedAt',
+        'amountWithoutTax',
+        'amountWithTax',
+        'vatAmount',
+        'vatCode',
+        'vatMention',
+        'productType',
+        'paymentMethod',
+        'otherMethod',
+        'personalServiceActivity',
+        'reference',
+        'client',
+        'billingId',
+        'billingNumber',
+        'transactionId',
+        'file',
+        'isTaxIncluded'
+    ]
+} as const;
+
+export const ReadAccountingIncomeBookEntryFileDtoSchema = {
+    type: 'object',
+    properties: {
+        id: {
+            type: 'string'
+        },
+        url: {
+            type: 'string',
+            nullable: true
+        },
+        relativeUrl: {
+            type: 'string',
+            nullable: true
+        }
+    },
+    required: [
+        'id',
+        'url',
+        'relativeUrl'
     ]
 } as const;
 
