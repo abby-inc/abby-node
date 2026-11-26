@@ -1434,7 +1434,7 @@ export type PaymentRequestPayloadDto = {
     dateFinEmploi: number;
 };
 
-export type PaymentRequestStatusUrssafTp = 0 | '10' | '20' | '30' | '40' | '50' | '60' | '70' | '110' | '111' | '120' | '112' | 'ERR_PARTICULIER_INCONNU' | 'ERR_CMPT_BLOQUE' | 'ERR_FACTURE_DOUBLON' | 'ERR_NBRE_PREST_MAX' | 'ERR_DATE_FUTUR' | 'ERR_DATE_PAIEMENT_AVANT_EXP' | 'ERR_PERIODE_EMPLOI_MOIS_NON_UNIQUE' | 'ERR_DATE_FIN_AVANT_DATE_DEB' | 'ERR_MONTANT_ACOMPTE' | 'ERR_TOTAL_PRESTATIONS' | 'ERR_CODE_NATURE' | 'ERR_CODE_ACTIVITE' | 'ERR_CODE_ACTIVITE_NATURE' | 'ERR_MNT_PREST_HT_TVA' | 'ERR_MNT_PREST_TTC' | 'ERR_VALEUR_NEGATIVE' | 'ERR_PRESTATAIRE_EMETTEUR_INCONNU' | 'ERR_LIEN_PARTICULIER_PRESTATAIRE' | 'ERR_PRESTATAIRE_FACTURATION_INCONNU' | 'ERR_CRITERE_RECHERCHE_VIDE' | 'ERR_DGFIP_R2P_INCONNU' | 'ERR_DATE_NAISSANCE_FUTUR' | 'ERR_LIEU_NAISSANCE_DEPT' | 'ERR_LIEU_NAISSANCE_COMN' | 'ERR_LIEU_NAISSANCE_PAYS' | 'ERR_DGFIP_IMPOTPART_INCONNU' | 'ERR_CONTACT' | 'ERR_CONTACT_ADRESSE_TYPE_VOIE' | 'ERR_CONTACT_ADRESSE_LETTRE_VOIE' | 'ERR_CONTACT_ADRESSE_TYPEVOIE' | 'ERR_CONTACT_ADRESSE_LIBELLEVOIE' | 'ERR_CONTACT_ADRESSE_INFORMATION_SUPPLEMENTAIRE' | 'ERR_CONTACT_ADRESSE_COMMUNE' | 'ERR_COORDONNEES_BANCAIRES' | 'ERR_FORMAT_VALEUR' | 'ERR_NBRE_MAX_RESULTAT' | 'ERR_RECHERCHE_VIDE' | 'ERR_ECV_PARTICULIERS_EXISTENT' | 'ERREUR_REFERENCE_PARTICULIER_EXISTANTE_TYPE' | 'ERR_LIEU_NAISSANCE_OBLIGATOIRE' | 'ERREUR_LIEU_NAISSANCE_INVALIDE' | 'ERR_RECHERCHE_PARTICULIER' | 'ERR_FORMAT_NUMINTERVENANT' | 'ERR_NUMINTERVENANT_MANQUANT' | 'ERR_NUMINTERVENANT_BLOQUE' | 'ERR_MANDAT_ECHU' | 'ERREUR_VALIDATION' | 'ERREUR_TECHNIQUE' | 'ERREUR_INCONNUE';
+export type PaymentRequestStatusUrssafTp = 0 | '10' | '20' | '30' | '40' | '50' | '70' | '60' | '110' | '111' | '120' | '112' | 'ERR_PARTICULIER_INCONNU' | 'ERR_CMPT_BLOQUE' | 'ERR_FACTURE_DOUBLON' | 'ERR_NBRE_PREST_MAX' | 'ERR_DATE_FUTUR' | 'ERR_DATE_PAIEMENT_AVANT_EXP' | 'ERR_PERIODE_EMPLOI_MOIS_NON_UNIQUE' | 'ERR_DATE_FIN_AVANT_DATE_DEB' | 'ERR_MONTANT_ACOMPTE' | 'ERR_TOTAL_PRESTATIONS' | 'ERR_CODE_NATURE' | 'ERR_CODE_ACTIVITE' | 'ERR_CODE_ACTIVITE_NATURE' | 'ERR_MNT_PREST_HT_TVA' | 'ERR_MNT_PREST_TTC' | 'ERR_VALEUR_NEGATIVE' | 'ERR_PRESTATAIRE_EMETTEUR_INCONNU' | 'ERR_LIEN_PARTICULIER_PRESTATAIRE' | 'ERR_PRESTATAIRE_FACTURATION_INCONNU' | 'ERR_CRITERE_RECHERCHE_VIDE' | 'ERR_DGFIP_R2P_INCONNU' | 'ERR_DATE_NAISSANCE_FUTUR' | 'ERR_LIEU_NAISSANCE_DEPT' | 'ERR_LIEU_NAISSANCE_COMN' | 'ERR_LIEU_NAISSANCE_PAYS' | 'ERR_DGFIP_IMPOTPART_INCONNU' | 'ERR_CONTACT' | 'ERR_CONTACT_ADRESSE_TYPE_VOIE' | 'ERR_CONTACT_ADRESSE_LETTRE_VOIE' | 'ERR_CONTACT_ADRESSE_TYPEVOIE' | 'ERR_CONTACT_ADRESSE_LIBELLEVOIE' | 'ERR_CONTACT_ADRESSE_INFORMATION_SUPPLEMENTAIRE' | 'ERR_CONTACT_ADRESSE_COMMUNE' | 'ERR_COORDONNEES_BANCAIRES' | 'ERR_FORMAT_VALEUR' | 'ERR_NBRE_MAX_RESULTAT' | 'ERR_RECHERCHE_VIDE' | 'ERR_ECV_PARTICULIERS_EXISTENT' | 'ERREUR_REFERENCE_PARTICULIER_EXISTANTE_TYPE' | 'ERR_LIEU_NAISSANCE_OBLIGATOIRE' | 'ERREUR_LIEU_NAISSANCE_INVALIDE' | 'ERR_RECHERCHE_PARTICULIER' | 'ERR_FORMAT_NUMINTERVENANT' | 'ERR_NUMINTERVENANT_MANQUANT' | 'ERR_NUMINTERVENANT_BLOQUE' | 'ERR_MANDAT_ECHU' | 'ERREUR_VALIDATION' | 'ERREUR_TECHNIQUE' | 'ERREUR_INCONNUE';
 
 export type PersonalServiceActivity = 'GARDE_ENFANT_HANDICAPE' | 'ACCOMPAGNEMENT_ENFANT_HANDICAPE' | 'AIDE_HUMAINE' | 'CONDUITE_VEHICULE_PERSONNEL' | 'AIDE_AU_DEPLACEMENT' | 'ENTRETIEN_DE_LA_MAISON' | 'JARDINAGE' | 'BRICOLAGE' | 'GARDE_ENFANT_PLUS_DE_6_ANS' | 'SOUTIEN_SCOLAIRE_COURS_A_DOMICILE' | 'SOIN_ESTHETIQUE_A_DOMICILE' | 'PREPARATION_REPAS_A_DOMICILE' | 'LIVRAISON_REPAS_A_DOMICILE' | 'COLLECTE_ET_LIVRAISON_DE_LINGE_REPASSE' | 'LIVRAISON_COURSES_A_DOMICILE' | 'ASSISTANCE_INFORMATIQUE' | 'SOINS_ET_PROMENADES_ANIMAUX_DE_COMPAGNIE_POUR_PERSONNES_DEPENDANTES' | 'MAINTENANCE_ENTRETIEN_ET_VIGILANCE_DE_LA_RESIDENCE_PRINCIPALE' | 'ASSISTANCE_ADMINISTRATIVE' | 'ACCOMPAGNEMENT_ENFANT_PLUS_DE_6_ANS' | 'TELEASSISTANCE' | 'INTERPRETE_LANGUE_DES_SIGNES' | 'CONDUITE_VEHICULE_PERSONNEL_EN_CAS_INVALIDITE_TEMPORAIRE' | 'ACCOMPAGNEMENT_DEPLACEMENTS_EN_DEHORS_DU_DOMICILE' | 'ASSISTANCE_PERSONNES_TEMPORAIREMENT_DEPENDANTES_A_DOMICILE' | 'COORDINATION_ET_GESTION' | 'DIVERS_NON_ELIGIBLE';
 
@@ -1639,6 +1639,57 @@ export type ReadAccountingBookDto = {
     companyId: string;
     createdAt: Date;
     updatedAt: Date;
+};
+
+export type ReadAccountingIncomeBookEntryDto = {
+    id: string;
+    /**
+     * Unix timestamp, in seconds
+     */
+    paymentReceivedAt: number;
+    /**
+     * In cents
+     */
+    amountWithoutTax: number | null;
+    /**
+     * In cents
+     */
+    amountWithTax: number | null;
+    /**
+     * In cents
+     */
+    vatAmount: number | null;
+    vatCode: VatCode | null;
+    vatMention: IncomeBookVatMention | null;
+    productType: ProductType | null;
+    paymentMethod: PaymentMethod | null;
+    otherMethod: string | null;
+    /**
+     * A PersonalServiceActivity, or MANUALLY_ADDED for a manual SAP entry
+     */
+    personalServiceActivity: string | null;
+    /**
+     * The invoice number when the entry comes from an invoice
+     */
+    reference: string | null;
+    client: string | null;
+    /**
+     * The linked invoice
+     */
+    billingId: string | null;
+    /**
+     * The number of the linked invoice
+     */
+    billingNumber: string | null;
+    transactionId: string | null;
+    file: ReadAccountingIncomeBookEntryFileDto | null;
+    isTaxIncluded: boolean;
+};
+
+export type ReadAccountingIncomeBookEntryFileDto = {
+    id: string;
+    url: string | null;
+    relativeUrl: string | null;
 };
 
 export type ReadAccountingThirdPartyDto = {
@@ -9199,6 +9250,28 @@ export type PurchaseRegisterControllerCreateV3Responses = {
 };
 
 export type PurchaseRegisterControllerCreateV3Response = PurchaseRegisterControllerCreateV3Responses[keyof PurchaseRegisterControllerCreateV3Responses];
+
+export type IncomeBookV2ControllerRetrieveEntryV2Data = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/v2/income-book/{id}';
+};
+
+export type IncomeBookV2ControllerRetrieveEntryV2Errors = {
+    /**
+     * No entry with this id in the current company
+     */
+    404: unknown;
+};
+
+export type IncomeBookV2ControllerRetrieveEntryV2Responses = {
+    200: ReadAccountingIncomeBookEntryDto;
+};
+
+export type IncomeBookV2ControllerRetrieveEntryV2Response = IncomeBookV2ControllerRetrieveEntryV2Responses[keyof IncomeBookV2ControllerRetrieveEntryV2Responses];
 
 export type OpportunitiesControllerRetrieveOpportunitiesV2Data = {
     body?: never;

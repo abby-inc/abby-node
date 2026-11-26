@@ -1558,8 +1558,8 @@ export const zPaymentRequestStatusUrssafTp = z.union([
     z.literal('30'),
     z.literal('40'),
     z.literal('50'),
-    z.literal('60'),
     z.literal('70'),
+    z.literal('60'),
     z.literal('110'),
     z.literal('111'),
     z.literal('120'),
@@ -1858,6 +1858,12 @@ export const zReadAccountingAccountListItemDto = z.object({
         description: 'Whether the account is related to VAT'
     }),
     parentId: z.string().nullish()
+});
+
+export const zReadAccountingIncomeBookEntryFileDto = z.object({
+    id: z.string(),
+    url: z.string().nullable(),
+    relativeUrl: z.string().nullable()
 });
 
 export const zReadAccountingThirdPartyDto = z.object({
@@ -3931,6 +3937,29 @@ export const zQueryTransactionDto = z.object({
     fileCount: z.number()
 });
 
+export const zReadAccountingIncomeBookEntryDto = z.object({
+    id: z.string(),
+    paymentReceivedAt: z.number().register(z.globalRegistry, {
+        description: 'Unix timestamp, in seconds'
+    }),
+    amountWithoutTax: z.number().nullable(),
+    amountWithTax: z.number().nullable(),
+    vatAmount: z.number().nullable(),
+    vatCode: zVatCode.nullable(),
+    vatMention: zIncomeBookVatMention.nullable(),
+    productType: zProductType.nullable(),
+    paymentMethod: zPaymentMethod.nullable(),
+    otherMethod: z.string().nullable(),
+    personalServiceActivity: z.string().nullable(),
+    reference: z.string().nullable(),
+    client: z.string().nullable(),
+    billingId: z.string().nullable(),
+    billingNumber: z.string().nullable(),
+    transactionId: z.string().nullable(),
+    file: zReadAccountingIncomeBookEntryFileDto.nullable(),
+    isTaxIncluded: z.boolean()
+});
+
 export const zReadBillingDetailsLineDto = z.object({
     generatedId: z.string().optional(),
     id: z.string().optional(),
@@ -5481,6 +5510,10 @@ export const zPurchaseRegisterControllerRemoveV3Path = z.object({
     })
 });
 
+export const zIncomeBookV2ControllerRetrieveEntryV2Path = z.object({
+    id: z.string()
+});
+
 export const zOpportunitiesControllerRetrieveOpportunitiesV2Query = z.object({
     page: z.number(),
     limit: z.number(),
@@ -6977,4 +7010,10 @@ export const zAccountingAccountControllerListV2Data = z.object({
     body: z.never().optional(),
     path: z.never().optional(),
     query: zAccountingAccountControllerListV2Query.optional()
+});
+
+export const zIncomeBookV2ControllerRetrieveEntryV2Data = z.object({
+    body: z.never().optional(),
+    path: zIncomeBookV2ControllerRetrieveEntryV2Path,
+    query: z.never().optional()
 });
