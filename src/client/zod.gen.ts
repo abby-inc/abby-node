@@ -4998,8 +4998,8 @@ export const zReadUserDto = z.object({
 });
 
 export const zIncomeBookControllerGetIncomeBookQuery = z.object({
-    page: z.number(),
-    limit: z.number(),
+    page: z.number().gte(1),
+    limit: z.number().gte(1).lte(200),
     countWithoutFilters: z.boolean().optional(),
     range: z.array(z.string()).optional(),
     search: z.string().optional(),
