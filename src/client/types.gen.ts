@@ -782,6 +782,8 @@ export type DismissPreferencesDto = {
     PRO_ACCOUNT_BANK_DETAILS?: DismissStateDto;
     PRO_ACCOUNT_PAYMENT_SETTINGS?: DismissStateDto;
     PRO_ACCOUNT_BILLING_DOCUMENT?: DismissStateDto;
+    MCP_PROMO?: DismissStateDto;
+    MCP_SETTINGS_BADGE?: DismissStateDto;
     PRO_ACCOUNT_CARD_WALLET_TUTORIAL?: DismissStateDto;
     PRO_ACCOUNT_INTERNATIONAL_WIRES?: DismissStateDto;
     PRO_ACCOUNT_GROUPED_WIRES?: DismissStateDto;

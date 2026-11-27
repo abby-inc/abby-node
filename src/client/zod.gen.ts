@@ -738,6 +738,8 @@ export const zDismissPreferencesDto = z.object({
     PRO_ACCOUNT_BANK_DETAILS: zDismissStateDto.optional(),
     PRO_ACCOUNT_PAYMENT_SETTINGS: zDismissStateDto.optional(),
     PRO_ACCOUNT_BILLING_DOCUMENT: zDismissStateDto.optional(),
+    MCP_PROMO: zDismissStateDto.optional(),
+    MCP_SETTINGS_BADGE: zDismissStateDto.optional(),
     PRO_ACCOUNT_CARD_WALLET_TUTORIAL: zDismissStateDto.optional(),
     PRO_ACCOUNT_INTERNATIONAL_WIRES: zDismissStateDto.optional(),
     PRO_ACCOUNT_GROUPED_WIRES: zDismissStateDto.optional(),
